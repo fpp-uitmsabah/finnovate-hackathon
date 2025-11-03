@@ -4,15 +4,12 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>FIN-novate Hackhathon 2025: Hacking Investment Literacy - Analysis Report</title>
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
-    <!-- Core Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"/>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -106,7 +103,7 @@
             transform: translateY(20px);
         }
 
-        /* Accordion Styles */
+        /* Accordion Styles (No longer used by challenges, but kept for potential other uses) */
         details {
             transition: all 0.3s ease-in-out;
         }
@@ -150,10 +147,8 @@
 </head>
 <body class="bg-gray-50 text-charcoal font-body">
 
-    <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
 
-    <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
@@ -168,7 +163,6 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero-bg min-h-screen flex items-center pt-20">
         <div class="hero-content max-w-7xl mx-auto px-6 py-20">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
@@ -224,7 +218,6 @@
         </div>
     </section>
 
-    <!-- Overview Section -->
     <section id="overview" class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -268,7 +261,6 @@
         </div>
     </section>
 
-    <!-- Structure Section -->
     <section id="structure" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -321,7 +313,6 @@
         </div>
     </section>
 
-    <!-- AI Workshop Modules -->
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -352,7 +343,6 @@
                             <span class="text-sm">Data-driven insights</span>
                         </div>
                     </div>
-                    <!-- FIXED: Changed text-gray-300 to text-gray-100 for readability -->
                     <p class="text-gray-100 text-sm">
                         "[Example] Act as a financial researcher. What are the root causes of [Chosen Problem] for Malaysian university students, citing data if available?"
                     </p>
@@ -376,7 +366,6 @@
                             <span class="text-sm">Creative prototyping</span>
                         </div>
                     </div>
-                    <!-- FIXED: Changed text-gray-300 to text-gray-100 for readability -->
                     <p class="text-gray-100 text-sm">
                         "[Example] Create a 3D Pixar-style image of a friendly 'Money Owl' mascot for our educational finance game."
                     </p>
@@ -400,7 +389,6 @@
                             <span class="text-sm">Academic integrity</span>
                         </div>
                     </div>
-                    <!-- FIXED: Changed text-gray-300 to text-gray-100 for readability -->
                     <p class="text-gray-100 text-sm">
                         Teach students how to use AI ethically and transparently for brainstorming and language support without fabricating answers.
                     </p>
@@ -409,7 +397,6 @@
         </div>
     </section>
 
-    <!-- Challenges Section -->
     <section id="challenges" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -421,49 +408,40 @@
                 </p>
             </div>
 
-            <!-- START: Updated Challenges Section -->
             <div class="grid lg:grid-cols-3 gap-8 mb-16">
-                <!-- Column 1: Foundational Mindset -->
-                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover stagger-item">
+                <div class="stagger-item">
                     <div class="flex items-center mb-6">
                         <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
                             <span class="text-2xl text-white">🧠</span>
                         </div>
                         <h3 class="font-display text-2xl font-bold text-navy">Foundational Mindset</h3>
                     </div>
-                    <div class="space-y-4" id="challenges-mindset">
-                        <!-- Challenges will be dynamically injected here -->
-                    </div>
+                    <div class="space-y-6" id="challenges-mindset">
+                        </div>
                 </div>
 
-                <!-- Column 2: Investment Vehicles -->
-                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover stagger-item">
+                <div class="stagger-item">
                     <div class="flex items-center mb-6">
                         <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mr-4">
                             <span class="text-2xl text-white">📈</span>
                         </div>
                         <h3 class="font-display text-2xl font-bold text-navy">Investment Vehicles</h3>
                     </div>
-                    <div class="space-y-4" id="challenges-vehicles">
-                        <!-- Challenges will be dynamically injected here -->
-                    </div>
+                    <div class="space-y-6" id="challenges-vehicles">
+                        </div>
                 </div>
 
-                <!-- Column 3: Practical Barriers -->
-                <div class="bg-white rounded-2xl p-6 shadow-lg card-hover stagger-item">
+                <div class="stagger-item">
                     <div class="flex items-center mb-6">
                         <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mr-4">
                             <span class="text-2xl text-white">🔧</span>
                         </div>
                         <h3 class="font-display text-2xl font-bold text-navy">Practical Barriers</h3>
                     </div>
-                    <div class="space-y-4" id="challenges-barriers">
-                        <!-- Challenges will be dynamically injected here -->
-                    </div>
+                    <div class="space-y-6" id="challenges-barriers">
+                        </div>
                 </div>
             </div>
-            <!-- END: Updated Challenges Section -->
-
             <div class="fade-in">
                 <div id="challengesChart" class="w-full h-96 bg-white rounded-2xl shadow-lg"></div>
             </div>
@@ -471,7 +449,6 @@
         </div>
     </section>
 
-    <!-- Judging Criteria -->
     <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -564,7 +541,6 @@
         </div>
     </section>
 
-    <!-- Analysis Section -->
     <section id="analysis" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
@@ -659,7 +635,6 @@
         </div>
     </section>
 
-    <!-- Conclusion -->
     <section class="py-20 bg-navy text-white">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="fade-in">
@@ -671,8 +646,7 @@
                 </p>
                 <div class="grid lg:grid-cols-3 gap-8 mb-12">
                     <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                        <div class="text-4xl font-bold text-gold mb-4">12</div> <!-- Updated from 13 -->
-                        <div class="text-lg font-semibold mb-2">Critical Challenges</div>
+                        <div class="text-4xl font-bold text-gold mb-4">12</div> <div class="text-lg font-semibold mb-2">Critical Challenges</div>
                         <div class="text-sm text-gray-300">Addressing key literacy gaps</div>
                     </div>
                     <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
@@ -698,7 +672,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-charcoal text-white py-12">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="font-display text-2xl font-bold text-gold mb-4">FIN-novate 2025</div>
@@ -711,6 +684,7 @@
 
     <script>
         // --- Challenge Data ---
+        // *** MODIFICATION: Added imageUrl property to each challenge object ***
         const allChallenges = [
             // Foundational Mindset
             {
@@ -720,7 +694,8 @@
                 problem: 'Students are paralyzed by the fear of losing money, keeping funds in low-yield accounts.',
                 impact: 'Money loses value due to inflation, missing growth opportunities.',
                 theme: 'Risk & Safety',
-                colorClass: 'bg-blue-50'
+                colorClass: 'bg-blue-50',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack1.png'
             },
             {
                 id: 'challenge-2',
@@ -729,7 +704,8 @@
                 problem: 'Students chase high-risk, hype investments, susceptible to scams and low-yield accounts.',
                 impact: 'Significant financial losses due to ignoring risk-reward fundamentals.',
                 theme: 'Risk & High Rewards',
-                colorClass: 'bg-purple-50'
+                colorClass: 'bg-purple-50',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack2.png'
             },
             {
                 id: 'challenge-3',
@@ -738,7 +714,8 @@
                 problem: 'Students are unable to accurately assess their own risk tolerance, leading to mistakes, potential losses, or mismanaged investments.',
                 impact: 'Emotional distress, or missed growth opportunities from being too cautious.',
                 theme: 'Risk & Persona',
-                colorClass: 'bg-blue-50'
+                colorClass: 'bg-blue-50',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack3.png'
             },
             {
                 id: 'challenge-5',
@@ -747,7 +724,8 @@
                 problem: 'Students start investing without clear, specific financial goals, leading to confusion and poor choices.',
                 impact: 'Focused investments, missed milestones, and demotivation.',
                 theme: 'Goals & Direction',
-                colorClass: 'bg-purple-50'
+                colorClass: 'bg-purple-50',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack4.png'
             },
 
             // Investment Vehicles
@@ -758,7 +736,8 @@
                 problem: 'Students lack diversification knowledge and invest all funds into one asset, risking massive losses.',
                 impact: 'Unnecessary exposure risk, missed stable growth opportunities.',
                 theme: 'Security & Diversification',
-                colorClass: 'bg-green-50'
+                colorClass: 'bg-green-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+5'
             },
             {
                 id: 'challenge-8',
@@ -767,7 +746,8 @@
                 problem: "Students don't understand the difference between buying individual stocks and diversified mutual funds/unit trusts.",
                 impact: 'Missed opportunities for balanced growth and increased exposure to risk.',
                 theme: 'Clarity & Growth',
-                colorClass: 'bg-teal-50'
+                colorClass: 'bg-teal-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+6'
             },
             {
                 id: 'challenge-6',
@@ -776,7 +756,8 @@
                 problem: 'Students do not understand the differences (fees, trading, active vs. passive management) between Exchange Traded Funds (ETFs) and traditional Mutual Funds/Unit Trusts.',
                 impact: 'Suboptimal investment choices, higher costs, and missed opportunities due to a lack of clarity on investment structures.',
                 theme: 'Transparency & Liquidity',
-                colorClass: 'bg-green-50'
+                colorClass: 'bg-green-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+7'
             },
             {
                 id: 'challenge-12',
@@ -785,7 +766,8 @@
                 problem: "Students don't know why to choose a Fixed Deposit over Equity for a short-term goal.",
                 impact: "Unoptimized growth, missed opportunities, and financial plans that don't align with life.",
                 theme: 'Strategic Alignment',
-                colorClass: 'bg-teal-50'
+                colorClass: 'bg-teal-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+8'
             },
             {
                 id: 'challenge-10',
@@ -794,7 +776,8 @@
                 problem: 'Students are drawn to "Cryptocurrency and Digital Assets" but lack fundamental understanding of technology, regulation, or volatility.',
                 impact: 'Significant financial losses, emotional distress, and susceptibility to scams due to uninformed speculation.',
                 theme: 'Informed Speculation',
-                colorClass: 'bg-green-50'
+                colorClass: 'bg-green-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+9'
             },
 
             // Practical Barriers
@@ -805,7 +788,8 @@
                 problem: 'Students want to invest but are overwhelmed by the practical steps (account opening, choosing the broker, making the first trade).',
                 impact: 'Inaction, missed early investment opportunities, and continued confusion.',
                 theme: 'Action & Clarity',
-                colorClass: 'bg-orange-50'
+                colorClass: 'bg-orange-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+10'
             },
             {
                 id: 'challenge-9',
@@ -814,7 +798,8 @@
                 problem: 'Students are overwhelmed by the sheer amount of financial data and don\'t know how to analyze companies or funds.',
                 impact: 'Inaction, missed investment opportunities, and poor decision-making.',
                 theme: 'Data & Inaction',
-                colorClass: 'bg-red-50'
+                colorClass: 'bg-red-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+11'
             },
             {
                 id: 'challenge-11',
@@ -823,7 +808,8 @@
                 problem: "Students want Shariah-compliant investments but don't know how to identify them or what makes them compliant.",
                 impact: 'Missed opportunities for faith-aligned wealth growth and unintentional investment in non-compliant ventures.',
                 theme: 'Principles & Prosperity',
-                colorClass: 'bg-orange-50'
+                colorClass: 'bg-orange-50',
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+12'
             }
         ];
 
@@ -840,29 +826,20 @@
 
             // Create and append challenge elements
             allChallenges.forEach(challenge => {
+                
+                // *** MODIFICATION: Replaced <details> accordion with an image card ***
                 const challengeHTML = `
-                    <details class="rounded-lg overflow-hidden ${challenge.colorClass}">
-                        <summary class="flex justify-between items-center p-4 cursor-pointer group">
-                            <h4 class="font-semibold text-navy pr-2">${challenge.title}</h4>
-                            <svg class="accordion-icon w-5 h-5 text-navy transform transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                        </summary>
-                        <div class="accordion-content pt-4 pb-4 space-y-3">
-                            <div>
-                                <strong class="text-sm text-charcoal">Problem:</strong>
-                                <p class="text-sm text-gray-600">${challenge.problem}</p>
-                            </div>
-                            <div>
-                                <strong class="text-sm text-charcoal">Impact:</strong>
-                                <p class="text-sm text-gray-600">${challenge.impact}</p>
-                            </div>
+                    <div class="rounded-lg overflow-hidden shadow-lg ${challenge.colorClass} flex flex-col h-full card-hover">
+                        <img class="w-full h-48 object-cover" src="${challenge.imageUrl}" alt="${challenge.title}">
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h4 class="font-semibold text-navy text-lg mb-2">${challenge.title}</h4>
+                            <p class="text-sm text-gray-600 mb-3 flex-grow">${challenge.problem}</p>
                             <div>
                                 <strong class="text-sm text-charcoal">Theme:</strong>
                                 <span class="text-sm text-white font-medium bg-navy/80 px-2 py-0.5 rounded">${challenge.theme}</span>
                             </div>
                         </div>
-                    </details>
+                    </div>
                 `;
                 
                 const container = containers[challenge.category];
@@ -1027,5 +1004,3 @@
     </script>
 </body>
 </html>
-
-
