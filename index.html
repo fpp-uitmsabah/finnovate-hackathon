@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="FIN-novate Hackathon 2025: A comprehensive analysis of UiTM's innovative hackathon transforming traditional financial education through AI-powered solutions and real-world problem solving."/>
+    <meta property="og:title" content="FIN-novate Hackathon 2025: Hacking Investment Literacy"/>
+    <meta property="og:description" content="Transforming financial education through AI-powered solutions and real-world problem solving at UiTM."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://fpp-uitmsabah.github.io/finnovate-hackathon/hack1.png"/>
     <title>FIN-novate Hackhathon 2025: Hacking Investment Literacy - Analysis Report</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -47,6 +50,10 @@
             background: url('hero_image.png') center/cover;
             opacity: 0.3;
             z-index: 1;
+        }
+        .hero-bg::before {
+            background-image: url('hero_image.png'), linear-gradient(135deg, rgba(30, 64, 175, 0.8), rgba(30, 58, 138, 0.8));
+            background-blend-mode: overlay;
         }
         .hero-content {
             position: relative;
@@ -142,26 +149,195 @@
             transform: rotate(180deg);
         }
 
+        /* Mobile Navigation */
+        .mobile-menu-button {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-menu-button {
+                display: block;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.5rem;
+            }
+            .mobile-menu-button span {
+                display: block;
+                width: 25px;
+                height: 3px;
+                background-color: #1E40AF;
+                margin: 5px 0;
+                transition: all 0.3s ease;
+            }
+            .mobile-menu-button.active span:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+            .mobile-menu-button.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .mobile-menu-button.active span:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-links a {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .nav-links a:last-child {
+                border-bottom: none;
+            }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Skip to content link */
+        .skip-to-content {
+            position: absolute;
+            left: -9999px;
+            z-index: 999;
+            padding: 1rem;
+            background-color: #1E40AF;
+            color: white;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+        }
+        .skip-to-content:focus {
+            left: 0;
+            top: 0;
+        }
+
+        /* Keyboard focus states */
+        a:focus, button:focus, summary:focus {
+            outline: 3px solid #F59E0B;
+            outline-offset: 2px;
+        }
+
+        /* Loading placeholder for charts */
+        .chart-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 384px;
+            background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .bg-gray-50 {
+                background-color: #1f2937;
+            }
+            .bg-white {
+                background-color: #111827;
+            }
+            .text-charcoal {
+                color: #e5e7eb;
+            }
+            .text-gray-600 {
+                color: #9ca3af;
+            }
+            .text-gray-400 {
+                color: #6b7280;
+            }
+            nav {
+                background-color: rgba(17, 24, 39, 0.9) !important;
+                border-bottom-color: #374151;
+            }
+        }
+
+        /* Enhanced color contrast */
+        .text-gray-300 {
+            color: #d1d5db;
+        }
+        .bg-white\/10 {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Print styles */
+        @media print {
+            nav, .mobile-menu-button, .skip-to-content {
+                display: none !important;
+            }
+            .progress-bar {
+                display: none !important;
+            }
+            section {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .hero-bg {
+                background: white !important;
+                color: black !important;
+            }
+            .hero-bg * {
+                color: black !important;
+            }
+            .card-hover {
+                box-shadow: none !important;
+                border: 1px solid #000 !important;
+            }
+            a {
+                text-decoration: underline;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+        }
+
     </style>
     <script src="https://statics.moonshot.cn/sdk/preview-widgets.min.js" defer=""></script>
 </head>
 <body class="bg-gray-50 text-charcoal font-body">
 
-    <div class="progress-bar" id="progressBar"></div>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
 
-    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200">
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Page scroll progress"></div>
+
+    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="font-display font-bold text-xl text-navy">FIN-novate 2025</div>
-                <div class="hidden md:flex space-x-8">
+                <button class="mobile-menu-button" id="mobileMenuButton" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-links hidden md:flex space-x-8" id="navLinks">
                     <a href="#overview" class="text-charcoal hover:text-gold transition-colors">Overview</a>
                     <a href="#structure" class="text-charcoal hover:text-gold transition-colors">Structure</a>
                     <a href="#challenges" class="text-charcoal hover:text-gold transition-colors">Challenges</a>
+                    <a href="#timeline" class="text-charcoal hover:text-gold transition-colors">Timeline</a>
+                    <a href="#prizes" class="text-charcoal hover:text-gold transition-colors">Prizes</a>
+                    <a href="#faq" class="text-charcoal hover:text-gold transition-colors">FAQ</a>
                     <a href="#analysis" class="text-charcoal hover:text-gold transition-colors">Analysis</a>
                 </div>
             </div>
         </div>
     </nav>
+
+    <main id="main-content">
 
     <section class="hero-bg min-h-screen flex items-center pt-20">
         <div class="hero-content max-w-7xl mx-auto px-6 py-20">
@@ -306,7 +482,11 @@
                     </div>
                 </div>
                 <div class="fade-in">
-                    <div id="structureChart" class="w-full h-96 bg-white rounded-2xl shadow-lg"></div>
+                    <div id="structureChart" class="w-full h-96 bg-white rounded-2xl shadow-lg chart-container">
+                        <div class="chart-loading">
+                            <span class="text-gray-400">Loading chart...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="section-divider"></div>
@@ -443,7 +623,11 @@
                 </div>
             </div>
             <div class="fade-in">
-                <div id="challengesChart" class="w-full h-96 bg-white rounded-2xl shadow-lg"></div>
+                <div id="challengesChart" class="w-full h-96 bg-white rounded-2xl shadow-lg chart-container">
+                    <div class="chart-loading">
+                        <span class="text-gray-400">Loading chart...</span>
+                    </div>
+                </div>
             </div>
             <div class="section-divider"></div>
         </div>
@@ -535,7 +719,226 @@
                 </div>
             </div>
             <div class="fade-in">
-                <div id="judgingChart" class="w-full h-96 bg-gray-50 rounded-2xl shadow-lg"></div>
+                <div id="judgingChart" class="w-full h-96 bg-gray-50 rounded-2xl shadow-lg chart-container">
+                    <div class="chart-loading">
+                        <span class="text-gray-400">Loading chart...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+        </div>
+    </section>
+
+    <section id="timeline" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
+                    Event Timeline
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Key dates and milestones for the FIN-novate Hackathon 2025.
+                </p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-8">
+                    <div class="fade-in flex items-start">
+                        <div class="flex-shrink-0 w-32 text-right pr-8">
+                            <div class="text-gold font-bold text-lg">Week 1</div>
+                            <div class="text-sm text-gray-500">Kickoff</div>
+                        </div>
+                        <div class="flex-shrink-0 w-4 h-4 bg-gold rounded-full mt-1 mr-8"></div>
+                        <div class="flex-grow bg-white rounded-xl p-6 shadow-lg border-l-4 border-gold">
+                            <h3 class="font-semibold text-navy text-xl mb-2">Hackathon Launch & Team Formation</h3>
+                            <p class="text-gray-600">Introduction to the hackathon, challenge selection, and team formation (5-6 members per team).</p>
+                        </div>
+                    </div>
+                    <div class="fade-in flex items-start">
+                        <div class="flex-shrink-0 w-32 text-right pr-8">
+                            <div class="text-teal font-bold text-lg">Week 2</div>
+                            <div class="text-sm text-gray-500">Workshop</div>
+                        </div>
+                        <div class="flex-shrink-0 w-4 h-4 bg-teal rounded-full mt-1 mr-8"></div>
+                        <div class="flex-grow bg-white rounded-xl p-6 shadow-lg border-l-4 border-teal">
+                            <h3 class="font-semibold text-navy text-xl mb-2">AI Accelerator Workshop</h3>
+                            <p class="text-gray-600">1-2 hour intensive session covering AI for Analysis, Design, and Ethics modules.</p>
+                        </div>
+                    </div>
+                    <div class="fade-in flex items-start">
+                        <div class="flex-shrink-0 w-32 text-right pr-8">
+                            <div class="text-navy font-bold text-lg">Week 3-4</div>
+                            <div class="text-sm text-gray-500">Development</div>
+                        </div>
+                        <div class="flex-shrink-0 w-4 h-4 bg-navy rounded-full mt-1 mr-8"></div>
+                        <div class="flex-grow bg-white rounded-xl p-6 shadow-lg border-l-4 border-navy">
+                            <h3 class="font-semibold text-navy text-xl mb-2">Solution Development & Report Creation</h3>
+                            <p class="text-gray-600">Teams work on their solutions, conduct research, and create their 30-slide infographic reports.</p>
+                        </div>
+                    </div>
+                    <div class="fade-in flex items-start">
+                        <div class="flex-shrink-0 w-32 text-right pr-8">
+                            <div class="text-charcoal font-bold text-lg">Week 5</div>
+                            <div class="text-sm text-gray-500">Submission</div>
+                        </div>
+                        <div class="flex-shrink-0 w-4 h-4 bg-charcoal rounded-full mt-1 mr-8"></div>
+                        <div class="flex-grow bg-white rounded-xl p-6 shadow-lg border-l-4 border-charcoal">
+                            <h3 class="font-semibold text-navy text-xl mb-2">Final Submission & Presentation</h3>
+                            <p class="text-gray-600">Submit infographic report and 10-minute pitch video. Judging and winner announcement.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+        </div>
+    </section>
+
+    <section id="prizes" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
+                    Prizes & Recognition
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Outstanding teams will receive prizes, recognition, and opportunities for campus-wide implementation.
+                </p>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <div class="fade-in bg-gradient-to-br from-gold to-yellow-600 rounded-2xl p-8 text-white text-center transform hover:scale-105 transition-all">
+                    <div class="text-6xl mb-4">🥇</div>
+                    <h3 class="font-display text-3xl font-bold mb-4">1st Place</h3>
+                    <div class="text-5xl font-bold mb-6">RM 1,000</div>
+                    <ul class="space-y-2 text-left">
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Cash Prize</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Certificate of Achievement</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Campus-wide Implementation Opportunity</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Featured in UiTM Publications</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="fade-in bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl p-8 text-white text-center transform hover:scale-105 transition-all">
+                    <div class="text-6xl mb-4">🥈</div>
+                    <h3 class="font-display text-3xl font-bold mb-4">2nd Place</h3>
+                    <div class="text-5xl font-bold mb-6">RM 600</div>
+                    <ul class="space-y-2 text-left">
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Cash Prize</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Certificate of Achievement</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Solution Presentation to Faculty</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="fade-in bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl p-8 text-white text-center transform hover:scale-105 transition-all">
+                    <div class="text-6xl mb-4">🥉</div>
+                    <h3 class="font-display text-3xl font-bold mb-4">3rd Place</h3>
+                    <div class="text-5xl font-bold mb-6">RM 400</div>
+                    <ul class="space-y-2 text-left">
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Cash Prize</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Certificate of Achievement</span>
+                        </li>
+                        <li class="flex items-center">
+                            <span class="mr-2">✓</span>
+                            <span>Recognition at Award Ceremony</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="fade-in bg-white rounded-2xl p-8 shadow-lg text-center">
+                <h3 class="font-display text-2xl font-bold text-navy mb-4">Special Recognition</h3>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    All participating teams will receive certificates of participation. Top solutions may be featured in financial literacy workshops and shared with other UiTM campuses.
+                </p>
+            </div>
+            <div class="section-divider"></div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-xl text-gray-600 leading-relaxed">
+                    Common questions about the FIN-novate Hackathon 2025.
+                </p>
+            </div>
+            <div class="space-y-4 fade-in">
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        Who can participate in the hackathon?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>The FIN-novate Hackathon is open to all FIN333 students at UiTM. Teams must consist of 5-6 members.</p>
+                    </div>
+                </details>
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        What AI tools will be covered in the workshop?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>The AI Accelerator Workshop covers three modules: Analysis (using Gemini for research), Design (using Canva Code and image generators like Nano Banana), and Ethics (AI disclosure and responsible usage).</p>
+                    </div>
+                </details>
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        How will solutions be evaluated?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>Solutions are evaluated based on two main components: Infographic Report (50 points) covering project execution, impact, leadership, teamwork, and report quality; and Presentation (50 points) covering topic coverage, fluency, audiovisuals, and defense ability.</p>
+                    </div>
+                </details>
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        What format should the final deliverables be in?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>Teams must submit: (1) A 30-slide infographic report in PDF format, and (2) A 10-minute pitch video explaining their solution.</p>
+                    </div>
+                </details>
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        Can we use AI tools for our solution development?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>Yes! The hackathon encourages the use of AI tools for analysis, design, and research. However, teams must follow ethical guidelines and include an AI disclosure statement in their submissions.</p>
+                    </div>
+                </details>
+                <details class="bg-white rounded-xl border border-gray-200">
+                    <summary class="cursor-pointer p-6 font-semibold text-navy hover:bg-gray-50">
+                        What happens if our solution wins?
+                        <span class="accordion-icon float-right">▼</span>
+                    </summary>
+                    <div class="accordion-content">
+                        <p>Winning teams receive cash prizes, certificates, and recognition. The top solution may be implemented campus-wide and featured in UiTM publications. All winners will present their solutions at an awards ceremony.</p>
+                    </div>
+                </details>
             </div>
             <div class="section-divider"></div>
         </div>
@@ -629,7 +1032,11 @@
             <div class="fade-in">
                 <div class="bg-white rounded-2xl p-8 shadow-lg">
                     <h3 class="font-display text-3xl font-bold text-navy mb-8 text-center">Success Metrics Framework</h3>
-                    <div id="successMetricsChart" class="w-full h-96"></div>
+                    <div id="successMetricsChart" class="w-full h-96 chart-container">
+                        <div class="chart-loading">
+                            <span class="text-gray-400">Loading chart...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -672,6 +1079,8 @@
         </div>
     </section>
 
+    </main>
+
     <footer class="bg-charcoal text-white py-12">
         <div class="max-w-7xl mx-auto px-6 text-center">
             <div class="font-display text-2xl font-bold text-gold mb-4">FIN-novate 2025</div>
@@ -695,7 +1104,8 @@
                 impact: 'Money loses value due to inflation, missing growth opportunities.',
                 theme: 'Risk & Safety',
                 colorClass: 'bg-blue-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack1.png'
+                imageUrl: 'hack1.png',
+                imageAlt: 'Fear of Loss Barrier - Students paralyzed by investment risk'
             },
             {
                 id: 'challenge-2',
@@ -705,7 +1115,8 @@
                 impact: 'Significant financial losses due to ignoring risk-reward fundamentals.',
                 theme: 'Risk & High Rewards',
                 colorClass: 'bg-purple-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack2.png'
+                imageUrl: 'hack2.png',
+                imageAlt: 'Get Rich Quick Mindset - High-risk investment trap'
             },
             {
                 id: 'challenge-3',
@@ -715,7 +1126,8 @@
                 impact: 'Emotional distress, or missed growth opportunities from being too cautious.',
                 theme: 'Risk & Persona',
                 colorClass: 'bg-blue-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack3.png'
+                imageUrl: 'hack3.png',
+                imageAlt: 'Misunderstanding Risk Appetite - Unable to assess risk tolerance'
             },
             {
                 id: 'challenge-5',
@@ -725,7 +1137,8 @@
                 impact: 'Focused investments, missed milestones, and demotivation.',
                 theme: 'Goals & Direction',
                 colorClass: 'bg-purple-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack4.png'
+                imageUrl: 'hack4.png',
+                imageAlt: 'Aimless Investing - Investing without clear financial goals'
             },
 
             // Investment Vehicles
@@ -737,7 +1150,8 @@
                 impact: 'Unnecessary exposure risk, missed stable growth opportunities.',
                 theme: 'Security & Diversification',
                 colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+5'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+5',
+                imageAlt: 'All Eggs in One Basket - Lack of investment diversification'
             },
             {
                 id: 'challenge-8',
@@ -747,7 +1161,8 @@
                 impact: 'Missed opportunities for balanced growth and increased exposure to risk.',
                 theme: 'Clarity & Growth',
                 colorClass: 'bg-teal-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+6'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+6',
+                imageAlt: 'Stock vs Unit Trust Confusion - Understanding investment vehicles'
             },
             {
                 id: 'challenge-6',
@@ -757,7 +1172,8 @@
                 impact: 'Suboptimal investment choices, higher costs, and missed opportunities due to a lack of clarity on investment structures.',
                 theme: 'Transparency & Liquidity',
                 colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+7'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+7',
+                imageAlt: 'ETF vs Mutual Fund Black Box - Understanding fund structures'
             },
             {
                 id: 'challenge-12',
@@ -767,7 +1183,8 @@
                 impact: "Unoptimized growth, missed opportunities, and financial plans that don't align with life.",
                 theme: 'Strategic Alignment',
                 colorClass: 'bg-teal-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+8'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+8',
+                imageAlt: 'Matching Vehicles to Goals - Optimizing investment strategy'
             },
             {
                 id: 'challenge-10',
@@ -777,7 +1194,8 @@
                 impact: 'Significant financial losses, emotional distress, and susceptibility to scams due to uninformed speculation.',
                 theme: 'Informed Speculation',
                 colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+9'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+9',
+                imageAlt: 'Digital Asset Hype - Understanding cryptocurrency risks'
             },
 
             // Practical Barriers
@@ -789,7 +1207,8 @@
                 impact: 'Inaction, missed early investment opportunities, and continued confusion.',
                 theme: 'Action & Clarity',
                 colorClass: 'bg-orange-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+10'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+10',
+                imageAlt: 'First Step Paralysis - Overcoming investment hesitation'
             },
             {
                 id: 'challenge-9',
@@ -799,7 +1218,8 @@
                 impact: 'Inaction, missed investment opportunities, and poor decision-making.',
                 theme: 'Data & Inaction',
                 colorClass: 'bg-red-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+11'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+11',
+                imageAlt: 'Analysis Paralysis - Overcoming information overload'
             },
             {
                 id: 'challenge-11',
@@ -809,7 +1229,8 @@
                 impact: 'Missed opportunities for faith-aligned wealth growth and unintentional investment in non-compliant ventures.',
                 theme: 'Principles & Prosperity',
                 colorClass: 'bg-orange-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+12'
+                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+12',
+                imageAlt: 'Ethical & Shariah Compliance - Finding faith-aligned investments'
             }
         ];
 
@@ -830,7 +1251,7 @@
                 // *** MODIFICATION: Replaced <details> accordion with an image card ***
                 const challengeHTML = `
                     <div class="rounded-lg overflow-hidden shadow-lg ${challenge.colorClass} flex flex-col h-full card-hover">
-                        <img class="w-full h-48 object-cover" src="${challenge.imageUrl}" alt="${challenge.title}">
+                        <img class="w-full h-48 object-cover" src="${challenge.imageUrl}" alt="${challenge.imageAlt || challenge.title}" loading="lazy">
                         <div class="p-4 flex flex-col flex-grow">
                             <h4 class="font-semibold text-navy text-lg mb-2">${challenge.title}</h4>
                             <p class="text-sm text-gray-600 mb-3 flex-grow">${challenge.problem}</p>
@@ -851,6 +1272,28 @@
 
         // --- DOMContentLoaded ---
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    this.classList.toggle('active');
+                    navLinks.classList.toggle('active');
+                });
+
+                // Close mobile menu when a link is clicked
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenuButton.classList.remove('active');
+                        navLinks.classList.remove('active');
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+
             // Progress bar
             window.addEventListener('scroll', function() {
                 const scrollTop = window.pageYOffset;
@@ -888,20 +1331,57 @@
             // Render challenges
             renderChallenges();
 
-            // Initialize charts
-            initializeCharts();
+            // Lazy load charts with Intersection Observer
+            const chartObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('chart-initialized')) {
+                        entry.target.classList.add('chart-initialized');
+                        const chartId = entry.target.id;
+                        
+                        // Remove loading placeholder
+                        const loadingEl = entry.target.querySelector('.chart-loading');
+                        if (loadingEl) {
+                            loadingEl.remove();
+                        }
+                        
+                        // Initialize the specific chart
+                        switch(chartId) {
+                            case 'structureChart':
+                                initStructureChart();
+                                break;
+                            case 'challengesChart':
+                                initChallengesChart();
+                                break;
+                            case 'judgingChart':
+                                initJudgingChart();
+                                break;
+                            case 'successMetricsChart':
+                                initSuccessMetricsChart();
+                                break;
+                        }
+                        
+                        chartObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                rootMargin: '50px'
+            });
+
+            // Observe all chart containers
+            document.querySelectorAll('.chart-container').forEach(chart => {
+                chartObserver.observe(chart);
+            });
         });
 
         // --- ECharts ---
-        function initializeCharts() {
-            const newGold = '#F59E0B';
-            const newTeal = '#06B6D4';
-            const newNavy = '#1E40AF';
-            const newCharcoal = '#334155';
+        let charts = {};
 
-            // Structure Chart
-            const structureChart = echarts.init(document.getElementById('structureChart'));
-            structureChart.setOption({
+        function initStructureChart() {
+            const newGold = '#F59E0B';
+            const newNavy = '#1E40AF';
+            
+            charts.structureChart = echarts.init(document.getElementById('structureChart'));
+            charts.structureChart.setOption({
                 title: { text: 'Hackathon Process Flow', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
                 tooltip: { trigger: 'item' },
                 series: [{
@@ -923,10 +1403,16 @@
                     lineStyle: { color: 'gradient', curveness: 0.5 }
                 }]
             });
+        }
+
+        function initChallengesChart() {
+            const newNavy = '#1E40AF';
+            const newGold = '#F59E0B';
+            const newCharcoal = '#334155';
 
             // Challenges Chart
-            const challengesChart = echarts.init(document.getElementById('challengesChart'));
-            challengesChart.setOption({
+            charts.challengesChart = echarts.init(document.getElementById('challengesChart'));
+            charts.challengesChart.setOption({
                 title: { text: 'Challenge Distribution by Category', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
                 tooltip: { trigger: 'item' },
                 series: [{
@@ -946,10 +1432,17 @@
                     }
                 }]
             });
+        }
+
+        function initJudgingChart() {
+            const newNavy = '#1E40AF';
+            const newGold = '#F59E0B';
+            const newTeal = '#06B6D4';
+            const newCharcoal = '#334155';
 
             // Judging Chart
-            const judgingChart = echarts.init(document.getElementById('judgingChart'));
-            judgingChart.setOption({
+            charts.judgingChart = echarts.init(document.getElementById('judgingChart'));
+            charts.judgingChart.setOption({
                 title: { text: 'Judging Criteria Breakdown', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
                 tooltip: { trigger: 'axis' },
                 xAxis: { type: 'category', data: ['Report', 'Presentation'], axisLabel: { color: newCharcoal } },
@@ -966,10 +1459,16 @@
                     barWidth: '60%'
                 }]
             });
+        }
+
+        function initSuccessMetricsChart() {
+            const newNavy = '#1E40AF';
+            const newGold = '#F59E0B';
+            const newCharcoal = '#334155';
 
             // Success Metrics Chart
-            const successChart = echarts.init(document.getElementById('successMetricsChart'));
-            successChart.setOption({
+            charts.successChart = echarts.init(document.getElementById('successMetricsChart'));
+            charts.successChart.setOption({
                 title: { text: 'Projected Impact Metrics', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
                 tooltip: { trigger: 'axis' },
                 radar: {
@@ -992,15 +1491,16 @@
                     }]
                 }]
             });
-
-            // Make charts responsive
-            window.addEventListener('resize', function() {
-                structureChart.resize();
-                challengesChart.resize();
-                judgingChart.resize();
-                successChart.resize();
-            });
         }
+
+        // Make charts responsive
+        window.addEventListener('resize', function() {
+            Object.values(charts).forEach(chart => {
+                if (chart && chart.resize) {
+                    chart.resize();
+                }
+            });
+        });
     </script>
 </body>
 </html>
