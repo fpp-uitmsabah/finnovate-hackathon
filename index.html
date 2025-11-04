@@ -1,215 +1,316 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>FIN-novate Hackhathon 2025: Hacking Investment Literacy - Analysis Report</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css"/>
+    <title>FIN-novate Hackathon 2025 | Hacking Investment Literacy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        'navy': '#1E40AF', // Brighter, more vibrant blue
-                        'gold': '#F59E0B', // Vibrant amber/gold
-                        'teal': '#06B6D4', // Vibrant cyan/teal
-                        'charcoal': '#334155' // Clean, readable dark slate for text
+                        'electric-blue': '#0EA5E9',
+                        'cyber-cyan': '#06B6D4',
+                        'amber-gold': '#F59E0B',
+                        'dark-bg': '#0F172A',
+                        'dark-card': '#1E293B',
+                        'dark-border': '#334155'
                     },
                     fontFamily: {
-                        'display': ['Playfair Display', 'serif'],
-                        'body': ['Inter', 'sans-serif'],
-                        'mono': ['JetBrains Mono', 'monospace']
+                        'display': ['Space Grotesk', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif']
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                     }
                 }
             }
         }
     </script>
     <style>
+        /* Glassmorphism effects */
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero background with animated gradient */
         .hero-bg {
-            /* Updated vibrant gradient */
-            background: linear-gradient(135deg, #1E40AF 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
             position: relative;
             overflow: hidden;
         }
+        
         .hero-bg::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('hero_image.png') center/cover;
-            opacity: 0.3;
-            z-index: 1;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
         }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .hero-content {
             position: relative;
             z-index: 2;
         }
+
+        /* Gradient text effects */
         .text-gradient {
-            /* Updated vibrant gradient */
-            background: linear-gradient(135deg, #F59E0B, #06B6D4);
+            background: linear-gradient(135deg, #F59E0B 0%, #06B6D4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .card-hover {
-            transition: all 0.3s ease;
+        
+        .text-gradient-blue {
+            background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         .card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.3);
         }
+
+        /* Animated progress bar */
         .progress-bar {
             position: fixed;
             top: 0;
             left: 0;
-            height: 3px;
-            /* Updated vibrant gradient */
-            background: linear-gradient(90deg, #F59E0B, #06B6D4);
+            height: 4px;
+            background: linear-gradient(90deg, #F59E0B 0%, #06B6D4 50%, #0EA5E9 100%);
             z-index: 1000;
             transition: width 0.3s ease;
+            box-shadow: 0 2px 10px rgba(14, 165, 233, 0.5);
         }
-        .section-divider {
-            height: 2px;
-            /* Updated vibrant gold */
-            background: linear-gradient(90deg, transparent, #F59E0B, transparent);
-            margin: 4rem 0;
+
+        /* Floating animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
         }
-        .floating-element {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
+        
+        @keyframes floating {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
         }
+
+        /* Fade in animations */
         .fade-in {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease;
         }
+        
         .fade-in.visible {
             opacity: 1;
             transform: translateY(0);
         }
-        .stagger-item {
-            opacity: 0;
-            transform: translateY(20px);
-        }
 
-        /* Accordion Styles (No longer used by challenges, but kept for potential other uses) */
-        details {
-            transition: all 0.3s ease-in-out;
+        /* FAQ Accordion */
+        .faq-item {
+            transition: all 0.3s ease;
         }
-        details[open] {
-            background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        details summary {
-            list-style: none;
+        
+        .faq-question {
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: rgba(14, 165, 233, 0.1);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
             padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: #1E40AF; /* Updated to new navy */
-            transition: background-color 0.2s ease;
         }
-        details summary::-webkit-details-marker {
-            display: none;
-        }
-        details summary:hover {
-            background-color: #f8f9fa;
-        }
-        details .accordion-content {
-            padding: 0 1rem 1rem 1rem;
-            color: #334155; /* Updated to new charcoal */
-            border-top: 1px solid #e5e7eb;
-            margin: 0 1rem;
-        }
-        details .accordion-icon {
+        
+        .faq-icon {
             transition: transform 0.3s ease;
-            color: #1E40AF; /* Updated to new navy */
         }
-        details[open] .accordion-icon {
+        
+        .faq-item.active .faq-icon {
             transform: rotate(180deg);
         }
 
-    </style>
-    <script src="https://statics.moonshot.cn/sdk/preview-widgets.min.js" defer=""></script>
-</head>
-<body class="bg-gray-50 text-charcoal font-body">
+        /* Glow effects */
+        .glow {
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+        }
+        
+        .glow-amber {
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+        }
 
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation active state */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #F59E0B, #06B6D4);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Timeline styles */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #0EA5E9, #06B6D4);
+        }
+
+        /* Prize card shine effect */
+        @keyframes shine {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .prize-shine {
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 100%
+            );
+            background-size: 200% 100%;
+            animation: shine 3s infinite;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-100 font-body">
+
+    <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
 
-    <nav class="fixed top-0 w-full bg-white/90 backdrop-blur-sm z-50 border-b border-gray-200">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full glass-strong z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
-                <div class="font-display font-bold text-xl text-navy">FIN-novate 2025</div>
+                <div class="font-display font-bold text-2xl text-gradient">FIN-novate 2025</div>
                 <div class="hidden md:flex space-x-8">
-                    <a href="#overview" class="text-charcoal hover:text-gold transition-colors">Overview</a>
-                    <a href="#structure" class="text-charcoal hover:text-gold transition-colors">Structure</a>
-                    <a href="#challenges" class="text-charcoal hover:text-gold transition-colors">Challenges</a>
-                    <a href="#analysis" class="text-charcoal hover:text-gold transition-colors">Analysis</a>
+                    <a href="#home" class="nav-link text-gray-300 hover:text-white active">Home</a>
+                    <a href="#challenges" class="nav-link text-gray-300 hover:text-white">Challenges</a>
+                    <a href="#timeline" class="nav-link text-gray-300 hover:text-white">Timeline</a>
+                    <a href="#prizes" class="nav-link text-gray-300 hover:text-white">Prizes</a>
+                    <a href="#faq" class="nav-link text-gray-300 hover:text-white">FAQ</a>
                 </div>
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 space-y-3">
+                <a href="#home" class="block text-gray-300 hover:text-white">Home</a>
+                <a href="#challenges" class="block text-gray-300 hover:text-white">Challenges</a>
+                <a href="#timeline" class="block text-gray-300 hover:text-white">Timeline</a>
+                <a href="#prizes" class="block text-gray-300 hover:text-white">Prizes</a>
+                <a href="#faq" class="block text-gray-300 hover:text-white">FAQ</a>
             </div>
         </div>
     </nav>
 
-    <section class="hero-bg min-h-screen flex items-center pt-20">
+    <!-- Hero Section - Home -->
+    <section id="home" class="hero-bg min-h-screen flex items-center pt-20">
         <div class="hero-content max-w-7xl mx-auto px-6 py-20">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div>
+                <div class="fade-in">
+                    <div class="inline-block glass px-4 py-2 rounded-full mb-6">
+                        <span class="text-electric-blue font-semibold">🚀 January 2025</span>
+                    </div>
                     <h1 class="font-display text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-                        FIN-novate<span class="text-gradient"> Hackathon</span>
+                        FIN-novate
+                        <span class="text-gradient block">Hackathon 2025</span>
                     </h1>
-                    <h3 class="text-2xl lg:text-3xl text-gray-300 mb-8 font-light">
+                    <h2 class="text-2xl lg:text-3xl text-gray-300 mb-6 font-light">
                         Hacking Investment Literacy
-                    </h3>
-                    <p class="text-lg text-gray-400 mb-8 leading-relaxed">
-                        A comprehensive analysis of UiTM's innovative hackathon transforming traditional financial education through AI-powered solutions and real-world problem solving.
+                    </h2>
+                    <p class="text-lg text-gray-400 mb-8 leading-relaxed max-w-xl">
+                        Join UiTM Sabah's premier hackathon transforming financial education through AI-powered solutions. Compete, innovate, and win amazing prizes!
                     </p>
                     <div class="flex flex-wrap gap-4">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                            <div class="text-gold font-mono text-sm">Event Type</div>
-                            <div class="text-white font-semibold">Hackathon</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                            <div class="text-gold font-mono text-sm">Target</div>
-                            <div class="text-white font-semibold">FIN333 Students</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                            <div class="text-gold font-mono text-sm">Focus</div>
-                            <div class="text-white font-semibold">Investment Literacy</div>
-                        </div>
+                        <a href="#challenges" class="glass-strong px-8 py-4 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all glow">
+                            View Challenges
+                        </a>
+                        <a href="#timeline" class="glass px-8 py-4 rounded-lg font-semibold text-white hover:bg-white/10 transition-all">
+                            Event Timeline
+                        </a>
                     </div>
                 </div>
-                <div class="floating-element">
-                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-                        <h3 class="font-display text-2xl text-white mb-6">Key Metrics</h3>
+                <div class="floating">
+                    <div class="glass-strong rounded-2xl p-8 border border-white/20">
+                        <h3 class="font-display text-2xl text-white mb-6 text-gradient-blue">Event Highlights</h3>
                         <div class="space-y-4">
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center p-3 glass rounded-lg">
                                 <span class="text-gray-300">Team Size</span>
-                                <span class="text-gold font-bold text-xl">5-6</span>
+                                <span class="text-amber-gold font-bold text-xl">5-6 Members</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-300">Report Length</span>
-                                <span class="text-gold font-bold text-xl">30 slides</span>
+                            <div class="flex justify-between items-center p-3 glass rounded-lg">
+                                <span class="text-gray-300">Duration</span>
+                                <span class="text-cyber-cyan font-bold text-xl">4 Weeks</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-300">Video Duration</span>
-                                <span class="text-gold font-bold text-xl">10 mins</span>
+                            <div class="flex justify-between items-center p-3 glass rounded-lg">
+                                <span class="text-gray-300">Total Prizes</span>
+                                <span class="text-electric-blue font-bold text-xl">RM 5,000+</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-300">Total Score</span>
-                                <span class="text-gold font-bold text-xl">100 pts</span>
+                            <div class="flex justify-between items-center p-3 glass rounded-lg">
+                                <span class="text-gray-300">Challenges</span>
+                                <span class="text-amber-gold font-bold text-xl">12 Topics</span>
                             </div>
                         </div>
                     </div>
@@ -218,473 +319,384 @@
         </div>
     </section>
 
-    <section id="overview" class="py-20 bg-white">
+    <!-- About Section -->
+    <section class="py-20 bg-dark-card/50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    Event Overview
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Why Join <span class="text-gradient">FIN-novate</span>?
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    FIN-novate 2025 represents a paradigm shift in financial education, transforming traditional coursework into an immersive, competitive experience.
-                </p>
-            </div>
-            <div class="grid lg:grid-cols-3 gap-8 mb-16">
-                <div class="card-hover bg-gradient-to-br from-navy to-charcoal rounded-2xl p-8 text-white">
-                    <div class="w-16 h-16 bg-gold rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">🎯</span>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Core Objective</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Identify key investment literacy gaps and design innovative solutions or educational tools to address them effectively.
-                    </p>
-                </div>
-                <div class="card-hover bg-gradient-to-br from-teal to-blue-600 rounded-2xl p-8 text-white">
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">🚀</span>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Innovation Focus</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Integration of AI tools throughout the problem-solving process, from analysis to design and ethical implementation.
-                    </p>
-                </div>
-                <div class="card-hover bg-gradient-to-br from-gold to-orange-500 rounded-2xl p-8 text-white">
-                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">🏆</span>
-                    </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Competitive Edge</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Real prizes, recognition, and potential implementation of winning solutions across the entire UiTM campus.
-                    </p>
-                </div>
-            </div>
-            <div class="section-divider"></div>
-        </div>
-    </section>
-
-    <section id="structure" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    Hackathon Structure
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    A carefully designed four-phase process ensuring comprehensive problem-solving and innovative solution development.
-                </p>
-            </div>
-            <div class="grid lg:grid-cols-2 gap-12 items-center mb-16">
-                <div class="fade-in">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8">Four-Phase Process</h3>
-                    <div class="space-y-6">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-8 h-8 bg-gold rounded-full flex items-center justify-center text-white font-bold">1</div>
-                            <div>
-                                <h4 class="font-semibold text-lg text-navy mb-2">Team Formation</h4>
-                                <p class="text-gray-600">Students form groups of 5-6 members as required for optimal collaboration.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4">
-                            <div class="w-8 h-8 bg-teal rounded-full flex items-center justify-center text-white font-bold">2</div>
-                            <div>
-                                <h4 class="font-semibold text-lg text-navy mb-2">Problem Selection</h4>
-                                <p class="text-gray-600">Teams choose one Investment Literacy Challenge from the curated list.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4">
-                            <div class="w-8 h-8 bg-navy rounded-full flex items-center justify-center text-white font-bold">3</div>
-                            <div>
-                                <h4 class="font-semibold text-lg text-navy mb-2">AI Accelerator Workshop</h4>
-                                <p class="text-gray-600">1-2 hour intensive session on leveraging AI tools for analysis and design.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-4">
-                            <div class="w-8 h-8 bg-charcoal rounded-full flex items-center justify-center text-white font-bold">4</div>
-                            <div>
-                                <h4 class="font-semibold text-lg text-navy mb-2">Final Submission</h4>
-                                <p class="text-gray-600">Deliver infographic report and pitch video for evaluation.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="fade-in">
-                    <div id="structureChart" class="w-full h-96 bg-white rounded-2xl shadow-lg"></div>
-                </div>
-            </div>
-            <div class="section-divider"></div>
-        </div>
-    </section>
-
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    AI Accelerator Workshop
-                </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Three comprehensive modules designed to equip students with cutting-edge AI tools for every stage of problem-solving.
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Transform traditional coursework into an immersive, competitive experience with real-world impact
                 </p>
             </div>
             <div class="grid lg:grid-cols-3 gap-8">
-                <div class="card-hover bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-8 text-white stagger-item">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">🔍</span>
+                <div class="glass-strong rounded-2xl p-8 card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-br from-electric-blue to-cyber-cyan rounded-full flex items-center justify-center mb-6 glow">
+                        <span class="text-3xl">🎯</span>
                     </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Module 1: AI for Analysis</h3>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Tool: Gemini</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Focus: Root cause analysis</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Data-driven insights</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-100 text-sm">
-                        "[Example] Act as a financial researcher. What are the root causes of [Chosen Problem] for Malaysian university students, citing data if available?"
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Real-World Impact</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Develop solutions addressing actual investment literacy gaps faced by Malaysian university students
                     </p>
                 </div>
-                <div class="card-hover bg-gradient-to-br from-green-600 to-blue-600 rounded-2xl p-8 text-white stagger-item">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">🎨</span>
+                <div class="glass-strong rounded-2xl p-8 card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-gold to-orange-500 rounded-full flex items-center justify-center mb-6 glow-amber">
+                        <span class="text-3xl">🤖</span>
                     </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Module 2: AI for Design</h3>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Tools: Canva Code, Image Generators (Nano Banana)</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Focus: Visual solution design</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Creative prototyping</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-100 text-sm">
-                        "[Example] Create a 3D Pixar-style image of a friendly 'Money Owl' mascot for our educational finance game."
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">AI-Powered Learning</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Master cutting-edge AI tools for analysis, design, and ethical implementation throughout the process
                     </p>
                 </div>
-                <div class="card-hover bg-gradient-to-br from-red-600 to-pink-600 rounded-2xl p-8 text-white stagger-item">
-                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-6">
-                        <span class="text-2xl">⚖️</span>
+                <div class="glass-strong rounded-2xl p-8 card-hover">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 glow">
+                        <span class="text-3xl">🏆</span>
                     </div>
-                    <h3 class="font-display text-2xl font-bold mb-4">Module 3: AI for Ethics</h3>
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Tool: AI Disclosure Statement</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Focus: Ethical AI usage</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2 h-2 bg-gold rounded-full"></span>
-                            <span class="text-sm">Academic integrity</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-100 text-sm">
-                        Teach students how to use AI ethically and transparently for brainstorming and language support without fabricating answers.
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Win Big Prizes</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Compete for cash prizes, recognition, and potential campus-wide implementation of your solution
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="challenges" class="py-20 bg-gray-50">
+    <!-- Challenges Section -->
+    <section id="challenges" class="py-20 bg-dark-bg">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    Investment Literacy Challenges
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Investment Literacy <span class="text-gradient">Challenges</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Twelve carefully curated challenges across three categories, addressing the most critical gaps in student investment knowledge.
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Choose from 12 carefully curated challenges across three categories
                 </p>
             </div>
 
-            <div class="grid lg:grid-cols-3 gap-8 mb-16">
-                <div class="stagger-item">
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <!-- Foundational Mindset -->
+                <div class="fade-in">
                     <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-electric-blue to-cyber-cyan rounded-full flex items-center justify-center mr-4 glow">
                             <span class="text-2xl text-white">🧠</span>
                         </div>
-                        <h3 class="font-display text-2xl font-bold text-navy">Foundational Mindset</h3>
+                        <h3 class="font-display text-2xl font-bold text-white">Foundational Mindset</h3>
                     </div>
-                    <div class="space-y-6" id="challenges-mindset">
-                        </div>
+                    <div class="space-y-4" id="challenges-mindset"></div>
                 </div>
 
-                <div class="stagger-item">
+                <!-- Investment Vehicles -->
+                <div class="fade-in">
                     <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center mr-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-amber-gold to-orange-500 rounded-full flex items-center justify-center mr-4 glow-amber">
                             <span class="text-2xl text-white">📈</span>
                         </div>
-                        <h3 class="font-display text-2xl font-bold text-navy">Investment Vehicles</h3>
+                        <h3 class="font-display text-2xl font-bold text-white">Investment Vehicles</h3>
                     </div>
-                    <div class="space-y-6" id="challenges-vehicles">
-                        </div>
+                    <div class="space-y-4" id="challenges-vehicles"></div>
                 </div>
 
-                <div class="stagger-item">
+                <!-- Practical Barriers -->
+                <div class="fade-in">
                     <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center mr-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mr-4 glow">
                             <span class="text-2xl text-white">🔧</span>
                         </div>
-                        <h3 class="font-display text-2xl font-bold text-navy">Practical Barriers</h3>
+                        <h3 class="font-display text-2xl font-bold text-white">Practical Barriers</h3>
                     </div>
-                    <div class="space-y-6" id="challenges-barriers">
-                        </div>
+                    <div class="space-y-4" id="challenges-barriers"></div>
                 </div>
             </div>
-            <div class="fade-in">
-                <div id="challengesChart" class="w-full h-96 bg-white rounded-2xl shadow-lg"></div>
-            </div>
-            <div class="section-divider"></div>
         </div>
     </section>
 
-    <section class="py-20 bg-white">
+    <!-- Timeline Section -->
+    <section id="timeline" class="py-20 bg-dark-card/50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    Judging Criteria
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Event <span class="text-gradient">Timeline</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Comprehensive evaluation framework ensuring fair assessment across multiple dimensions of quality and impact.
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Four-week journey from team formation to final presentation
                 </p>
             </div>
-            <div class="grid lg:grid-cols-2 gap-12 mb-16">
-                <div class="fade-in">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8">Infographic Report (50%)</h3>
-                    <div class="space-y-6">
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Project Execution</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="space-y-8">
+                    <!-- Week 1 -->
+                    <div class="relative pl-8 timeline-item fade-in">
+                        <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-electric-blue glow" style="left: -6px;"></div>
+                        <div class="glass-strong rounded-xl p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-display text-2xl font-bold text-white">Week 1</h3>
+                                <span class="glass px-4 py-2 rounded-full text-electric-blue font-semibold">Formation</span>
                             </div>
-                            <p class="text-gray-600 text-sm">How organized and effective is their plan for the solution?</p>
-                        </div>
-                        <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Impact &amp; Reflection</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
-                            </div>
-                            <p class="text-gray-600 text-sm">How well does the solution solve the chosen literacy gap?</p>
-                        </div>
-                        <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Effective Leadership</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
-                            </div>
-                            <p class="text-gray-600 text-sm">How well did the team manage tasks and problem-solve?</p>
-                        </div>
-                        <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Teamwork</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
-                            </div>
-                            <p class="text-gray-600 text-sm">How well did the team collaborate?</p>
-                        </div>
-                        <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Report Writing</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
-                            </div>
-                            <p class="text-gray-600 text-sm">Professionalism, clarity, and visual appeal</p>
+                            <h4 class="text-xl text-amber-gold font-semibold mb-3">Team Formation & Challenge Selection</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li class="flex items-start">
+                                    <span class="text-electric-blue mr-2">▸</span>
+                                    Form teams of 5-6 members
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-electric-blue mr-2">▸</span>
+                                    Select one Investment Literacy Challenge
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-electric-blue mr-2">▸</span>
+                                    Register team and submit challenge choice
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </div>
-                <div class="fade-in">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8">Presentation (50%)</h3>
-                    <div class="space-y-6">
-                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Coverage of Topic</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">20 pts</span>
+
+                    <!-- Week 2 -->
+                    <div class="relative pl-8 timeline-item fade-in">
+                        <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-cyber-cyan glow" style="left: -6px;"></div>
+                        <div class="glass-strong rounded-xl p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-display text-2xl font-bold text-white">Week 2</h3>
+                                <span class="glass px-4 py-2 rounded-full text-cyber-cyan font-semibold">Workshop</span>
                             </div>
-                            <p class="text-gray-600 text-sm">Accuracy and completeness of problem and solution explanation</p>
+                            <h4 class="text-xl text-amber-gold font-semibold mb-3">AI Accelerator Workshop</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li class="flex items-start">
+                                    <span class="text-cyber-cyan mr-2">▸</span>
+                                    Module 1: AI for Analysis (Gemini)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-cyber-cyan mr-2">▸</span>
+                                    Module 2: AI for Design (Canva, Image Gen)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-cyber-cyan mr-2">▸</span>
+                                    Module 3: AI for Ethics
+                                </li>
+                            </ul>
                         </div>
-                        <div class="bg-gradient-to-r from-teal-50 to-green-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Fluency &amp; Clarity</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
+                    </div>
+
+                    <!-- Week 3 -->
+                    <div class="relative pl-8 timeline-item fade-in">
+                        <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-amber-gold glow-amber" style="left: -6px;"></div>
+                        <div class="glass-strong rounded-xl p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-display text-2xl font-bold text-white">Week 3</h3>
+                                <span class="glass px-4 py-2 rounded-full text-amber-gold font-semibold">Development</span>
                             </div>
-                            <p class="text-gray-600 text-sm">How clear and confident was their presentation?</p>
+                            <h4 class="text-xl text-amber-gold font-semibold mb-3">Solution Development</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li class="flex items-start">
+                                    <span class="text-amber-gold mr-2">▸</span>
+                                    Conduct research and analysis
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-amber-gold mr-2">▸</span>
+                                    Design and prototype solution
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-amber-gold mr-2">▸</span>
+                                    Create 30-slide infographic report
+                                </li>
+                            </ul>
                         </div>
-                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Effective Audio Visual</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
+                    </div>
+
+                    <!-- Week 4 -->
+                    <div class="relative pl-8 timeline-item fade-in">
+                        <div class="absolute left-0 top-0 w-4 h-4 rounded-full bg-purple-500 glow" style="left: -6px;"></div>
+                        <div class="glass-strong rounded-xl p-6 card-hover">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-display text-2xl font-bold text-white">Week 4</h3>
+                                <span class="glass px-4 py-2 rounded-full text-purple-400 font-semibold">Submission</span>
                             </div>
-                            <p class="text-gray-600 text-sm">How well did slides support their pitch?</p>
-                        </div>
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="font-semibold text-navy">Defense Ability</h4>
-                                <span class="bg-gold text-white px-3 py-1 rounded-full text-sm font-bold">10 pts</span>
-                            </div>
-                            <p class="text-gray-600 text-sm">How well did they anticipate and answer key questions?</p>
+                            <h4 class="text-xl text-amber-gold font-semibold mb-3">Final Submission & Presentation</h4>
+                            <ul class="space-y-2 text-gray-400">
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-2">▸</span>
+                                    Submit infographic report (PDF)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-2">▸</span>
+                                    Submit 10-minute pitch video
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-purple-400 mr-2">▸</span>
+                                    Live Q&A with judges
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="fade-in">
-                <div id="judgingChart" class="w-full h-96 bg-gray-50 rounded-2xl shadow-lg"></div>
-            </div>
-            <div class="section-divider"></div>
         </div>
     </section>
 
-    <section id="analysis" class="py-20 bg-gray-50">
+    <!-- Prizes Section -->
+    <section id="prizes" class="py-20 bg-dark-bg">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold text-navy mb-6">
-                    Strategic Analysis
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Amazing <span class="text-gradient">Prizes</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Deep insights into the hackathon's innovative approach and potential impact on financial education.
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Compete for cash prizes, recognition, and real-world impact
                 </p>
             </div>
-            <div class="grid lg:grid-cols-2 gap-12 mb-16">
-                <div class="fade-in">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8">Key Innovations</h3>
-                    <div class="space-y-6">
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-gold rounded-full flex items-center justify-center mr-4">
-                                    <span class="text-white font-bold">AI</span>
-                                </div>
-                                <h4 class="font-semibold text-lg text-navy">AI-First Approach</h4>
+
+            <div class="grid lg:grid-cols-3 gap-8 mb-12">
+                <!-- 1st Prize -->
+                <div class="glass-strong rounded-2xl p-8 card-hover relative overflow-hidden">
+                    <div class="prize-shine absolute inset-0"></div>
+                    <div class="relative z-10">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-gold to-yellow-500 mb-4 glow-amber">
+                                <span class="text-3xl">🥇</span>
                             </div>
-                            <p class="text-gray-600 leading-relaxed">
-                                Integration of generative AI tools throughout the entire problem-solving process, from initial analysis to final design and ethical considerations.
-                            </p>
+                            <h3 class="font-display text-3xl font-bold text-amber-gold mb-2">1st Prize</h3>
+                            <div class="text-5xl font-bold text-white mb-4">RM 2,500</div>
                         </div>
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-teal rounded-full flex items-center justify-center mr-4">
-                                    <span class="text-white font-bold">RW</span>
-                                </div>
-                                <h4 class="font-semibold text-lg text-navy">Real-World Application</h4>
-                            </div>
-                            <p class="text-gray-600 leading-relaxed">
-                                Focus on solving actual problems faced by Malaysian university students, with potential for campus-wide implementation of winning solutions.
-                            </p>
-                        </div>
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-navy rounded-full flex items-center justify-center mr-4">
-                                    <span class="text-white font-bold">TR</span>
-                                </div>
-                                <h4 class="font-semibold text-lg text-navy">Transformative Learning</h4>
-                            </div>
-                            <p class="text-gray-600 leading-relaxed">
-                                Conversion of traditional coursework into competitive, hands-on experience that builds practical skills and industry-relevant knowledge.
-                            </p>
-                        </div>
+                        <ul class="space-y-3 text-gray-300">
+                            <li class="flex items-start">
+                                <span class="text-amber-gold mr-2">✓</span>
+                                Certificate of Excellence
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-gold mr-2">✓</span>
+                                Trophy & Recognition
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-gold mr-2">✓</span>
+                                Campus-wide Implementation
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-gold mr-2">✓</span>
+                                Featured on UiTM Website
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div class="fade-in">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8">Impact Potential</h3>
-                    <div class="bg-white rounded-2xl p-8 shadow-lg">
-                        <div class="space-y-6">
-                            <div class="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-semibold text-navy">Student Engagement</h4>
-                                    <p class="text-sm text-gray-600">Gamification increases participation</p>
-                                </div>
-                                <div class="text-3xl font-bold text-gold">+85%</div>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-semibold text-navy">Skill Development</h4>
-                                    <p class="text-sm text-gray-600">AI literacy and problem-solving</p>
-                                </div>
-                                <div class="text-3xl font-bold text-teal">+92%</div>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-semibold text-navy">Solution Quality</h4>
-                                    <p class="text-sm text-gray-600">Real-world problem focus</p>
-                                </div>
-                                <div class="text-3xl font-bold text-navy">+78%</div>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-orange-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-semibold text-navy">Implementation Rate</h4>
-                                    <p class="text-sm text-gray-600">Campus-wide adoption potential</p>
-                                </div>
-                                <div class="text-3xl font-bold text-charcoal">+65%</div>
-                            </div>
+
+                <!-- 2nd Prize -->
+                <div class="glass-strong rounded-2xl p-8 card-hover">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 mb-4">
+                            <span class="text-3xl">🥈</span>
                         </div>
+                        <h3 class="font-display text-3xl font-bold text-gray-300 mb-2">2nd Prize</h3>
+                        <div class="text-5xl font-bold text-white mb-4">RM 1,500</div>
                     </div>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start">
+                            <span class="text-cyber-cyan mr-2">✓</span>
+                            Certificate of Achievement
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-cyber-cyan mr-2">✓</span>
+                            Trophy & Recognition
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-cyber-cyan mr-2">✓</span>
+                            Special Mention
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3rd Prize -->
+                <div class="glass-strong rounded-2xl p-8 card-hover">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-orange-700 to-orange-800 mb-4">
+                            <span class="text-3xl">🥉</span>
+                        </div>
+                        <h3 class="font-display text-3xl font-bold text-orange-400 mb-2">3rd Prize</h3>
+                        <div class="text-5xl font-bold text-white mb-4">RM 1,000</div>
+                    </div>
+                    <ul class="space-y-3 text-gray-300">
+                        <li class="flex items-start">
+                            <span class="text-electric-blue mr-2">✓</span>
+                            Certificate of Achievement
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-electric-blue mr-2">✓</span>
+                            Trophy & Recognition
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-electric-blue mr-2">✓</span>
+                            Special Mention
+                        </li>
+                    </ul>
                 </div>
             </div>
-            <div class="fade-in">
-                <div class="bg-white rounded-2xl p-8 shadow-lg">
-                    <h3 class="font-display text-3xl font-bold text-navy mb-8 text-center">Success Metrics Framework</h3>
-                    <div id="successMetricsChart" class="w-full h-96"></div>
+
+            <!-- Additional Benefits -->
+            <div class="glass-strong rounded-2xl p-8 fade-in">
+                <h3 class="font-display text-2xl font-bold text-white mb-6 text-center">
+                    All Participants Receive
+                </h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">📜</div>
+                        <h4 class="font-semibold text-white mb-2">Participation Certificate</h4>
+                        <p class="text-gray-400 text-sm">Official recognition of completion</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">🎓</div>
+                        <h4 class="font-semibold text-white mb-2">Course Credit</h4>
+                        <p class="text-gray-400 text-sm">Counts towards FIN333 assessment</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">💼</div>
+                        <h4 class="font-semibold text-white mb-2">Portfolio Piece</h4>
+                        <p class="text-gray-400 text-sm">Real-world project for your resume</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-20 bg-navy text-white">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <div class="fade-in">
-                <h2 class="font-display text-4xl lg:text-5xl font-bold mb-8">
-                    Transforming Financial Education
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-dark-card/50">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Frequently Asked <span class="text-gradient">Questions</span>
                 </h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-12">
-                    FIN-novate 2025 represents a paradigm shift in financial education, combining cutting-edge AI technology with real-world problem solving to create lasting impact for Malaysian university students.
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Everything you need to know about FIN-novate 2025
                 </p>
-                <div class="grid lg:grid-cols-3 gap-8 mb-12">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                        <div class="text-4xl font-bold text-gold mb-4">12</div> <div class="text-lg font-semibold mb-2">Critical Challenges</div>
-                        <div class="text-sm text-gray-300">Addressing key literacy gaps</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                        <div class="text-4xl font-bold text-teal mb-4">3</div>
-                        <div class="text-lg font-semibold mb-2">AI Modules</div>
-                        <div class="text-sm text-gray-300">Analysis, Design, Ethics</div>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                        <div class="text-4xl font-bold text-white mb-4">100</div>
-                        <div class="text-lg font-semibold mb-2">Total Points</div>
-                        <div class="text-sm text-gray-300">Balanced evaluation system</div>
-                    </div>
-                </div>
-                <div class="text-lg text-gray-300 leading-relaxed max-w-3xl mx-auto">
-                    <p class="mb-6">
-                        This innovative approach to financial education demonstrates how traditional academic requirements can be transformed into engaging, technology-driven experiences that prepare students for real-world challenges.
-                    </p>
-                    <p>
-                        By focusing on practical problem-solving and ethical AI integration, FIN-novate 2025 sets a new standard for educational innovation in the financial sector.
-                    </p>
-                </div>
+            </div>
+
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ items will be populated by JavaScript -->
             </div>
         </div>
     </section>
 
-    <footer class="bg-charcoal text-white py-12">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <div class="font-display text-2xl font-bold text-gold mb-4">FIN-novate 2025</div>
-            <p class="text-gray-400 mb-6">Empowering UiTM's financial future, one solution at a time.</p>
-            <div class="text-sm text-gray-500">
-                Analysis Report • Generated November 2025 • Comprehensive Strategic Overview
+    <!-- Footer -->
+    <footer class="bg-dark-bg border-t border-dark-border py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold mb-4">
+                    <span class="text-gradient">FIN-novate 2025</span>
+                </div>
+                <p class="text-gray-400 mb-6">Empowering UiTM Sabah's financial future through innovation</p>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#home" class="text-gray-400 hover:text-electric-blue transition-colors">Home</a>
+                    <a href="#challenges" class="text-gray-400 hover:text-electric-blue transition-colors">Challenges</a>
+                    <a href="#timeline" class="text-gray-400 hover:text-electric-blue transition-colors">Timeline</a>
+                    <a href="#prizes" class="text-gray-400 hover:text-electric-blue transition-colors">Prizes</a>
+                    <a href="#faq" class="text-gray-400 hover:text-electric-blue transition-colors">FAQ</a>
+                </div>
+                <div class="text-sm text-gray-500">
+                    © 2025 UiTM Sabah • FIN333 Investment Analysis Course • All Rights Reserved
+                </div>
             </div>
         </div>
     </footer>
 
     <script>
         // --- Challenge Data ---
-        // *** MODIFICATION: Added imageUrl property to each challenge object ***
         const allChallenges = [
             // Foundational Mindset
             {
@@ -692,40 +704,32 @@
                 category: 'mindset',
                 title: '"Fear of Loss" Barrier',
                 problem: 'Students are paralyzed by the fear of losing money, keeping funds in low-yield accounts.',
-                impact: 'Money loses value due to inflation, missing growth opportunities.',
                 theme: 'Risk & Safety',
-                colorClass: 'bg-blue-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack1.png'
+                imageUrl: 'hack1.png'
             },
             {
                 id: 'challenge-2',
                 category: 'mindset',
                 title: '"Get Rich Quick" Mindset',
-                problem: 'Students chase high-risk, hype investments, susceptible to scams and low-yield accounts.',
-                impact: 'Significant financial losses due to ignoring risk-reward fundamentals.',
+                problem: 'Students chase high-risk, hype investments, susceptible to scams.',
                 theme: 'Risk & High Rewards',
-                colorClass: 'bg-purple-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack2.png'
+                imageUrl: 'hack2.png'
             },
             {
                 id: 'challenge-3',
                 category: 'mindset',
                 title: 'Misunderstanding Risk Appetite',
-                problem: 'Students are unable to accurately assess their own risk tolerance, leading to mistakes, potential losses, or mismanaged investments.',
-                impact: 'Emotional distress, or missed growth opportunities from being too cautious.',
+                problem: 'Students cannot accurately assess their own risk tolerance, leading to mistakes.',
                 theme: 'Risk & Persona',
-                colorClass: 'bg-blue-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack3.png'
+                imageUrl: 'hack3.png'
             },
             {
                 id: 'challenge-5',
                 category: 'mindset',
                 title: 'Aimless Investing',
-                problem: 'Students start investing without clear, specific financial goals, leading to confusion and poor choices.',
-                impact: 'Focused investments, missed milestones, and demotivation.',
+                problem: 'Students start investing without clear financial goals, leading to confusion.',
                 theme: 'Goals & Direction',
-                colorClass: 'bg-purple-50',
-                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack4.png'
+                imageUrl: 'hack4.png'
             },
 
             // Investment Vehicles
@@ -733,51 +737,36 @@
                 id: 'challenge-4',
                 category: 'vehicles',
                 title: '"All Eggs in One Basket"',
-                problem: 'Students lack diversification knowledge and invest all funds into one asset, risking massive losses.',
-                impact: 'Unnecessary exposure risk, missed stable growth opportunities.',
-                theme: 'Security & Diversification',
-                colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+5'
+                problem: 'Students lack diversification knowledge and risk massive losses.',
+                theme: 'Security & Diversification'
             },
             {
                 id: 'challenge-8',
                 category: 'vehicles',
                 title: '"Stock vs. Unit Trust" Confusion',
-                problem: "Students don't understand the difference between buying individual stocks and diversified mutual funds/unit trusts.",
-                impact: 'Missed opportunities for balanced growth and increased exposure to risk.',
-                theme: 'Clarity & Growth',
-                colorClass: 'bg-teal-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+6'
+                problem: "Students don't understand the difference between individual stocks and diversified funds.",
+                theme: 'Clarity & Growth'
             },
             {
                 id: 'challenge-6',
                 category: 'vehicles',
                 title: '"ETF vs. Mutual Fund" Black Box',
-                problem: 'Students do not understand the differences (fees, trading, active vs. passive management) between Exchange Traded Funds (ETFs) and traditional Mutual Funds/Unit Trusts.',
-                impact: 'Suboptimal investment choices, higher costs, and missed opportunities due to a lack of clarity on investment structures.',
-                theme: 'Transparency & Liquidity',
-                colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+7'
+                problem: 'Students do not understand the differences between ETFs and Mutual Funds.',
+                theme: 'Transparency & Liquidity'
             },
             {
                 id: 'challenge-12',
                 category: 'vehicles',
                 title: 'Inability to Match Vehicles to Goals',
-                problem: "Students don't know why to choose a Fixed Deposit over Equity for a short-term goal.",
-                impact: "Unoptimized growth, missed opportunities, and financial plans that don't align with life.",
-                theme: 'Strategic Alignment',
-                colorClass: 'bg-teal-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+8'
+                problem: "Students don't know why to choose Fixed Deposit over Equity for short-term goals.",
+                theme: 'Strategic Alignment'
             },
             {
                 id: 'challenge-10',
                 category: 'vehicles',
                 title: '"Digital Asset" Hype',
-                problem: 'Students are drawn to "Cryptocurrency and Digital Assets" but lack fundamental understanding of technology, regulation, or volatility.',
-                impact: 'Significant financial losses, emotional distress, and susceptibility to scams due to uninformed speculation.',
-                theme: 'Informed Speculation',
-                colorClass: 'bg-green-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+9'
+                problem: 'Students drawn to cryptocurrency but lack fundamental understanding.',
+                theme: 'Informed Speculation'
             },
 
             // Practical Barriers
@@ -785,35 +774,62 @@
                 id: 'challenge-7',
                 category: 'barriers',
                 title: '"First Step" Paralysis',
-                problem: 'Students want to invest but are overwhelmed by the practical steps (account opening, choosing the broker, making the first trade).',
-                impact: 'Inaction, missed early investment opportunities, and continued confusion.',
-                theme: 'Action & Clarity',
-                colorClass: 'bg-orange-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+10'
+                problem: 'Students are overwhelmed by practical steps of opening accounts and trading.',
+                theme: 'Action & Clarity'
             },
             {
                 id: 'challenge-9',
                 category: 'barriers',
                 title: 'Analysis Paralysis',
-                problem: 'Students are overwhelmed by the sheer amount of financial data and don\'t know how to analyze companies or funds.',
-                impact: 'Inaction, missed investment opportunities, and poor decision-making.',
-                theme: 'Data & Inaction',
-                colorClass: 'bg-red-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+11'
+                problem: 'Students overwhelmed by financial data and unable to analyze companies.',
+                theme: 'Data & Inaction'
             },
             {
                 id: 'challenge-11',
                 category: 'barriers',
                 title: 'Ethical & Shariah-Compliance',
-                problem: "Students want Shariah-compliant investments but don't know how to identify them or what makes them compliant.",
-                impact: 'Missed opportunities for faith-aligned wealth growth and unintentional investment in non-compliant ventures.',
-                theme: 'Principles & Prosperity',
-                colorClass: 'bg-orange-50',
-                imageUrl: 'https://via.placeholder.com/600x338.png?text=Challenge+Image+12'
+                problem: "Students want Shariah-compliant investments but don't know how to identify them.",
+                theme: 'Principles & Prosperity'
             }
         ];
 
-        // --- Function to Render Challenges ---
+        // --- FAQ Data ---
+        const faqData = [
+            {
+                question: 'Who can participate in FIN-novate 2025?',
+                answer: 'All FIN333 students at UiTM Sabah are eligible to participate. Students must form teams of 5-6 members and register for the hackathon.'
+            },
+            {
+                question: 'How do we form a team?',
+                answer: 'Teams should consist of 5-6 members from your FIN333 class. You can form teams with classmates who share similar interests and complementary skills.'
+            },
+            {
+                question: 'What AI tools will we learn to use?',
+                answer: 'You will learn to use Gemini for analysis, Canva Code and image generators for design, and ethical AI frameworks for responsible implementation.'
+            },
+            {
+                question: 'What are the deliverables?',
+                answer: 'Teams must submit a 30-slide infographic report (PDF) and a 10-minute pitch video presenting their solution. Both deliverables must include an AI disclosure statement.'
+            },
+            {
+                question: 'How will projects be evaluated?',
+                answer: 'Projects are evaluated on two main criteria: Infographic Report (50%) covering execution, impact, leadership, teamwork, and writing; and Presentation (50%) covering topic coverage, fluency, audio-visual effectiveness, and defense ability.'
+            },
+            {
+                question: 'Can we implement our solution if we win?',
+                answer: 'Yes! Winning solutions have the potential for campus-wide implementation at UiTM Sabah, with support and recognition from the university.'
+            },
+            {
+                question: 'What if we need help during the hackathon?',
+                answer: 'Support is available throughout the hackathon period. You can reach out to course instructors and attend the AI Accelerator Workshop for guidance.'
+            },
+            {
+                question: 'Is this event mandatory for FIN333 students?',
+                answer: 'The hackathon counts towards your FIN333 course assessment. Check with your course instructor for specific grading requirements.'
+            }
+        ];
+
+        // --- Render Challenges ---
         function renderChallenges() {
             const containers = {
                 mindset: document.getElementById('challenges-mindset'),
@@ -821,23 +837,18 @@
                 barriers: document.getElementById('challenges-barriers')
             };
 
-            // Clear existing content
-            Object.values(containers).forEach(container => container.innerHTML = '');
-
-            // Create and append challenge elements
             allChallenges.forEach(challenge => {
-                
-                // *** MODIFICATION: Replaced <details> accordion with an image card ***
                 const challengeHTML = `
-                    <div class="rounded-lg overflow-hidden shadow-lg ${challenge.colorClass} flex flex-col h-full card-hover">
-                        <img class="w-full h-48 object-cover" src="${challenge.imageUrl}" alt="${challenge.title}">
-                        <div class="p-4 flex flex-col flex-grow">
-                            <h4 class="font-semibold text-navy text-lg mb-2">${challenge.title}</h4>
-                            <p class="text-sm text-gray-600 mb-3 flex-grow">${challenge.problem}</p>
-                            <div>
-                                <strong class="text-sm text-charcoal">Theme:</strong>
-                                <span class="text-sm text-white font-medium bg-navy/80 px-2 py-0.5 rounded">${challenge.theme}</span>
+                    <div class="glass-strong rounded-xl p-5 card-hover">
+                        ${challenge.imageUrl ? `
+                            <div class="mb-4 rounded-lg overflow-hidden">
+                                <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-32 object-cover">
                             </div>
+                        ` : ''}
+                        <h4 class="font-semibold text-white text-lg mb-2">${challenge.title}</h4>
+                        <p class="text-sm text-gray-400 mb-3">${challenge.problem}</p>
+                        <div class="inline-block glass px-3 py-1 rounded-full">
+                            <span class="text-xs text-electric-blue font-medium">${challenge.theme}</span>
                         </div>
                     </div>
                 `;
@@ -846,6 +857,48 @@
                 if (container) {
                     container.insertAdjacentHTML('beforeend', challengeHTML);
                 }
+            });
+        }
+
+        // --- Render FAQ ---
+        function renderFAQ() {
+            const container = document.getElementById('faqContainer');
+            
+            faqData.forEach((faq, index) => {
+                const faqHTML = `
+                    <div class="faq-item glass-strong rounded-xl overflow-hidden">
+                        <div class="faq-question p-6 flex justify-between items-center">
+                            <h4 class="font-semibold text-white text-lg pr-4">${faq.question}</h4>
+                            <svg class="faq-icon w-6 h-6 text-electric-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="px-6 pb-6 text-gray-400">
+                                ${faq.answer}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', faqHTML);
+            });
+
+            // Add click handlers
+            document.querySelectorAll('.faq-question').forEach((question) => {
+                question.addEventListener('click', () => {
+                    const faqItem = question.parentElement;
+                    const wasActive = faqItem.classList.contains('active');
+                    
+                    // Close all FAQ items
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Open clicked item if it wasn't active
+                    if (!wasActive) {
+                        faqItem.classList.add('active');
+                    }
+                });
             });
         }
 
@@ -864,6 +917,7 @@
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
             };
+            
             const observer = new IntersectionObserver(function(entries) {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -871,136 +925,66 @@
                     }
                 });
             }, observerOptions);
+            
             document.querySelectorAll('.fade-in').forEach(el => {
                 observer.observe(el);
             });
 
-            // Stagger animations
-            anime({
-                targets: '.stagger-item',
-                translateY: [50, 0],
-                opacity: [0, 1],
-                delay: anime.stagger(100), // Faster stagger
-                duration: 800,
-                easing: 'easeOutQuart'
-            });
-
-            // Render challenges
-            renderChallenges();
-
-            // Initialize charts
-            initializeCharts();
-        });
-
-        // --- ECharts ---
-        function initializeCharts() {
-            const newGold = '#F59E0B';
-            const newTeal = '#06B6D4';
-            const newNavy = '#1E40AF';
-            const newCharcoal = '#334155';
-
-            // Structure Chart
-            const structureChart = echarts.init(document.getElementById('structureChart'));
-            structureChart.setOption({
-                title: { text: 'Hackathon Process Flow', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
-                tooltip: { trigger: 'item' },
-                series: [{
-                    type: 'sankey',
-                    data: [
-                        { name: 'Team Formation' },
-                        { name: 'Problem Selection' },
-                        { name: 'AI Workshop' },
-                        { name: 'Solution Development' },
-                        { name: 'Final Submission' }
-                    ],
-                    links: [
-                        { source: 'Team Formation', target: 'Problem Selection', value: 100 },
-                        { source: 'Problem Selection', target: 'AI Workshop', value: 100 },
-                        { source: 'AI Workshop', target: 'Solution Development', value: 100 },
-                        { source: 'Solution Development', target: 'Final Submission', value: 100 }
-                    ],
-                    itemStyle: { color: newGold },
-                    lineStyle: { color: 'gradient', curveness: 0.5 }
-                }]
-            });
-
-            // Challenges Chart
-            const challengesChart = echarts.init(document.getElementById('challengesChart'));
-            challengesChart.setOption({
-                title: { text: 'Challenge Distribution by Category', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
-                tooltip: { trigger: 'item' },
-                series: [{
-                    type: 'pie',
-                    radius: ['40%', '70%'],
-                    data: [
-                        { value: 4, name: 'Foundational Mindset', itemStyle: { color: '#3b82f6' } },
-                        { value: 5, name: 'Investment Vehicles', itemStyle: { color: '#10b981' } },
-                        { value: 3, name: 'Practical Barriers', itemStyle: { color: newGold } }
-                    ],
-                    emphasis: {
-                        itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
-                    },
-                    label: {
-                        color: newCharcoal,
-                        formatter: '{b}: {c} ({d}%)'
+            // Navigation active state
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - 200) {
+                        current = section.getAttribute('id');
                     }
-                }]
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').slice(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
             });
 
-            // Judging Chart
-            const judgingChart = echarts.init(document.getElementById('judgingChart'));
-            judgingChart.setOption({
-                title: { text: 'Judging Criteria Breakdown', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
-                tooltip: { trigger: 'axis' },
-                xAxis: { type: 'category', data: ['Report', 'Presentation'], axisLabel: { color: newCharcoal } },
-                yAxis: { type: 'value', axisLabel: { color: newCharcoal } },
-                series: [{
-                    data: [50, 50],
-                    type: 'bar',
-                    itemStyle: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                            { offset: 0, color: newGold },
-                            { offset: 1, color: newTeal }
-                        ])
-                    },
-                    barWidth: '60%'
-                }]
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
             });
 
-            // Success Metrics Chart
-            const successChart = echarts.init(document.getElementById('successMetricsChart'));
-            successChart.setOption({
-                title: { text: 'Projected Impact Metrics', left: 'center', textStyle: { color: newNavy, fontSize: 18, fontWeight: 'bold' } },
-                tooltip: { trigger: 'axis' },
-                radar: {
-                    indicator: [
-                        { name: 'Student Engagement', max: 100 },
-                        { name: 'Skill Development', max: 100 },
-                        { name: 'Solution Quality', max: 100 },
-                        { name: 'Implementation Rate', max: 100 },
-                        { name: 'Innovation Level', max: 100 }
-                    ],
-                    axisName: { color: newCharcoal }
-                },
-                series: [{
-                    type: 'radar',
-                    data: [{
-                        value: [85, 92, 78, 65, 88],
-                        name: 'Projected Impact',
-                        itemStyle: { color: newGold },
-                        areaStyle: { color: 'rgba(245, 158, 11, 0.3)' } // RGB for #F59E0B
-                    }]
-                }]
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('#mobileMenu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
             });
 
-            // Make charts responsive
-            window.addEventListener('resize', function() {
-                structureChart.resize();
-                challengesChart.resize();
-                judgingChart.resize();
-                successChart.resize();
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
             });
-        }
+
+            // Render challenges and FAQ
+            renderChallenges();
+            renderFAQ();
+        });
     </script>
 </body>
 </html>
