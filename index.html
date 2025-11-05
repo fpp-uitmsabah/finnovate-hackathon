@@ -291,6 +291,28 @@
         .modal-close-btn:hover {
             color: #ffffff; /* white */
         }
+        
+        /* === ADDED NEON SHIMMER ANIMATION === */
+        @keyframes neon-shimmer {
+            0%, 100% {
+                /* Start with the site's electric-blue glow */
+                box-shadow: 0 0 8px rgba(14, 165, 233, 0.7), 
+                            0 0 16px rgba(14, 165, 233, 0.5), 
+                            0 0 24px rgba(14, 165, 233, 0.3);
+            }
+            50% {
+                /* Pulse to the site's amber-gold glow */
+                box-shadow: 0 0 12px rgba(245, 158, 11, 0.8), 
+                            0 0 24px rgba(245, 158, 11, 0.6), 
+                            0 0 40px rgba(245, 158, 11, 0.4);
+            }
+        }
+
+        .neon-shimmer {
+            animation: neon-shimmer 2.5s ease-in-out infinite;
+        }
+        /* === END OF ANIMATION === */
+
     </style>
 </head>
 <body class="bg-dark-bg text-gray-100 font-body">
@@ -323,7 +345,7 @@
                 <a href="#home" class="block text-gray-300 hover:text-white">Home</a>
                 <a href="#challenges" class="block text-gray-300 hover:text-white">Challenges</a>
                 <a href="#timeline" class="block text-gray-300 hover:text-white">Timeline</a>
-                <a href="#prizes" class="block text-gray-300 hover:text-white">Rewards</a>
+                <a href="#prizes" class="block text-gray-300 hover:text-white">Prizes</a>
                 <!-- ADDED REGISTER LINK -->
                 <a href="#register" class="block text-gray-300 hover:text-white">Register</a>
                 <a href="#faq" class="block text-gray-300 hover:text-white">FAQ</a>
@@ -480,7 +502,7 @@
                 <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
                     Event <span class="text-gradient">Timeline</span>
                 </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                <p class="text-xl text-gray400 max-w-3xl mx-auto leading-relaxed">
                     Four-week journey from team formation to final presentation
                 </p>
             </div>
@@ -633,7 +655,7 @@
                                 Campus-wide Implementation
                             </li>
                             <li class="flex items-start">
-                                <span class="text-amber-gold mr-2">✓</span>
+                                <span classs="text-amber-gold mr-2">✓</span>
                                 Special Mention
                             </li>
                         </ul>
@@ -729,13 +751,13 @@
                 </p>
             </div>
 
-            <!-- === REPLACED IFRAME WITH A BUTTON === -->
+            <!-- === UPDATED BUTTON === -->
             <div class="text-center fade-in">
                 <a 
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSfI80nXs7KJLmQxYoRyNmcww6HVSHqWpqXCL59XtAfmiuin6Q/viewform?embedded=true" 
+                    href="https://forms.gle/u9t6rAEuHqGjESG36" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    class="inline-block glass-strong px-10 py-5 md:px-12 md:py-6 rounded-lg font-semibold text-xl md:text-2xl text-white hover:bg-electric-blue/20 transition-all glow-amber shadow-lg transform hover:scale-105"
+                    class="inline-block glass-strong px-10 py-5 md:px-12 md:py-6 rounded-lg font-semibold text-xl md:text-2xl text-white hover:bg-electric-blue/20 transition-all transform hover:scale-105 neon-shimmer"
                 >
                     <div class="flex items-center space-x-3">
                         <span>Click Here to Register Your Team</span>
@@ -744,7 +766,7 @@
                     </div>
                 </a>
             </div>
-            <!-- === END OF REPLACEMENT === -->
+            <!-- === END OF UPDATE === -->
 
         </div>
     </section>
@@ -779,9 +801,9 @@
                     <a href="#home" class="text-gray-400 hover:text-electric-blue transition-colors">Home</a>
                     <a href="#challenges" class="text-gray-400 hover:text-electric-blue transition-colors">Challenges</a>
                     <a href="#timeline" class="text-gray-400 hover:text-electric-blue transition-colors">Timeline</a>
-                    <a href="#prizes" class="text-gray-400 hover:text-electric-blue transition-colors">Rewards</a>
+                    <a href="#prizes" class="text-gray-400 hover:text-electric-blue transition-colors">Prizes</a>
                     <!-- ADDED REGISTER LINK -->
-                    <a href="https://forms.gle/qL538bEpGEppqkjF7" class="text-gray-400 hover:text-electric-blue transition-colors">Register</a>
+                    <a href="#register" class="text-gray-400 hover:text-electric-blue transition-colors">Register</a>
                     <a href="#faq" class="text-gray-400 hover:text-electric-blue transition-colors">FAQ</a>
                 </div>
                 <div class="text-sm text-gray-500">
@@ -1181,7 +1203,7 @@
                             <p class="leading-relaxed">${challenge.problem}</p>
                         </div>
                         <div>
-                            <h4 classs="font-bold text-cyber-cyan text-lg mb-2">The Impact:</h4>
+                            <h4 class="font-bold text-cyber-cyan text-lg mb-2">The Impact:</h4>
                             <p class="leading-relaxed">${challenge.impact}</p>
                         </div>
                         <div class="mt-6 pt-6 border-t border-dark-border text-center">
@@ -1227,5 +1249,3 @@
     </script>
 </body>
 </html>
-
-
