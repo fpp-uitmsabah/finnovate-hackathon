@@ -738,35 +738,40 @@
                 category: 'vehicles',
                 title: '"All Eggs in One Basket"',
                 problem: 'Students lack diversification knowledge and risk massive losses.',
-                theme: 'Security & Diversification'
+                theme: 'Security & Diversification',
+                imageUrl: 'hack5.png'
             },
             {
                 id: 'challenge-8',
                 category: 'vehicles',
                 title: '"Stock vs. Unit Trust" Confusion',
                 problem: "Students don't understand the difference between individual stocks and diversified funds.",
-                theme: 'Clarity & Growth'
+                theme: 'Clarity & Growth',
+                imageUrl: 'hack6.png'
             },
             {
                 id: 'challenge-6',
                 category: 'vehicles',
                 title: '"ETF vs. Mutual Fund" Black Box',
                 problem: 'Students do not understand the differences between ETFs and Mutual Funds.',
-                theme: 'Transparency & Liquidity'
+                theme: 'Transparency & Liquidity',
+                imageUrl: 'hack7.png'
             },
             {
                 id: 'challenge-12',
                 category: 'vehicles',
                 title: 'Inability to Match Vehicles to Goals',
                 problem: "Students don't know why to choose Fixed Deposit over Equity for short-term goals.",
-                theme: 'Strategic Alignment'
+                theme: 'Strategic Alignment',
+                imageUrl: 'hack8.png'
             },
             {
                 id: 'challenge-10',
                 category: 'vehicles',
                 title: '"Digital Asset" Hype',
                 problem: 'Students drawn to cryptocurrency but lack fundamental understanding.',
-                theme: 'Informed Speculation'
+                theme: 'Informed Speculation',
+                imageUrl: 'hack9.png'
             },
 
             // Practical Barriers
@@ -775,21 +780,24 @@
                 category: 'barriers',
                 title: '"First Step" Paralysis',
                 problem: 'Students are overwhelmed by practical steps of opening accounts and trading.',
-                theme: 'Action & Clarity'
+                theme: 'Action & Clarity',
+                imageUrl: 'hack10.png'
             },
             {
                 id: 'challenge-9',
                 category: 'barriers',
                 title: 'Analysis Paralysis',
                 problem: 'Students overwhelmed by financial data and unable to analyze companies.',
-                theme: 'Data & Inaction'
+                theme: 'Data & Inaction',
+                imageUrl: 'hack11.png'
             },
             {
                 id: 'challenge-11',
                 category: 'barriers',
                 title: 'Ethical & Shariah-Compliance',
                 problem: "Students want Shariah-compliant investments but don't know how to identify them.",
-                theme: 'Principles & Prosperity'
+                theme: 'Principles & Prosperity',
+                imageUrl: 'hack12.png'
             }
         ];
 
@@ -842,7 +850,7 @@
                     <div class="glass-strong rounded-xl p-5 card-hover">
                         ${challenge.imageUrl ? `
                             <div class="mb-4 rounded-lg overflow-hidden">
-                                <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-32 object-cover">
+                                <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-auto object-contain">
                             </div>
                         ` : ''}
                         <h4 class="font-semibold text-white text-lg mb-2">${challenge.title}</h4>
