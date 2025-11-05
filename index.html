@@ -229,6 +229,68 @@
             background-size: 200% 100%;
             animation: shine 3s infinite;
         }
+
+        /* Modal styles */
+        .modal-container {
+            position: fixed;
+            inset: 0;
+            z-index: 90;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-container.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+        }
+        .modal-panel {
+            position: relative;
+            z-index: 100;
+            background: rgba(30, 41, 59, 0.9); /* dark-card with opacity */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(51, 65, 85, 1); /* dark-border */
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 2xl; /* 672px */
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal-container.visible .modal-panel {
+            transform: scale(1);
+        }
+        .modal-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 110;
+            color: #94a3b8; /* gray-400 */
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+        .modal-close-btn:hover {
+            color: #ffffff; /* white */
+        }
     </style>
 </head>
 <body class="bg-dark-bg text-gray-100 font-body">
@@ -246,6 +308,8 @@
                     <a href="#challenges" class="nav-link text-gray-300 hover:text-white">Challenges</a>
                     <a href="#timeline" class="nav-link text-gray-300 hover:text-white">Timeline</a>
                     <a href="#prizes" class="nav-link text-gray-300 hover:text-white">Prizes</a>
+                    <!-- ADDED REGISTER LINK -->
+                    <a href="#register" class="nav-link text-gray-300 hover:text-white">Register</a>
                     <a href="#faq" class="nav-link text-gray-300 hover:text-white">FAQ</a>
                 </div>
                 <button id="mobileMenuBtn" class="md:hidden text-white">
@@ -259,7 +323,9 @@
                 <a href="#home" class="block text-gray-300 hover:text-white">Home</a>
                 <a href="#challenges" class="block text-gray-300 hover:text-white">Challenges</a>
                 <a href="#timeline" class="block text-gray-300 hover:text-white">Timeline</a>
-                <a href="#prizes" class="block text-gray-300 hover:text-white">Prizes</a>
+                <a href="#prizes" class="block text-gray-300 hover:text-white">Rewards</a>
+                <!-- ADDED REGISTER LINK -->
+                <a href="#register" class="block text-gray-300 hover:text-white">Register</a>
                 <a href="#faq" class="block text-gray-300 hover:text-white">FAQ</a>
             </div>
         </div>
@@ -271,7 +337,7 @@
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="fade-in">
                     <div class="inline-block glass px-4 py-2 rounded-full mb-6">
-                        <span class="text-electric-blue font-semibold">🚀 January 2025</span>
+                        <span class="text-electric-blue font-semibold">🚀 2025</span>
                     </div>
                     <h1 class="font-display text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
                         FIN-novate
@@ -281,7 +347,7 @@
                         Hacking Investment Literacy
                     </h2>
                     <p class="text-lg text-gray-400 mb-8 leading-relaxed max-w-xl">
-                        Join UiTM Sabah's premier hackathon transforming financial education through AI-powered solutions. Compete, innovate, and win amazing prizes!
+                        Join UiTM Sabah's premier hackathon transforming financial education through AI-powered solutions. Compete, innovate, and gain amazing benefits!
                     </p>
                     <div class="flex flex-wrap gap-4">
                         <a href="#challenges" class="glass-strong px-8 py-4 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all glow">
@@ -302,11 +368,7 @@
                             </div>
                             <div class="flex justify-between items-center p-3 glass rounded-lg">
                                 <span class="text-gray-300">Duration</span>
-                                <span class="text-cyber-cyan font-bold text-xl">4 Weeks</span>
-                            </div>
-                            <div class="flex justify-between items-center p-3 glass rounded-lg">
-                                <span class="text-gray-300">Total Prizes</span>
-                                <span class="text-electric-blue font-bold text-xl">RM 5,000+</span>
+                                <span class="text-cyber-cyan font-bold text-xl">4 Weeks</span>               
                             </div>
                             <div class="flex justify-between items-center p-3 glass rounded-lg">
                                 <span class="text-gray-300">Challenges</span>
@@ -353,9 +415,9 @@
                     <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 glow">
                         <span class="text-3xl">🏆</span>
                     </div>
-                    <h3 class="font-display text-2xl font-bold text-white mb-4">Win Big Prizes</h3>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Gain Amazing Benefits</h3>
                     <p class="text-gray-400 leading-relaxed">
-                        Compete for cash prizes, recognition, and potential campus-wide implementation of your solution
+                        Compete for completion, recognition, and potential campus-wide implementation of your solution
                     </p>
                 </div>
             </div>
@@ -467,7 +529,7 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="text-cyber-cyan mr-2">▸</span>
-                                    Module 2: AI for Design (Canva, Image Gen)
+                                    Module 2: AI for Design (Canva AI, Image Gen)
                                 </li>
                                 <li class="flex items-start">
                                     <span class="text-cyber-cyan mr-2">▸</span>
@@ -497,7 +559,7 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="text-amber-gold mr-2">▸</span>
-                                    Create 30-slide infographic report
+                                    Create <30-slide infographic report
                                 </li>
                             </ul>
                         </div>
@@ -519,11 +581,11 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="text-purple-400 mr-2">▸</span>
-                                    Submit 10-minute pitch video
+                                    Submit 10-minute pitch video (Upload in your YouTube and submit the link that will be provided later)
                                 </li>
                                 <li class="flex items-start">
                                     <span class="text-purple-400 mr-2">▸</span>
-                                    Live Q&A with judges
+                                    Q&A with judges (TBA)
                                 </li>
                             </ul>
                         </div>
@@ -538,10 +600,10 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
                 <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
-                    Amazing <span class="text-gradient">Prizes</span>
+                    Amazing <span class="text-gradient">Benefits</span>
                 </h2>
                 <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                    Compete for cash prizes, recognition, and real-world impact
+                    Compete for project completion, recognition, and real-world impact
                 </p>
             </div>
 
@@ -554,8 +616,8 @@
                             <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-amber-gold to-yellow-500 mb-4 glow-amber">
                                 <span class="text-3xl">🥇</span>
                             </div>
-                            <h3 class="font-display text-3xl font-bold text-amber-gold mb-2">1st Prize</h3>
-                            <div class="text-5xl font-bold text-white mb-4">RM 2,500</div>
+                            <h3 class="font-display text-3xl font-bold text-amber-gold mb-2">Gold Award</h3>
+                            <div class="text-5xl font-bold text-white mb-4">✨</div>
                         </div>
                         <ul class="space-y-3 text-gray-300">
                             <li class="flex items-start">
@@ -564,7 +626,7 @@
                             </li>
                             <li class="flex items-start">
                                 <span class="text-amber-gold mr-2">✓</span>
-                                Trophy & Recognition
+                                Recognition
                             </li>
                             <li class="flex items-start">
                                 <span class="text-amber-gold mr-2">✓</span>
@@ -572,7 +634,7 @@
                             </li>
                             <li class="flex items-start">
                                 <span class="text-amber-gold mr-2">✓</span>
-                                Featured on UiTM Website
+                                Special Mention
                             </li>
                         </ul>
                     </div>
@@ -584,8 +646,8 @@
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 mb-4">
                             <span class="text-3xl">🥈</span>
                         </div>
-                        <h3 class="font-display text-3xl font-bold text-gray-300 mb-2">2nd Prize</h3>
-                        <div class="text-5xl font-bold text-white mb-4">RM 1,500</div>
+                        <h3 class="font-display text-3xl font-bold text-gray-300 mb-2">Silver Award</h3>
+                        <div class="text-5xl font-bold text-white mb-4">✨</div>
                     </div>
                     <ul class="space-y-3 text-gray-300">
                         <li class="flex items-start">
@@ -594,7 +656,7 @@
                         </li>
                         <li class="flex items-start">
                             <span class="text-cyber-cyan mr-2">✓</span>
-                            Trophy & Recognition
+                            Recognition
                         </li>
                         <li class="flex items-start">
                             <span class="text-cyber-cyan mr-2">✓</span>
@@ -609,8 +671,8 @@
                         <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-orange-700 to-orange-800 mb-4">
                             <span class="text-3xl">🥉</span>
                         </div>
-                        <h3 class="font-display text-3xl font-bold text-orange-400 mb-2">3rd Prize</h3>
-                        <div class="text-5xl font-bold text-white mb-4">RM 1,000</div>
+                        <h3 class="font-display text-3xl font-bold text-orange-400 mb-2">Bronze Award</h3>
+                        <div class="text-5xl font-bold text-white mb-4">✨</div>
                     </div>
                     <ul class="space-y-3 text-gray-300">
                         <li class="flex items-start">
@@ -619,7 +681,7 @@
                         </li>
                         <li class="flex items-start">
                             <span class="text-electric-blue mr-2">✓</span>
-                            Trophy & Recognition
+                            Recognition
                         </li>
                         <li class="flex items-start">
                             <span class="text-electric-blue mr-2">✓</span>
@@ -655,8 +717,40 @@
         </div>
     </section>
 
+    <!-- Registration Section -->
+    <section id="register" class="py-20 bg-dark-card/50"> <!-- Swapped background to alternate -->
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Register <span class="text-gradient">Now</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Secure your spot in FIN-novate 2025! Teams must be 5-6 members.
+                </p>
+            </div>
+
+            <!-- === REPLACED IFRAME WITH A BUTTON === -->
+            <div class="text-center fade-in">
+                <a 
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSfI80nXs7KJLmQxYoRyNmcww6HVSHqWpqXCL59XtAfmiuin6Q/viewform?embedded=true" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    class="inline-block glass-strong px-10 py-5 md:px-12 md:py-6 rounded-lg font-semibold text-xl md:text-2xl text-white hover:bg-electric-blue/20 transition-all glow-amber shadow-lg transform hover:scale-105"
+                >
+                    <div class="flex items-center space-x-3">
+                        <span>Click Here to Register Your Team</span>
+                        <!-- External link icon -->
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </div>
+                </a>
+            </div>
+            <!-- === END OF REPLACEMENT === -->
+
+        </div>
+    </section>
+
     <!-- FAQ Section -->
-    <section id="faq" class="py-20 bg-dark-card/50">
+    <section id="faq" class="py-20 bg-dark-bg"> <!-- Swapped background to alternate -->
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-16 fade-in">
                 <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
@@ -685,7 +779,9 @@
                     <a href="#home" class="text-gray-400 hover:text-electric-blue transition-colors">Home</a>
                     <a href="#challenges" class="text-gray-400 hover:text-electric-blue transition-colors">Challenges</a>
                     <a href="#timeline" class="text-gray-400 hover:text-electric-blue transition-colors">Timeline</a>
-                    <a href="#prizes" class="text-gray-400 hover:text-electric-blue transition-colors">Prizes</a>
+                    <a href="#prizes" class="text-gray-400 hover:text-electric-blue transition-colors">Rewards</a>
+                    <!-- ADDED REGISTER LINK -->
+                    <a href="https://forms.gle/qL538bEpGEppqkjF7" class="text-gray-400 hover:text-electric-blue transition-colors">Register</a>
                     <a href="#faq" class="text-gray-400 hover:text-electric-blue transition-colors">FAQ</a>
                 </div>
                 <div class="text-sm text-gray-500">
@@ -695,78 +791,142 @@
         </div>
     </footer>
 
+    <!-- Challenge Modal -->
+    <div id="challengeModal" class="modal-container">
+        <!-- Modal Overlay -->
+        <div class="modal-overlay"></div>
+        
+        <!-- Modal Panel -->
+        <div class="modal-panel">
+            <!-- Close Button -->
+            <button id="modalCloseBtn" class="modal-close-btn">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+
+                </svg>
+            </button>
+            
+            <!-- Modal Content -->
+            <div id="modalContent" class="modal-content">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- Challenge Data ---
+        // Updated with all details from the PDF
         const allChallenges = [
             // Foundational Mindset
             {
                 id: 'challenge-1',
                 category: 'mindset',
-                title: '"Fear of Loss" Barrier',
+                title: 'The "Fear of Loss" Barrier',
+                subtitle: 'Breaking the Chains of Investment Inaction',
+                problemShort: 'Students are paralyzed by the fear of losing money, keeping funds in low-yield accounts.',
                 problem: 'Students are paralyzed by the fear of losing money, keeping funds in low-yield accounts.',
+                impact: 'Money loses value due to inflation, missing growth opportunities.',
+                cta: 'Design a solution that builds confidence!',
                 theme: 'Risk & Safety',
-                imageUrl: 'hack1.png'
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack1.png'
             },
             {
                 id: 'challenge-2',
                 category: 'mindset',
                 title: '"Get Rich Quick" Mindset',
-                problem: 'Students chase high-risk, hype investments, susceptible to scams.',
+                subtitle: 'Navigating Volatility Trap',
+                problemShort: 'Students chase high-risk, hype investments, susceptible to scams.',
+                problem: 'Students chase high-risk, hype investments, susceptible to scams and low-yield accounts.',
+                impact: 'Significant financial losses due to ignoring risk-reward fundamentals.',
+                cta: 'Design a solution for smart growth!',
                 theme: 'Risk & High Rewards',
-                imageUrl: 'hack2.png'
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack2.png'
             },
             {
                 id: 'challenge-3',
                 category: 'mindset',
                 title: 'Misunderstanding Risk Appetite',
-                problem: 'Students cannot accurately assess their own risk tolerance, leading to mistakes.',
+                subtitle: 'Persona Profile',
+                problemShort: 'Students cannot accurately assess their own risk tolerance, leading to mistakes.',
+                problem: 'Students are unable to accurately assess their own risk tolerance, leading to mistakes, potential losses, or mismanaged investments.',
+                impact: 'Emotional distress, or missed growth opportunities from being too cautious.',
+                cta: 'Design a solution for personalized risk intelligence!',
                 theme: 'Risk & Persona',
-                imageUrl: 'hack3.png'
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack3.png'
             },
             {
                 id: 'challenge-5',
                 category: 'mindset',
                 title: 'Aimless Investing',
-                problem: 'Students start investing without clear financial goals, leading to confusion.',
+                subtitle: 'Charting Your Financial Constellation',
+                problemShort: 'Students start investing without clear financial goals, leading to confusion.',
+                problem: 'Students start investing without clear, specific financial goals, leading to confusion and poor choices.',
+                impact: 'Focused investments, missed milestones, and demotivation.',
+                cta: 'Design a solution for goal-driven wealth building!',
                 theme: 'Goals & Direction',
-                imageUrl: 'hack4.png'
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack4.png'
             },
 
             // Investment Vehicles
             {
                 id: 'challenge-4',
                 category: 'vehicles',
-                title: '"All Eggs in One Basket"',
-                problem: 'Students lack diversification knowledge and risk massive losses.',
-                theme: 'Security & Diversification'
+                title: 'The "All Eggs in One Basket" Problem',
+                subtitle: "Don't Get Crushed: The Power of Diversification",
+                problemShort: 'Students lack diversification knowledge and risk massive losses.',
+                problem: 'Students lack diversification knowledge and invest all funds into one asset, risking massive losses.',
+                impact: 'Unnecessary exposure risk, missed stable growth opportunities.',
+                cta: 'Design a solution for balanced wealth building!',
+                theme: 'Security & Diversification',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack5.png'
             },
             {
                 id: 'challenge-8',
                 category: 'vehicles',
                 title: '"Stock vs. Unit Trust" Confusion',
-                problem: "Students don't understand the difference between individual stocks and diversified funds.",
-                theme: 'Clarity & Growth'
+                subtitle: 'Demystifying Diversification',
+                problemShort: "Students don't understand the difference between individual stocks and diversified funds.",
+                problem: "Students don't understand the difference between buying individual stocks and diversified mutual funds/unit trusts.",
+                impact: 'Missed opportunities for balanced growth and increased exposure to risk.',
+                cta: 'Design a solution that clarifies investment choices!',
+                theme: 'Clarity & Growth',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack6.png'
             },
             {
                 id: 'challenge-6',
                 category: 'vehicles',
-                title: '"ETF vs. Mutual Fund" Black Box',
-                problem: 'Students do not understand the differences between ETFs and Mutual Funds.',
-                theme: 'Transparency & Liquidity'
+                title: 'ETF vs. Mutual Fund Confusion',
+                subtitle: 'The Black Box of Passive vs. Active',
+                problemShort: 'Students do not understand the differences between ETFs and Mutual Funds.',
+                problem: 'Students do not understand the differences (fees, trading, active vs. passive management) between Exchange Traded Funds (ETFs) and traditional Mutual Funds/Unit Trusts.',
+                impact: 'Suboptimal investment choices, higher costs, and missed opportunities due to a lack of clarity on investment structures.',
+                cta: 'Design a solution for crystal-clear investing!',
+                theme: 'Transparency & Liquidity',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack7.png'
             },
             {
                 id: 'challenge-12',
                 category: 'vehicles',
                 title: 'Inability to Match Vehicles to Goals',
-                problem: "Students don't know why to choose Fixed Deposit over Equity for short-term goals.",
-                theme: 'Strategic Alignment'
+                subtitle: 'Strategic Investing: Aligning Money with Milestones',
+                problemShort: "Students don't know why to choose Fixed Deposit over Equity for short-term goals.",
+                problem: "Students don't know why to choose a Fixed Deposit over Equity for a short-term goal.",
+                impact: "Unoptimized growth, missed opportunities, and financial plans that don't align with life.",
+                cta: 'Design a solution for personalized financial journeys!',
+                theme: 'Strategic Alignment',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack8.png'
             },
             {
                 id: 'challenge-10',
                 category: 'vehicles',
-                title: '"Digital Asset" Hype',
-                problem: 'Students drawn to cryptocurrency but lack fundamental understanding.',
-                theme: 'Informed Speculation'
+                title: 'The "Digital Asset" Hype',
+                subtitle: 'Navigating the Volatility Vortex',
+                problemShort: 'Students drawn to cryptocurrency but lack fundamental understanding.',
+                problem: 'Students are drawn to "Cryptocurrency and Digital Assets" but lack fundamental understanding of technology, regulation, or volatility.',
+                impact: 'Significant financial losses, emotional distress, and susceptibility to scams due to uninformed speculation.',
+                cta: 'Design a solution for informed digital investing',
+                theme: 'Informed Speculation',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack9.png'
             },
 
             // Practical Barriers
@@ -774,22 +934,37 @@
                 id: 'challenge-7',
                 category: 'barriers',
                 title: '"First Step" Paralysis',
-                problem: 'Students are overwhelmed by practical steps of opening accounts and trading.',
-                theme: 'Action & Clarity'
+                subtitle: 'Unlocking the Gates of Investment',
+                problemShort: 'Students are overwhelmed by practical steps of opening accounts and trading.',
+                problem: 'Students want to invest but are overwhelmed by the practical steps (account opening, choosing the broker, making the first trade).',
+                impact: 'Inaction, missed early investment opportunities, and continued confusion.',
+                cta: 'Design a solution that simplifies the journey!',
+                theme: 'Action & Clarity',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack10.png'
             },
             {
                 id: 'challenge-9',
                 category: 'barriers',
                 title: 'Analysis Paralysis',
-                problem: 'Students overwhelmed by financial data and unable to analyze companies.',
-                theme: 'Data & Inaction'
+                subtitle: 'Info-whelm to Informed Decisions',
+                problemShort: 'Students overwhelmed by financial data and unable to analyze companies.',
+                problem: "Students are overwhelmed by the sheer amount of financial data and don't know how to analyze companies or funds.",
+                impact: 'Inaction, missed investment opportunities, and poor decision-making.',
+                cta: 'Design a solution that simplifies investment research!',
+                theme: 'Data & Inaction',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack11.png'
             },
             {
                 id: 'challenge-11',
                 category: 'barriers',
-                title: 'Ethical & Shariah-Compliance',
-                problem: "Students want Shariah-compliant investments but don't know how to identify them.",
-                theme: 'Principles & Prosperity'
+                title: 'Ethical Investing (Shariah-compliance)',
+                subtitle: 'Guided Growth: Navigating Investments with Principles',
+                problemShort: "Students want Shariah-compliant investments but don't know how to identify them.",
+                problem: "Students want Shariah-compliant investments but don't know how to identify them or what makes them compliant.",
+                impact: 'Missed opportunities for faith-aligned wealth growth and unintentional investment in non-compliant ventures.',
+                cta: 'Design a solution for principled prosperity!',
+                theme: 'Principles & Prosperity',
+                imageUrl: 'https://fpp-uitmsabah.github.io/finnovate-hackathon/hack12.png'
             }
         ];
 
@@ -838,19 +1013,21 @@
             };
 
             allChallenges.forEach(challenge => {
+                // Use a <button> for semantics and accessibility
                 const challengeHTML = `
-                    <div class="glass-strong rounded-xl p-5 card-hover">
+                    <button data-challenge-id="${challenge.id}" class="challenge-card text-left w-full glass-strong rounded-xl p-5 card-hover">
                         ${challenge.imageUrl ? `
-                            <div class="mb-4 rounded-lg overflow-hidden">
-                                <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-32 object-cover">
+                            <div class="mb-4 rounded-lg overflow-hidden bg-black/10">
+                                <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-auto object-contain">
                             </div>
                         ` : ''}
                         <h4 class="font-semibold text-white text-lg mb-2">${challenge.title}</h4>
-                        <p class="text-sm text-gray-400 mb-3">${challenge.problem}</p>
+                        <!-- Use the short problem description for the card -->
+                        <p class="text-sm text-gray-400 mb-3">${challenge.problemShort}</p>
                         <div class="inline-block glass px-3 py-1 rounded-full">
                             <span class="text-xs text-electric-blue font-medium">${challenge.theme}</span>
                         </div>
-                    </div>
+                    </button>
                 `;
                 
                 const container = containers[challenge.category];
@@ -938,7 +1115,6 @@
                 let current = '';
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
                     if (pageYOffset >= sectionTop - 200) {
                         current = section.getAttribute('id');
                     }
@@ -981,10 +1157,75 @@
                 });
             });
 
-            // Render challenges and FAQ
+            // --- Modal Logic ---
+            const modal = document.getElementById('challengeModal');
+            const modalContent = document.getElementById('modalContent');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalOverlay = modal.querySelector('.modal-overlay');
+
+            function openModal(challengeId) {
+                const challenge = allChallenges.find(c => c.id === challengeId);
+                if (!challenge) return;
+
+                // Populate modal content
+                modalContent.innerHTML = `
+                    <div class="w-full h-48 md:h-64 rounded-lg overflow-hidden mb-6 bg-black/20">
+                        <img src="${challenge.imageUrl}" alt="${challenge.title}" class="w-full h-full object-contain">
+                    </div>
+                    <h2 class="font-display text-3xl font-bold text-gradient mb-2">${challenge.title}</h2>
+                    ${challenge.subtitle ? `<h3 class="text-xl text-gray-300 font-semibold mb-6">${challenge.subtitle}</h3>` : ''}
+                    
+                    <div class="space-y-6 text-gray-300">
+                        <div>
+                            <h4 class="font-bold text-amber-gold text-lg mb-2">The Problem:</h4>
+                            <p class="leading-relaxed">${challenge.problem}</p>
+                        </div>
+                        <div>
+                            <h4 classs="font-bold text-cyber-cyan text-lg mb-2">The Impact:</h4>
+                            <p class="leading-relaxed">${challenge.impact}</p>
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-dark-border text-center">
+                            <p class="font-display text-2xl text-white">${challenge.cta}</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Show modal
+                modal.classList.add('visible');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+
+            function closeModal() {
+                // Hide modal
+                modal.classList.remove('visible');
+                document.body.style.overflow = ''; // Re-enable scrolling
+                
+                // Clear content after transition to prevent flash
+                setTimeout(() => {
+                    modalContent.innerHTML = ''; 
+                }, 300);
+            }
+
+            // Event Listeners for Modal
+            
+            // Use event delegation on the challenges section
+            document.getElementById('challenges').addEventListener('click', function(e) {
+                const card = e.target.closest('.challenge-card');
+                if (card) {
+                    const challengeId = card.dataset.challengeId;
+                    openModal(challengeId);
+                }
+            });
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', closeModal);
+            
+            // --- Render dynamic content ---
             renderChallenges();
             renderFAQ();
         });
     </script>
 </body>
 </html>
+
+
