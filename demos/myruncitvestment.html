@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyRuncit - Pelaburan Mikro</title>
+    <!--
+      Current time: Sunday, November 9, 2025 at 6:33 PM +08 
+      (Kota Kinabalu, Sabah, Malaysia)
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Simple helper for hiding elements */
+        .hidden {
+            display: none !important;
+        }
+        /* Tailwind's animate-spin */
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <!-- Main Application Container -->
+    <div id="app">
+
+        <!-- 1. Loading Spinner (Visible by default) -->
+        <div id="loading-spinner-container" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-50">
+            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <!-- 2. Main Content (Pages) -->
+        <div id="main-content" class="pb-24 max-w-lg mx-auto hidden">
+            
+            <!-- Page: Home -->
+            <div id="page-home" class="p-4 space-y-6">
+                <!-- Header -->
+                <div class="pt-4">
+                    <h1 class="text-3xl font-bold text-gray-900">Selamat Pagi!</h1>
+                    <p class="text-gray-500">Jom kumpul sikit-sikit.</p>
+                </div>
+
+                <!-- Portfolio Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg relative">
+                    <div id="home-lock-icon" class="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hidden">
+                        <svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L8 5V11H16V5L12 1ZM10 6.30332L12 4.69668L14 6.30332V9H10V6.30332ZM7 12V22H17V12H7ZM13 18.001H11V16.001H13V18.001Z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase">Nilai Portfolio</h2>
+                        <button id="home-show-value-button">
+                            <!-- Icon toggled by JS -->
+                        </button>
+                    </div>
+                    <p id="home-portfolio-value" class="text-4xl font-bold text-gray-800 mb-1">RM0.00</p>
+                    <p id="home-portfolio-gains" class="text-lg font-semibold text-green-600">RM0.00 (0.00%)</p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Tindakan Pantas</h3>
+                    
+                    <!-- Simpan Baki -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md flex justify-between items-center">
+                        <div>
+                            <p class="text-lg font-semibold text-gray-700">Simpan Baki</p>
+                            <p id="home-roundup-amount" class="text-2xl font-bold text-blue-600">RM0.00</p>
+                            <p class="text-sm text-gray-500">Sedia untuk dilaburkan</p>
+                        </div>
+                        <button id="home-invest-roundup-button" disabled class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors disabled:bg-gray-300">
+                            Labur
+                        </button>
+                    </div>
+                    
+                    <!-- Beli Sikit-Sikit -->
+                    <div id="home-dca-card" class="bg-white p-5 rounded-2xl shadow-md flex justify-between items-center hidden">
+                        <div>
+                            <p class="text-lg font-semibold text-gray-700">Beli Sikit-Sikit</p>
+                            <p id="home-dca-amount" class="text-2xl font-bold text-purple-600">RM0.00</p>
+                            <p class="text-sm text-gray-500">Pelaburan bulanan anda</p>
+                        </div>
+                        <button id="home-invest-dca-button" class="px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">
+                            Labur
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-5 rounded-2xl flex items-center space-x-4">
+                    <div class="p-3 bg-white rounded-full shadow-md">
+                        <svg class="w-8 h-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18 7C18 5.34315 16.6569 4 15 4C13.3431 4 12 5.34315 12 7H11C7.68629 7 5 9.68629 5 13V15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H5V20C5 20.5523 5.44772 21 6 21H8C8.5523 21 9 20.5523 9 20V19H15V20C15 20.5523 15.4477 21 16 21H18C18.5523 21 19 20.5523 19 20V19H20C20.5523 19 21 18.5523 21 18V16C21 15.4477 20.5523 15 20 15H19V13C19 9.68629 16.3137 7 13 7H12V7C12 7.55228 12.4477 8 13 8H14C14.5523 8 15 7.55228 15 7C15 6.44772 14.5523 6 14 6C12.8954 6 12 6.89543 12 8V9.08277C14.2882 9.48912 16.035 11.084 16.7417 13H19V11H17C16.4477 11 16 10.5523 16 10C16 9.44772 16.4477 9 17 9H19C19 8.44772 18.5523 8 18 8V7ZM7 13C7 10.7909 8.79086 9 11 9V13H7Z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">Kenapa melabur sikit-sikit?</p>
+                        <p class="text-sm text-gray-600">Pelaburan konsisten, walaupun kecil, boleh membina kekayaan dari masa ke masa.</p>
+                        <button id="home-manage-investment-button" class="text-sm font-semibold text-blue-700 hover:underline mt-1">
+                            Urus pelaburan anda
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Page: Invest -->
+            <div id="page-invest" class="p-4 space-y-6 hidden">
+                <h1 class="text-3xl font-bold text-gray-900 pt-4">Autopilot</h1>
+                <p class="text-gray-600">Automasikan pelaburan anda untuk ketenangan fikiran.</p>
+                
+                <!-- Simpan Baki (Round-ups) -->
+                <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-bold text-blue-700 mb-2">Simpan Baki</h2>
+                            <p class="text-sm text-gray-600 mb-4">Laburkan baki wang daripada perbelanjaan harian anda secara automatik.</p>
+                        </div>
+                        <button id="invest-roundup-toggle-button" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-gray-200">
+                            <span id="invest-roundup-toggle-knob" class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform translate-x-1"></span>
+                        </button>
+                    </div>
+                    <button id="invest-roundup-info-button" class="text-sm font-semibold text-blue-600 hover:underline">
+                        Bagaimana ia berfungsi?
+                    </button>
+                    
+                    <div id="invest-roundup-details" class="mt-6 hidden">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3">Baki Terkumpul</h3>
+                        <div id="invest-transactions-list" class="space-y-2 mb-4 max-h-48 overflow-y-auto pr-2">
+                            <!-- Transactions injected by JS -->
+                        </div>
+                        <div class="flex justify-between items-center border-t pt-4">
+                            <span id="invest-roundup-total" class="text-lg font-bold text-gray-800">Jumlah: RM0.00</span>
+                            <button id="invest-invest-roundup-button" disabled class="px-5 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors disabled:bg-gray-300">
+                                Labur Sekarang
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Beli Sikit-Sikit (DCA) -->
+                <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <h2 class="text-xl font-bold text-purple-700 mb-2">Beli Sikit-Sikit</h2>
+                    <p class="text-sm text-gray-600 mb-4">Labur sejumlah wang tetap secara automatik setiap bulan (DCA).</p>
+                    
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg font-semibold text-gray-700">RM</span>
+                        <input id="invest-dca-input" type="number" class="w-full text-lg font-semibold p-2 border-b-2 border-gray-300 focus:border-purple-500 focus:outline-none" placeholder="0">
+                        <span class="text-lg font-semibold text-gray-700">/ bulan</span>
+                    </div>
+                    <button id="invest-set-dca-button" class="w-full mt-5 py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 transition-colors">
+                        Tetapkan Pelaburan Bulanan
+                    </button>
+                    <button id="invest-stop-dca-button" class="w-full mt-3 text-sm font-semibold text-red-600 hover:underline hidden">
+                        Berhenti Melabur
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Page: Portfolio -->
+            <div id="page-portfolio" class="p-4 space-y-6 hidden">
+                <h1 class="text-3xl font-bold text-gray-900 pt-4">Portfolio Anda</h1>
+                
+                <!-- Portfolio Value Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase">Nilai Portfolio</h2>
+                        <button id="portfolio-show-value-button">
+                            <!-- Icon toggled by JS -->
+                        </button>
+                    </div>
+                    <p id="portfolio-value" class="text-4xl font-bold text-gray-800 mb-1">RM0.00</p>
+                    
+                    <div class="mt-4 space-y-2">
+                        <div class="flex justify-between text-lg">
+                            <span class="text-gray-600">Jumlah Pulangan</span>
+                            <span id="portfolio-gains" class="font-semibold text-green-600">RM0.00 (0.00%)</span>
+                        </div>
+                        <div class="flex justify-between text-lg">
+                            <span class="text-gray-600">Jumlah Dilaburkan</span>
+                            <span id="portfolio-invested" class="font-semibold text-gray-800">RM0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Psychological Shield (FoGL) -->
+                <div class="bg-gradient-to-br from-gray-700 to-gray-900 text-white p-6 rounded-2xl shadow-xl">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <svg class="w-8 h-8 text-yellow-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L8 5V11H16V5L12 1ZM10 6.30332L12 4.69668L14 6.30332V9H10V6.30332ZM7 12V22H17V12H7ZM13 18.001H11V16.001H13V18.001Z"></path>
+                        </svg>
+                        <h2 class="text-2xl font-bold">Mod Jangka Panjang</h2>
+                    </div>
+                    <p class="text-gray-300 mb-5">
+                        Takut tertekan & jual bila pasaran jatuh? Kunci portfolio anda untuk elak buat keputusan terburu-buru.
+                    </p>
+                    
+                    <div id="portfolio-locked-info" class="text-center bg-gray-700 p-4 rounded-lg hidden">
+                        <p class="font-semibold text-yellow-300">Portfolio Anda Dikunci!</p>
+                        <p class="text-sm text-gray-200">Bertenang dan biarkan pelaburan anda bertumbuh.</p>
+                        <p class="text-sm text-gray-200 mt-2">Buka pada: <span id="portfolio-locked-date" class="font-bold"></span></p>
+                    </div>
+
+                    <button id="portfolio-lock-button" class="w-full py-3 bg-yellow-400 text-gray-900 font-bold rounded-lg shadow-md hover:bg-yellow-300 transition-colors">
+                        Kunci Portfolio Saya
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Bottom Navigation -->
+        <nav id="nav-container" class="fixed bottom-0 left-0 right-0 h-20 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)] max-w-lg mx-auto rounded-t-3xl grid grid-cols-3 items-center hidden">
+            <button id="nav-button-home" data-page="home" class="flex flex-col items-center justify-center space-y-1 transition-colors text-blue-600">
+                <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.0006 1.62109L22.607 9.87321V22.3732H1.39429V9.87321L12.0006 1.62109ZM12.0006 4.31481L3.39429 10.9995V20.3732H9.0006V14.3732H15.0006V20.3732H20.607V10.9995L12.0006 4.31481Z"></path>
+                </svg>
+                <span class="text-xs font-semibold font-bold">Utama</span>
+            </button>
+            <button id="nav-button-invest" data-page="invest" class="flex flex-col items-center justify-center space-y-1 transition-colors text-gray-400 hover:text-gray-600">
+                <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 7C18 5.34315 16.6569 4 15 4C13.3431 4 12 5.34315 12 7H11C7.68629 7 5 9.68629 5 13V15H4C3.44772 15 3 15.4477 3 16V18C3 18.5523 3.44772 19 4 19H5V20C5 20.5523 5.44772 21 6 21H8C8.5523 21 9 20.5523 9 20V19H15V20C15 20.5523 15.4477 21 16 21H18C18.5523 21 19 20.5523 19 20V19H20C20.5523 19 21 18.5523 21 18V16C21 15.4477 20.5523 15 20 15H19V13C19 9.68629 16.3137 7 13 7H12V7C12 7.55228 12.4477 8 13 8H14C14.5523 8 15 7.55228 15 7C15 6.44772 14.5523 6 14 6C12.8954 6 12 6.89543 12 8V9.08277C14.2882 9.48912 16.035 11.084 16.7417 13H19V11H17C16.4477 11 16 10.5523 16 10C16 9.44772 16.4477 9 17 9H19C19 8.44772 18.5523 8 18 8V7ZM7 13C7 10.7909 8.79086 9 11 9V13H7Z"></path>
+                </svg>
+                <span class="text-xs font-semibold font-medium">Labur</span>
+            </button>
+            <button id="nav-button-portfolio" data-page="portfolio" class="flex flex-col items-center justify-center space-y-1 transition-colors text-gray-400 hover:text-gray-600">
+                <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 13H5V21H3V13ZM11 13H13V21H11V13ZM19 13H21V21H19V13ZM3 3H5V11H3V3ZM11 3H13V11H11V3ZM19 3H21V11H19V3Z"></path>
+                </svg>
+                <span class="text-xs font-semibold font-medium">Portfolio</span>
+            </button>
+        </nav>
+
+        <!-- 4. Modal Container -->
+        <div id="modal-container" class="hidden">
+            <!-- Modals are injected here by JS -->
+        </div>
+
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script type="module">
+        // --- Firebase Imports ---
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+          ? JSON.parse(__firebase_config) 
+          : { apiKey: "DEFAULT_API_KEY", authDomain: "DEFAULT_AUTH_DOMAIN", projectId: "DEFAULT_PROJECT_ID" };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-myruncit-app';
+
+        // Initialize Firebase
+        setLogLevel('Debug');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- MOCK DATA ---
+        const MOCK_TRANSACTIONS = [
+          { id: 't1', vendor: 'Kedai Kopi Ah Meng', amount: 4.20, date: '2025-11-09T08:30:00' },
+          { id: 't2', vendor: 'MyNews', amount: 12.50, date: '2025-11-09T09:15:00' },
+          { id: 't3', vendor: 'Pasar Pagi', amount: 21.80, date: '2025-11-08T11:20:00' },
+          { id: 't4', vendor: 'Grab Ride', amount: 8.00, date: '2025-11-08T18:05:00' },
+          { id: 't5', vendor: 'Restoran Nasi Kandar', amount: 15.30, date: '2025-11-07T13:10:00' },
+          { id: 't6', vendor: '7-Eleven', amount: 6.70, date: '2025-11-07T21:45:00' },
+        ];
+
+        // --- SVG Icons Map ---
+        const ICONS = {
+            eye: `<svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3C17.52 3 22 7.48 22 13C22 18.52 17.52 23 12 23C6.48 23 2 18.52 2 13C2 7.48 6.48 3 12 3ZM12 5C8.69 5 5.8 7.14 4.58 10.22C4.53 10.33 4.5 10.44 4.5 10.55L4.5 11.5C4.5 11.78 4.72 12 5 12C5.28 12 5.5 11.78 5.5 11.5L5.5 11.03C6.57 8.56 9.03 7 12 7C14.97 7 17.43 8.56 18.5 11.03L18.5 11.5C18.5 11.78 18.72 12 19 12C19.28 12 19.5 11.78 19.5 11.5L19.5 10.55C19.5 10.44 19.47 10.33 19.42 10.22C18.2 7.14 15.31 5 12 5ZM12 13C10.9 13 10 13.9 10 15C10 16.1 10.9 17 12 17C13.1 17 14 16.1 14 15C14 13.9 13.1 13 12 13Z"></path>
+                  </svg>`,
+            eyeOff: `<svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                       <path d="M19.42 10.22C19.47 10.33 19.5 10.44 19.5 10.55L19.5 11.5C19.5 11.78 19.28 12 19 12C18.72 12 18.5 11.78 18.5 11.5L18.5 11.03C17.43 8.56 14.97 7 12 7C9.03 7 6.57 8.56 5.5 11.03L5.5 11.5C5.5 11.78 5.28 12 5 12C4.72 12 4.5 11.78 4.5 11.5L4.5 10.55C4.5 10.44 4.53 10.33 4.58 10.22C5.8 7.14 8.69 5 12 5C15.31 5 18.2 7.14 19.42 10.22ZM12 3C17.52 3 22 7.48 22 13C22 18.52 17.52 23 12 23C6.48 23 2 18.52 2 13C2 7.48 6.48 3 12 3ZM12 13C10.9 13 10 13.9 10 15C10 16.1 10.9 17 12 17C13.1 17 14 16.1 14 15C14 13.9 13.1 13 12 13Z"></path>
+                     </svg>`,
+            close: `<svg class="w-6 h-6 text-gray-400 hover:text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path>
+                    </svg>`,
+            checkCircle: `<svg class="w-16 h-16 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"></path>
+                          </svg>`
+        };
+
+        // --- Application State ---
+        let state = {
+            isAuthReady: false,
+            userId: null,
+            page: 'home',
+            modal: null,
+            isLoading: true,
+            portfolio: { totalInvested: 0, currentValue: 0 },
+            settings: {
+                roundupsEnabled: true,
+                dcaAmount: 0,
+                dcaFrequency: 'monthly',
+                portfolioLockedUntil: null,
+            },
+            transactions: [],
+            dcaAmountInput: '0',
+            showValue: true,
+        };
+
+        let paths = {};
+        let growthInterval;
+
+        // --- Helper Functions ---
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('ms-MY', {
+                style: 'currency',
+                currency: 'MYR',
+            }).format(amount || 0);
+        };
+
+        const calculateRoundup = (amount) => {
+            const roundedUp = Math.ceil(amount);
+            return parseFloat((roundedUp - amount).toFixed(2));
+        };
+
+        // --- DOM References ---
+        // Will be populated on DOMContentLoaded
+        let dom = {};
+
+        // --- State Update & Rendering Functions ---
+
+        function updateLoading() {
+            if (state.isLoading || !state.isAuthReady) {
+                dom.loadingContainer.classList.remove('hidden');
+                dom.mainContent.classList.add('hidden');
+                dom.navContainer.classList.add('hidden');
+            } else {
+                dom.loadingContainer.classList.add('hidden');
+                dom.mainContent.classList.remove('hidden');
+                dom.navContainer.classList.remove('hidden');
+            }
+        }
+
+        function updateNav() {
+            dom.navButtons.forEach(btn => {
+                if (btn.dataset.page === state.page) {
+                    btn.classList.remove('text-gray-400', 'hover:text-gray-600');
+                    btn.classList.add('text-blue-600');
+                    btn.querySelector('span').classList.add('font-bold');
+                    btn.querySelector('span').classList.remove('font-medium');
+                } else {
+                    btn.classList.add('text-gray-400', 'hover:text-gray-600');
+                    btn.classList.remove('text-blue-600');
+                    btn.querySelector('span').classList.remove('font-bold');
+                    btn.querySelector('span').classList.add('font-medium');
+                }
+            });
+        }
+
+        function showPage(pageId) {
+            state.page = pageId;
+            dom.pages.forEach(p => {
+                if (p.id === `page-${pageId}`) {
+                    p.classList.remove('hidden');
+                } else {
+                    p.classList.add('hidden');
+                }
+            });
+            updateNav();
+            window.scrollTo(0, 0); // Scroll to top on page change
+        }
+
+        function toggleShowValue() {
+            state.showValue = !state.showValue;
+            updateHomePage();
+            updatePortfolioPage();
+        }
+
+        function updateHomePage() {
+            const { portfolio, settings, showValue, transactions } = state;
+            const totalRoundup = transactions.reduce((acc, t) => acc + calculateRoundup(t.amount), 0);
+            
+            const totalGains = portfolio.currentValue - portfolio.totalInvested;
+            const totalGainsPercent = portfolio.totalInvested > 0 ? (totalGains / portfolio.totalInvested) * 100 : 0;
+            const gainsColor = totalGains >= 0 ? 'text-green-600' : 'text-red-600';
+
+            const displayValue = showValue ? formatCurrency(portfolio.currentValue) : '••••••••';
+            const displayGains = showValue ? `${formatCurrency(totalGains)} (${totalGainsPercent.toFixed(2)}%)` : '••••••••';
+
+            dom.home.portfolioValue.textContent = displayValue;
+            dom.home.portfolioGains.textContent = displayGains;
+            dom.home.portfolioGains.className = `text-lg font-semibold ${gainsColor}`;
+            dom.home.showValueButton.innerHTML = showValue ? ICONS.eyeOff : ICONS.eye;
+
+            const isLocked = settings.portfolioLockedUntil && new Date() < settings.portfolioLockedUntil.toDate();
+            dom.home.lockIcon.classList.toggle('hidden', !isLocked);
+
+            // Quick Actions
+            dom.home.roundupAmount.textContent = formatCurrency(totalRoundup);
+            dom.home.investRoundupButton.disabled = totalRoundup === 0;
+
+            if (settings.dcaAmount > 0) {
+                dom.home.dcaCard.classList.remove('hidden');
+                dom.home.dcaAmount.textContent = formatCurrency(settings.dcaAmount);
+            } else {
+                dom.home.dcaCard.classList.add('hidden');
+            }
+        }
+
+        function updateInvestPage() {
+            const { settings, transactions } = state;
+            
+            // Toggle
+            dom.invest.roundupToggleButton.classList.toggle('bg-blue-600', settings.roundupsEnabled);
+            dom.invest.roundupToggleButton.classList.toggle('bg-gray-200', !settings.roundupsEnabled);
+            dom.invest.roundupToggleKnob.classList.toggle('translate-x-6', settings.roundupsEnabled);
+            dom.invest.roundupToggleKnob.classList.toggle('translate-x-1', !settings.roundupsEnabled);
+
+            // Roundup Details
+            dom.invest.roundupDetails.classList.toggle('hidden', !settings.roundupsEnabled);
+
+            if (settings.roundupsEnabled) {
+                const totalRoundup = transactions.reduce((acc, t) => acc + calculateRoundup(t.amount), 0);
+                dom.invest.roundupTotal.textContent = `Jumlah: ${formatCurrency(totalRoundup)}`;
+                dom.invest.investRoundupButton.disabled = totalRoundup === 0;
+                
+                if (transactions.length > 0) {
+                    dom.invest.transactionsList.innerHTML = transactions.map(t => {
+                        const roundup = calculateRoundup(t.amount);
+                        return `
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600 truncate w-3/5">${t.vendor}</span>
+                                <span class="text-gray-500">${formatCurrency(t.amount)}</span>
+                                <span class="font-semibold text-blue-600 w-16 text-right">+ ${formatCurrency(roundup)}</span>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    dom.invest.transactionsList.innerHTML = `<p class="text-sm text-gray-500 text-center py-4">Tiada baki terkumpul buat masa ini.</p>`;
+                }
+            }
+
+            // DCA
+            dom.invest.dcaInput.value = state.dcaAmountInput;
+            dom.invest.setDcaButton.textContent = settings.dcaAmount > 0 ? 'Kemas Kini' : 'Tetapkan Pelaburan Bulanan';
+            dom.invest.stopDcaButton.classList.toggle('hidden', !(settings.dcaAmount > 0));
+        }
+
+        function updatePortfolioPage() {
+            const { portfolio, settings, showValue } = state;
+
+            const totalGains = portfolio.currentValue - portfolio.totalInvested;
+            const totalGainsPercent = portfolio.totalInvested > 0 ? (totalGains / portfolio.totalInvested) * 100 : 0;
+            const gainsColor = totalGains >= 0 ? 'text-green-600' : 'text-red-600';
+
+            const displayValue = showValue ? formatCurrency(portfolio.currentValue) : '••••••••';
+            const displayInvested = showValue ? formatCurrency(portfolio.totalInvested) : '••••••••';
+            const displayGains = showValue ? `${formatCurrency(totalGains)} (${totalGainsPercent.toFixed(2)}%)` : '••••••••';
+
+            dom.portfolio.value.textContent = displayValue;
+            dom.portfolio.invested.textContent = displayInvested;
+            dom.portfolio.gains.textContent = displayGains;
+            dom.portfolio.gains.className = `font-semibold ${gainsColor}`;
+            dom.portfolio.showValueButton.innerHTML = showValue ? ICONS.eyeOff : ICONS.eye;
+
+            // Lock Shield
+            const isLocked = settings.portfolioLockedUntil && new Date() < settings.portfolioLockedUntil.toDate();
+            dom.portfolio.lockedInfo.classList.toggle('hidden', !isLocked);
+            dom.portfolio.lockButton.classList.toggle('hidden', isLocked);
+            if (isLocked) {
+                dom.portfolio.lockedDate.textContent = new Intl.DateTimeFormat('ms-MY', { dateStyle: 'long' }).format(settings.portfolioLockedUntil.toDate());
+            }
+        }
+        
+        function updateAllPages() {
+            updateHomePage();
+            updateInvestPage();
+            updatePortfolioPage();
+        }
+
+        // --- Modal Functions ---
+
+        function showModal(modalType) {
+            state.modal = modalType;
+            let modalHTML = '';
+            
+            switch (modalType) {
+                case 'lock':
+                    modalHTML = createLockModalHTML();
+                    break;
+                case 'locked':
+                    modalHTML = createLockedInfoModalHTML();
+                    break;
+                case 'roundupInfo':
+                    modalHTML = createRoundupInfoModalHTML();
+                    break;
+            }
+            
+            dom.modalContainer.innerHTML = modalHTML;
+            dom.modalContainer.classList.remove('hidden');
+            
+            // Attach listeners for the newly created modal
+            attachModalListeners(modalType);
+        }
+
+        function hideModal() {
+            state.modal = null;
+            dom.modalContainer.innerHTML = '';
+            dom.modalContainer.classList.add('hidden');
+        }
+        
+        function attachModalListeners(modalType) {
+            const closeModal = () => hideModal();
+            dom.modalContainer.querySelector('#modal-backdrop').addEventListener('click', closeModal);
+            dom.modalContainer.querySelector('#modal-close-button').addEventListener('click', closeModal);
+            
+            switch (modalType) {
+                case 'lock':
+                    dom.modalContainer.querySelector('#lock-30').addEventListener('click', () => handleSetLock(30));
+                    dom.modalContainer.querySelector('#lock-180').addEventListener('click', () => handleSetLock(180));
+                    dom.modalContainer.querySelector('#lock-365').addEventListener('click', () => handleSetLock(365));
+                    break;
+                case 'locked':
+                    dom.modalContainer.querySelector('#locked-faham-button').addEventListener('click', closeModal);
+                    break;
+                case 'roundupInfo':
+                    dom.modalContainer.querySelector('#roundup-hebat-button').addEventListener('click', closeModal);
+                    break;
+            }
+        }
+
+        function createLockModalHTML() {
+            return `
+                <div id="modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm" onclick="event.stopPropagation()">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-bold text-gray-800">Kunci Portfolio</h2>
+                                <button id="modal-close-button" type="button">${ICONS.close}</button>
+                            </div>
+                            <p class="text-gray-600">
+                                Ini akan menyembunyikan nilai portfolio anda dan menghalang anda daripada menjual. Pilih tempoh bertenang anda.
+                            </p>
+                            <div class="space-y-3">
+                                <button id="lock-30" class="w-full py-3 px-5 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">Kunci selama 30 Hari</button>
+                                <button id="lock-180" class="w-full py-3 px-5 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">Kunci selama 6 Bulan</button>
+                                <button id="lock-365" class="w-full py-3 px-5 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors">Kunci selama 1 Tahun</button>
+                            </div>
+                            <p class="text-xs text-gray-500 text-center">Anda masih boleh terus melabur seperti biasa.</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createLockedInfoModalHTML() {
+            const formattedDate = new Intl.DateTimeFormat('ms-MY', { dateStyle: 'long', timeStyle: 'short' }).format(state.settings.portfolioLockedUntil.toDate());
+            return `
+                <div id="modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm" onclick="event.stopPropagation()">
+                        <div class="flex flex-col items-center text-center space-y-4">
+                            ${ICONS.checkCircle}
+                            <h2 class="text-2xl font-bold text-gray-800">Portfolio Dikunci!</h2>
+                            <p class="text-gray-600">
+                                Bagus! Anda telah mengambil langkah untuk melindungi pelaburan jangka panjang anda daripada emosi jangka pendek.
+                            </p>
+                            <p class="text-gray-700 font-semibold">Portfolio anda akan dibuka semula pada:</p>
+                            <p class="text-lg font-bold text-blue-600">${formattedDate}</p>
+                            <button id="locked-faham-button" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Faham</button>
+                            <button id="modal-close-button" class="hidden"></button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createRoundupInfoModalHTML() {
+            return `
+                <div id="modal-backdrop" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md" onclick="event.stopPropagation()">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h2 class="text-xl font-bold text-blue-700">Apa itu "Simpan Baki"?</h2>
+                                <button id="modal-close-button" type="button">${ICONS.close}</button>
+                            </div>
+                            <p class="text-gray-600">Ia adalah cara mudah untuk melabur tanpa perlu difikirkan.</p>
+                            <ul class="space-y-3">
+                                <li class="flex space-x-3"><span class="font-bold text-blue-600">1.</span><span class="text-gray-700">Anda berbelanja seperti biasa (kami simulasikan ini).</span></li>
+                                <li class="flex space-x-3"><span class="font-bold text-blue-600">2.</span><span class="text-gray-700">Kami 'bundarkan' setiap transaksi ke Ringgit terdekat.</span></li>
+                                <li class="flex space-x-3"><span class="font-bold text-blue-600">3.</span><span class="text-gray-700">Perbezaannya (baki) dikumpulkan.</span></li>
+                            </ul>
+                            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                                <p class="font-semibold">Contoh:</p>
+                                <p class="text-gray-700">Anda beli kopi: <span class="font-bold">RM 4.20</span></p>
+                                <p class="text-gray-700">Kami bundarkan ke: <span class="font-bold">RM 5.00</span></p>
+                                <p class="text-gray-700">Baki untuk dilabur: <span class="font-bold text-blue-600">RM 0.80</span></p>
+                            </div>
+                            <p class="text-gray-600">Apabila baki anda terkumpul, anda boleh melaburkannya dengan satu klik!</p>
+                            <button id="roundup-hebat-button" class="w-full py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">Hebat!</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Firebase Logic Handlers ---
+
+        async function handleUpdateSettings(newSettings) {
+            if (!paths.settings) return;
+            state.isLoading = true;
+            updateLoading();
+            try {
+                await setDoc(paths.settings, newSettings, { merge: true });
+            } catch (error) {
+                console.error("Error updating settings:", error);
+            }
+            state.isLoading = false;
+            updateLoading();
+        }
+
+        async function handleInvestRoundups() {
+            if (!paths.profile) return;
+            const totalRoundup = state.transactions.reduce((acc, t) => acc + calculateRoundup(t.amount), 0);
+            if (totalRoundup === 0) return;
+
+            state.isLoading = true;
+            updateLoading();
+            try {
+                const newTotalInvested = state.portfolio.totalInvested + totalRoundup;
+                const newCurrentValue = state.portfolio.currentValue + totalRoundup;
+
+                await setDoc(paths.profile, {
+                    totalInvested: newTotalInvested,
+                    currentValue: newCurrentValue,
+                    lastRoundupInvested: serverTimestamp()
+                }, { merge: true });
+                
+                state.transactions = []; // Clear transactions
+                updateInvestPage();
+            } catch (error) {
+                console.error("Error investing roundups:", error);
+            }
+            state.isLoading = false;
+            updateLoading();
+        }
+
+        async function handleInvestDCA() {
+            if (!paths.profile || state.settings.dcaAmount === 0) return;
+            
+            state.isLoading = true;
+            updateLoading();
+            try {
+                const dcaAmount = state.settings.dcaAmount;
+                const newTotalInvested = state.portfolio.totalInvested + dcaAmount;
+                const newCurrentValue = state.portfolio.currentValue + dcaAmount;
+                
+                await setDoc(paths.profile, {
+                    totalInvested: newTotalInvested,
+                    currentValue: newCurrentValue,
+                    lastDCAInvested: serverTimestamp()
+                }, { merge: true });
+            } catch (error) {
+                console.error("Error investing DCA:", error);
+            }
+            state.isLoading = false;
+            updateLoading();
+        }
+        
+        async function handleSetLock(durationInDays) {
+            if (!paths.settings) return;
+            const lockDate = new Date();
+            lockDate.setDate(lockDate.getDate() + durationInDays);
+            
+            await handleUpdateSettings({ portfolioLockedUntil: Timestamp.fromDate(lockDate) });
+            showModal('locked');
+        }
+
+        function handleSetDCA() {
+            const amount = parseFloat(state.dcaAmountInput) || 0;
+            handleUpdateSettings({ dcaAmount: amount });
+        }
+
+        // --- Simulated Growth ---
+        function startGrowthSimulator() {
+            if (growthInterval) clearInterval(growthInterval);
+            
+            growthInterval = setInterval(() => {
+                if (state.portfolio.totalInvested === 0 || !state.isAuthReady) return;
+
+                const marketGain = state.portfolio.currentValue * 0.0001;
+                const newValue = state.portfolio.currentValue + marketGain;
+                
+                // Update state locally for immediate feedback
+                state.portfolio.currentValue = newValue;
+                updateHomePage(); // Update relevant parts
+                updatePortfolioPage();
+                
+                // Update Firestore (debounced or throttled in a real app)
+                if (paths.profile) {
+                    setDoc(paths.profile, { currentValue: newValue }, { merge: true });
+                }
+            }, 3000);
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate DOM reference object
+            dom = {
+                app: document.getElementById('app'),
+                loadingContainer: document.getElementById('loading-spinner-container'),
+                mainContent: document.getElementById('main-content'),
+                navContainer: document.getElementById('nav-container'),
+                modalContainer: document.getElementById('modal-container'),
+                pages: document.querySelectorAll('#main-content > div[id^="page-"]'),
+                navButtons: document.querySelectorAll('#nav-container button'),
+
+                home: {
+                    lockIcon: document.getElementById('home-lock-icon'),
+                    showValueButton: document.getElementById('home-show-value-button'),
+                    portfolioValue: document.getElementById('home-portfolio-value'),
+                    portfolioGains: document.getElementById('home-portfolio-gains'),
+                    roundupAmount: document.getElementById('home-roundup-amount'),
+                    investRoundupButton: document.getElementById('home-invest-roundup-button'),
+                    dcaCard: document.getElementById('home-dca-card'),
+                    dcaAmount: document.getElementById('home-dca-amount'),
+                    investDcaButton: document.getElementById('home-invest-dca-button'),
+                    manageInvestmentButton: document.getElementById('home-manage-investment-button')
+                },
+                invest: {
+                    roundupToggleButton: document.getElementById('invest-roundup-toggle-button'),
+                    roundupToggleKnob: document.getElementById('invest-roundup-toggle-knob'),
+                    roundupInfoButton: document.getElementById('invest-roundup-info-button'),
+                    roundupDetails: document.getElementById('invest-roundup-details'),
+                    transactionsList: document.getElementById('invest-transactions-list'),
+                    roundupTotal: document.getElementById('invest-roundup-total'),
+                    investRoundupButton: document.getElementById('invest-invest-roundup-button'),
+                    dcaInput: document.getElementById('invest-dca-input'),
+                    setDcaButton: document.getElementById('invest-set-dca-button'),
+                    stopDcaButton: document.getElementById('invest-stop-dca-button')
+                },
+                portfolio: {
+                    showValueButton: document.getElementById('portfolio-show-value-button'),
+                    value: document.getElementById('portfolio-value'),
+                    gains: document.getElementById('portfolio-gains'),
+                    invested: document.getElementById('portfolio-invested'),
+                    lockButton: document.getElementById('portfolio-lock-button'),
+                    lockedInfo: document.getElementById('portfolio-locked-info'),
+                    lockedDate: document.getElementById('portfolio-locked-date')
+                }
+            };
+
+            // --- Attach Event Listeners ---
+
+            // Nav
+            dom.navButtons.forEach(btn => {
+                btn.addEventListener('click', () => showPage(btn.dataset.page));
+            });
+
+            // Home
+            dom.home.showValueButton.addEventListener('click', toggleShowValue);
+            dom.home.investRoundupButton.addEventListener('click', handleInvestRoundups);
+            dom.home.investDcaButton.addEventListener('click', handleInvestDCA);
+            dom.home.manageInvestmentButton.addEventListener('click', () => showPage('invest'));
+            
+            // Invest
+            dom.invest.roundupToggleButton.addEventListener('click', () => {
+                handleUpdateSettings({ roundupsEnabled: !state.settings.roundupsEnabled });
+            });
+            dom.invest.roundupInfoButton.addEventListener('click', () => showModal('roundupInfo'));
+            dom.invest.investRoundupButton.addEventListener('click', handleInvestRoundups);
+            dom.invest.dcaInput.addEventListener('input', (e) => {
+                state.dcaAmountInput = e.target.value;
+            });
+            dom.invest.setDcaButton.addEventListener('click', handleSetDCA);
+            dom.invest.stopDcaButton.addEventListener('click', () => {
+                state.dcaAmountInput = '0';
+                handleUpdateSettings({ dcaAmount: 0 });
+            });
+
+            // Portfolio
+            dom.portfolio.showValueButton.addEventListener('click', toggleShowValue);
+            dom.portfolio.lockButton.addEventListener('click', () => showModal('lock'));
+
+            // --- Start Auth and Data Loading ---
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    state.userId = user.uid;
+                    state.isAuthReady = true;
+
+                    paths = {
+                        profile: doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'main'),
+                        settings: doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'main'),
+                    };
+
+                    // Load mock transactions
+                    state.transactions = MOCK_TRANSACTIONS;
+
+                    // Attach listeners
+                    onSnapshot(paths.profile, (doc) => {
+                        if (doc.exists()) {
+                            state.portfolio = doc.data();
+                        } else {
+                            setDoc(paths.profile, state.portfolio);
+                        }
+                        updateAllPages();
+                    });
+
+                    onSnapshot(paths.settings, (doc) => {
+                        if (doc.exists()) {
+                            const data = doc.data();
+                            state.settings = {
+                                ...data,
+                                portfolioLockedUntil: data.portfolioLockedUntil || null,
+                            };
+                            state.dcaAmountInput = data.dcaAmount.toString();
+                        } else {
+                            setDoc(paths.settings, state.settings);
+                        }
+                        state.isLoading = false;
+                        updateAllPages();
+                        updateLoading();
+                    });
+
+                    // Start simulation
+                    startGrowthSimulator();
+
+                } else {
+                    // Not signed in, attempt sign in
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Error during sign-in:", error);
+                        dom.loadingContainer.innerHTML = `<p class="text-red-500 p-4">Error connecting to server. Please refresh.</p>`;
+                    }
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
