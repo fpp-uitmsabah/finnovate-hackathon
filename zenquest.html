@@ -1,0 +1,983 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, 
+  signInAnonymously, 
+  signInWithCustomToken, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { 
+  getFirestore, 
+  doc, 
+  getDoc,
+  setDoc, 
+  addDoc, 
+  deleteDoc, 
+  onSnapshot, 
+  collection, 
+  query, 
+  serverTimestamp,
+  writeBatch
+} from 'firebase/firestore';
+import { setLogLevel } from 'firebase/app';
+
+// --- Firebase Configuration ---
+// These variables are injected by the environment.
+const firebaseConfig = typeof __firebase_config !== 'undefined' 
+  ? JSON.parse(__firebase_config) 
+  : { apiKey: "DEFAULT_API_KEY", authDomain: "DEFAULT_AUTH_DOMAIN", projectId: "DEFAULT_PROJECT_ID" };
+
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-savequest-app';
+
+// Initialize Firebase
+setLogLevel('Debug');
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- SVG Icons ---
+// (Icons remain the same as they are universal)
+
+const HomeIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.0006 1.62109L22.607 9.87321V22.3732H1.39429V9.87321L12.0006 1.62109ZM12.0006 4.31481L3.39429 10.9995V20.3732H9.0006V14.3732H15.0006V20.3732H20.607V10.9995L12.0006 4.31481Z"></path>
+  </svg>
+);
+
+const TargetIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4ZM12 6C10.9 6 10 6.9 10 8C10 9.1 10.9 10 12 10C13.1 10 14 9.1 14 8C14 6.9 13.1 6 12 6ZM12 10C9.79 10 8 11.79 8 14C8 16.21 9.79 18 12 18C14.21 18 16 16.21 16 14C16 11.79 14.21 10 12 10ZM12 12C13.1 12 14 12.9 14 14C14 15.1 13.1 16 12 16C10.9 16 10 15.1 10 14C10 12.9 10.9 12 12 12Z"></path>
+  </svg>
+);
+
+const UsersIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M16 13C17.6569 13 19 11.6569 19 10C19 8.34315 17.6569 7 16 7C14.3431 7 13 8.34315 13 10C13 11.6569 14.3431 13 16 13ZM16 15C13.2386 15 11 17.2386 11 20H21C21 17.2386 18.7614 15 16 15ZM8 13C9.65685 13 11 11.6569 11 10C11 8.34315 9.65685 7 8 7C6.34315 7 5 8.34315 5 10C5 11.6569 6.34315 13 8 13ZM8 15C5.23858 15 3 17.2386 3 20H13C13 17.2386 10.7614 15 8 15Z"></path>
+  </svg>
+);
+
+const PlusIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path>
+  </svg>
+);
+
+const CheckIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path>
+  </svg>
+);
+
+const CloseIcon = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path>
+  </svg>
+);
+
+// --- Helper Functions ---
+
+/**
+ * Formats a number as Malaysian Ringgit (MYR).
+ * @param {number} amount - The number to format.
+ * @returns {string} - Formatted currency string.
+ */
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('ms-MY', {
+    style: 'currency',
+    currency: 'MYR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount || 0);
+};
+
+// --- App Components ---
+
+/**
+ * Loading Spinner Component
+ */
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-full w-full">
+    <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
+
+/**
+ * Main App Component
+ */
+export default function App() {
+  // --- State ---
+  const [isAuthReady, setIsAuthReady] = useState(false);
+  const [userId, setUserId] = useState(null);
+  
+  const [page, setPage] = useState('dash'); // 'dash', 'goals', 'squads'
+  const [modal, setModal] = useState(null); // 'log', 'goal', 'setName', 'createSquad', 'joinSquad'
+
+  const [profile, setProfile] = useState(null); // { displayName, currentSquadId }
+  const [goals, setGoals] = useState([]); // [{ id, title, targetAmount }]
+  const [savings, setSavings] = useState([]); // [{ id, amount, description, goalId, createdAt }]
+  
+  const [squad, setSquad] = useState(null); // { id, squadName, leaderName }
+  const [squadMembers, setSquadMembers] = useState([]); // [{ id, name, totalSavings }]
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // --- Paths ---
+  const paths = useMemo(() => {
+    if (!userId) return null;
+    return {
+      profile: doc(db, 'artifacts', appId, 'users', userId, 'profile', 'main'),
+      goals: collection(db, 'artifacts', appId, 'users', userId, 'goals'),
+      savings: collection(db, 'artifacts', appId, 'users', userId, 'savings'),
+      publicSquads: collection(db, 'artifacts', appId, 'public', 'data', 'squads'),
+    };
+  }, [userId]);
+
+  // --- Effects ---
+
+  // 1. Handle Auth
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserId(user.uid);
+        setIsAuthReady(true);
+      } else {
+        try {
+          // Check for injected token first
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            // Fallback to anonymous sign-in
+            await signInAnonymously(auth);
+          }
+        } catch (error) {
+          console.error("Error during sign-in:", error);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Main Data Listeners (Profile, Goals, Savings)
+  useEffect(() => {
+    if (!isAuthReady || !userId || !paths) return;
+
+    const unsubProfile = onSnapshot(paths.profile, (doc) => {
+      if (doc.exists()) {
+        setProfile(doc.data());
+      } else {
+        // Force user to set a name for the social features
+        setModal('setName');
+      }
+    });
+
+    const unsubGoals = onSnapshot(query(paths.goals), (snapshot) => {
+      const goalsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setGoals(goalsData);
+    });
+
+    const unsubSavings = onSnapshot(query(paths.savings), (snapshot) => {
+      const savingsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSavings(savingsData);
+    });
+
+    return () => {
+      unsubProfile();
+      unsubGoals();
+      unsubSavings();
+    };
+  }, [isAuthReady, userId, paths]);
+
+  // 3. Squad Data Listeners
+  useEffect(() => {
+    if (!profile || !profile.currentSquadId || !paths) {
+      setSquad(null);
+      setSquadMembers([]);
+      return;
+    }
+
+    const squadId = profile.currentSquadId;
+    const squadDocRef = doc(paths.publicSquads, squadId);
+    const membersColRef = collection(squadDocRef, 'members');
+
+    const unsubSquad = onSnapshot(squadDocRef, (doc) => {
+      if(doc.exists()) {
+        setSquad({ id: doc.id, ...doc.data() });
+      }
+    });
+
+    const unsubMembers = onSnapshot(query(membersColRef), (snapshot) => {
+      const membersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort for leaderboard
+      membersData.sort((a, b) => (b.totalSavings || 0) - (a.totalSavings || 0));
+      setSquadMembers(membersData);
+    });
+
+    return () => {
+      unsubSquad();
+      unsubMembers();
+    };
+  }, [profile, paths]);
+
+// --- Memoized Calculations ---
+  
+  const totalSavings = useMemo(() => {
+    return savings.reduce((acc, log) => acc + (log.amount || 0), 0);
+  }, [savings]);
+
+  const savingsByGoal = useMemo(() => {
+    const map = new Map();
+    savings.forEach(log => {
+      if (log.goalId) {
+        map.set(log.goalId, (map.get(log.goalId) || 0) + log.amount);
+      }
+    });
+    return map;
+  }, [savings]);
+
+  // --- Firebase Actions ---
+
+  const handleSetName = async (name) => {
+    if (!paths) return;
+    setIsLoading(true);
+    try {
+      await setDoc(paths.profile, { 
+        displayName: name, 
+        currentSquadId: null 
+      }, { merge: true });
+      setModal(null);
+    } catch (error) {
+      console.error("Error setting name:", error);
+    }
+    setIsLoading(false);
+  };
+
+  const handleLogSaving = async (amount, description, goalId) => {
+    if (!paths || !profile) return;
+    setIsLoading(true);
+    const newTotalSavings = totalSavings + amount;
+    
+    try {
+      const batch = writeBatch(db);
+
+      // 1. Add to private savings log
+      batch.set(doc(collection(paths.savings)), {
+        amount,
+        description,
+        goalId: goalId || null,
+        createdAt: serverTimestamp()
+      });
+      
+      // 2. Update public squad member doc (if in a squad)
+      if (profile.currentSquadId) {
+        const memberDocRef = doc(paths.publicSquads, profile.currentSquadId, 'members', userId);
+        batch.set(memberDocRef, {
+          name: profile.displayName,
+          totalSavings: newTotalSavings
+        }, { merge: true });
+      }
+      
+      await batch.commit();
+      setModal(null);
+    } catch (error) {
+      console.error("Error logging saving:", error);
+    }
+    setIsLoading(false);
+  };
+  
+  const handleAddGoal = async (title, targetAmount) => {
+    if (!paths) return;
+    setIsLoading(true);
+    try {
+      await addDoc(paths.goals, {
+        title,
+        targetAmount,
+        createdAt: serverTimestamp()
+      });
+      setModal(null);
+    } catch (error) {
+      console.error("Error adding goal:", error);
+    }
+    setIsLoading(false);
+  };
+  
+  const handleCreateSquad = async (squadName) => {
+    if (!paths || !profile) return;
+    setIsLoading(true);
+    const squadId = userId; // The creator's ID is the squad ID
+    
+    try {
+      const batch = writeBatch(db);
+
+      // 1. Create the public squad doc
+      const squadDocRef = doc(paths.publicSquads, squadId);
+      batch.set(squadDocRef, {
+        squadName,
+        leaderName: profile.displayName,
+        leaderId: userId
+      });
+      
+      // 2. Add leader as first member
+      const memberDocRef = doc(squadDocRef, 'members', userId);
+      batch.set(memberDocRef, {
+        name: profile.displayName,
+        totalSavings: totalSavings
+      });
+      
+      // 3. Update user's private profile
+      batch.set(paths.profile, {
+        currentSquadId: squadId
+      }, { merge: true });
+      
+      await batch.commit();
+      setModal(null);
+    } catch (error) {
+      console.error("Error creating squad:", error);
+    }
+    setIsLoading(false);
+  };
+  
+  const handleJoinSquad = async (squadId) => {
+    if (!paths || !profile || !squadId) return;
+    setIsLoading(true);
+    
+    try {
+      // 1. Check if squad exists
+      const squadDocRef = doc(paths.publicSquads, squadId);
+      const squadDoc = await getDoc(squadDocRef);
+      
+      if (!squadDoc.exists()) {
+        throw new Error("Skuad tidak dijumpai!");
+      }
+
+      // 2. Leave current squad if in one
+      if(profile.currentSquadId) {
+        await handleLeaveSquad(false); // internal call, don't reset loading
+      }
+      
+      const batch = writeBatch(db);
+      
+      // 3. Add user to new squad's member list
+      const memberDocRef = doc(squadDocRef, 'members', userId);
+      batch.set(memberDocRef, {
+        name: profile.displayName,
+        totalSavings: totalSavings
+      });
+      
+      // 4. Update user's private profile
+      batch.set(paths.profile, {
+        currentSquadId: squadId
+      }, { merge: true });
+      
+      await batch.commit();
+      setModal(null);
+    } catch (error) {
+      console.error("Error joining squad:", error);
+      // TODO: Show this error in the modal
+    }
+    setIsLoading(false);
+  };
+  
+  const handleLeaveSquad = async (resetLoading = true) => {
+    if (!paths || !profile || !profile.currentSquadId) return;
+    if(resetLoading) setIsLoading(true);
+    
+    try {
+      const batch = writeBatch(db);
+      
+      // 1. Remove member doc from public squad
+      const memberDocRef = doc(paths.publicSquads, profile.currentSquadId, 'members', userId);
+      batch.delete(memberDocRef);
+      
+      // 2. Update private profile
+      batch.set(paths.profile, {
+        currentSquadId: null
+      }, { merge: true });
+      
+      await batch.commit();
+    } catch (error) {
+      console.error("Error leaving squad:", error);
+    }
+    if(resetLoading) setIsLoading(false);
+  };
+
+  // --- Render Logic ---
+
+  if (!isAuthReady || (modal !== 'setName' && !profile)) {
+    return (
+      <div className="bg-teal-50 min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  const renderPage = () => {
+    switch (page) {
+      case 'goals':
+        return <GoalsPage goals={goals} savingsByGoal={savingsByGoal} onAddGoal={() => setModal('goal')} />;
+      case 'squads':
+        return <SquadsPage 
+                  userId={userId}
+                  profile={profile}
+                  squad={squad} 
+                  members={squadMembers} 
+                  onJoin={() => setModal('joinSquad')}
+                  onCreate={() => setModal('createSquad')}
+                  onLeave={handleLeaveSquad}
+                />;
+      case 'dash':
+      default:
+        return <DashboardPage totalSavings={totalSavings} goals={goals} savingsByGoal={savingsByGoal} />;
+    }
+  };
+
+  const renderModal = () => {
+    switch (modal) {
+      case 'setName':
+        return <SetNameModal onSubmit={handleSetName} isLoading={isLoading} />;
+      case 'log':
+        return <LogSavingModal onSubmit={handleLogSaving} goals={goals} isLoading={isLoading} onClose={() => setModal(null)} />;
+      case 'goal':
+        return <AddGoalModal onSubmit={handleAddGoal} isLoading={isLoading} onClose={() => setModal(null)} />;
+      case 'createSquad':
+        return <CreateSquadModal onSubmit={handleCreateSquad} isLoading={isLoading} onClose={() => setModal(null)} />;
+      case 'joinSquad':
+        return <JoinSquadModal onSubmit={handleJoinSquad} isLoading={isLoading} onClose={() => setModal(null)} />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-teal-50 font-sans">
+      <div className="pb-24 max-w-lg mx-auto">
+        {renderPage()}
+      </div>
+      
+      {renderModal()}
+      
+      <BottomNav activePage={page} onSetPage={setPage} onLog={() => setModal('log')} />
+    </div>
+  );
+}
+
+// --- Page Components ---
+
+/**
+ * Dashboard Page: Shows the "Pet" and summary
+ */
+const DashboardPage = ({ totalSavings, goals, savingsByGoal }) => {
+  
+  const SavingsPet = () => {
+    const getPet = () => {
+      // Pet levels in RM
+      if (totalSavings < 50) return { emoji: '🌱', name: 'Tunas' };
+      if (totalSavings < 200) return { emoji: '🪴', name: 'Anak Pokok' };
+      if (totalSavings < 500) return { emoji: '🌳', name: 'Pokok Muda' };
+      if (totalSavings < 1000) return { emoji: '🌸', name: 'Pokok Bunga Raya' };
+      if (totalSavings < 2500) return { emoji: '🌴', name: 'Pokok Kelapa' };
+      if (totalSavings < 5000) return { emoji: '🌲', name: 'Pokok Meranti' }; // Malaysian tree
+      return { emoji: '💰', name: 'Pokok Duit' };
+    };
+    
+    const { emoji, name } = getPet();
+    
+    return (
+      <div className="bg-gradient-to-br from-white to-teal-100 p-8 rounded-3xl shadow-lg flex flex-col items-center">
+        <span className="text-8xl mb-4">{emoji}</span>
+        <span className="text-xl font-semibold text-teal-800">{name}</span>
+        <span className="text-sm text-teal-600">Haiwan simpanan anda membesar bersama anda!</span>
+      </div>
+    );
+  };
+  
+  const totalTarget = useMemo(() => goals.reduce((acc, g) => acc + g.targetAmount, 0), [goals]);
+  const totalProgress = totalTarget > 0 ? (totalSavings / totalTarget) * 100 : 0;
+
+  return (
+    <div className="p-4 space-y-6">
+      <h1 className="text-3xl font-bold text-teal-900 pt-4">Taman Zen Anda</h1>
+      <SavingsPet />
+      
+      <div className="bg-white p-6 rounded-2xl shadow-md">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase mb-2">Jumlah Disimpan</h2>
+        <p className="text-4xl font-bold text-teal-700">{formatCurrency(totalSavings)}</p>
+      </div>
+      
+      {goals.length > 0 && (
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4">Kemajuan Matlamat Keseluruhan</h2>
+          <ProgressBar progress={totalProgress} />
+          <div className="flex justify-between text-sm text-gray-600 mt-2">
+            <span>{formatCurrency(totalSavings)}</span>
+            <span>{formatCurrency(totalTarget)}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Goals Page: Shows all "Quests"
+ */
+const GoalsPage = ({ goals, savingsByGoal, onAddGoal }) => {
+  return (
+    <div className="p-4 space-y-6">
+      <div className="flex justify-between items-center pt-4">
+        <h1 className="text-3xl font-bold text-teal-900">Misi Anda</h1>
+        <button
+          onClick={onAddGoal}
+          className="bg-teal-500 text-white p-2 rounded-full shadow-lg hover:bg-teal-600 transition-colors"
+        >
+          <PlusIcon className="w-6 h-6" />
+        </button>
+      </div>
+      
+      {goals.length === 0 ? (
+        <div className="text-center text-gray-500 py-16">
+          <TargetIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+          <p>Tiada misi lagi!</p>
+          <p>Tekan '+' untuk mulakan misi simpanan baru.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {goals.map(goal => {
+            const current = savingsByGoal.get(goal.id) || 0;
+            const target = goal.targetAmount;
+            const progress = target > 0 ? (current / target) * 100 : 0;
+            
+            return (
+              <div key={goal.id} className="bg-white p-5 rounded-2xl shadow-md">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-lg font-semibold text-gray-800">{goal.title}</span>
+                  {progress >= 100 && <CheckIcon className="w-6 h-6 text-green-500" />}
+                </div>
+                <ProgressBar progress={progress} />
+                <div className="flex justify-between text-sm text-gray-600 mt-2">
+                  <span>{formatCurrency(current)}</span>
+                  <span className="font-medium">{formatCurrency(target)}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Squads Page: Social features
+ */
+const SquadsPage = ({ userId, profile, squad, members, onJoin, onCreate, onLeave }) => {
+  return (
+    <div className="p-4 space-y-6">
+      <h1 className="text-3xl font-bold text-teal-900 pt-4">Skuad Simpanan</h1>
+      
+      {squad ? (
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h2 className="text-2xl font-bold text-teal-700 text-center mb-1">{squad.squadName}</h2>
+          <p className="text-center text-sm text-gray-500 mb-6">Diketuai oleh {squad.leaderName}</p>
+          
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Papan Markah</h3>
+          <ul className="space-y-3">
+            {members.map((member, index) => (
+              <li 
+                key={member.id} 
+                className={`flex items-center justify-between p-3 rounded-lg ${member.id === userId ? 'bg-teal-100 border border-teal-300' : 'bg-gray-50'}`}
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="font-bold text-teal-700 w-6 text-center">{index + 1}</span>
+                  <span className="font-semibold text-gray-700">{member.name} {member.id === userId && '(Anda)'}</span>
+                </div>
+                <span className="font-bold text-teal-600">{formatCurrency(member.totalSavings)}</span>
+              </li>
+            ))}
+          </ul>
+          
+          <button
+            onClick={onLeave}
+            className="w-full mt-8 bg-red-500 text-white font-semibold py-3 rounded-lg hover:bg-red-600 transition-colors"
+          >
+            Tinggalkan Skuad
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white p-6 rounded-2xl shadow-md text-center space-y-6">
+          <UsersIcon className="w-20 h-20 mx-auto text-gray-400" />
+          <p className="text-lg text-gray-600">Anda belum sertai skuad lagi. Sertai skuad kawan atau cipta skuad anda sendiri!</p>
+          <div className="flex flex-col space-y-3">
+            <button
+              onClick={onJoin}
+              className="w-full bg-teal-500 text-white font-semibold py-3 rounded-lg hover:bg-teal-600 transition-colors"
+            >
+              Sertai Skuad
+            </button>
+            <button
+              onClick={onCreate}
+              className="w-full bg-amber-500 text-white font-semibold py-3 rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              Cipta Skuad
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <div className="bg-gray-800 text-gray-300 p-4 rounded-lg text-sm break-all">
+        <p className="font-semibold text-white mb-2">Kongsi ID Pengguna Anda:</p>
+        <p className="font-mono">{userId}</p>
+        <p className="text-xs text-gray-400 mt-2">ID anda ialah bagaimana kawan boleh menjemput anda ke skuad mereka, atau ia akan menjadi ID Skuad baru anda jika anda mencipta satu.</p>
+      </div>
+    </div>
+  );
+};
+
+// --- Helper Components ---
+
+/**
+ * Bottom Navigation Bar
+ */
+const BottomNav = ({ activePage, onSetPage, onLog }) => {
+  const navItems = [
+    { id: 'dash', label: 'Taman', icon: HomeIcon },
+    { id: 'goals', label: 'Misi', icon: TargetIcon },
+    { id: 'squads', label: 'Skuad', icon: UsersIcon },
+  ];
+  
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 h-20 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)] max-w-lg mx-auto rounded-t-3xl grid grid-cols-4 items-center">
+      {navItems.map((item) => {
+        const isActive = activePage === item.id;
+        return (
+          <button
+            key={item.id}
+            onClick={() => onSetPage(item.id)}
+            className={`flex flex-col items-center justify-center space-y-1 transition-colors ${isActive ? 'text-teal-600' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <item.icon className="w-6 h-6" />
+            <span className={`text-xs font-semibold ${isActive ? 'font-bold' : 'font-medium'}`}>{item.label}</span>
+          </button>
+        );
+      })}
+      {/* Log Button */}
+      <button
+        onClick={onLog}
+        className="flex items-center justify-center"
+      >
+        <div className="flex items-center justify-center w-14 h-14 bg-amber-500 text-white rounded-full shadow-lg transform hover:scale-105 transition-transform">
+          <PlusIcon className="w-8 h-8" />
+        </div>
+      </button>
+    </nav>
+  );
+};
+
+/**
+ * Reusable Progress Bar
+ */
+const ProgressBar = ({ progress }) => {
+  const displayProgress = Math.min(100, Math.max(0, progress));
+  return (
+    <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+      <div
+        className="bg-gradient-to-r from-teal-400 to-blue-500 h-4 rounded-full transition-all duration-500 ease-out"
+        style={{ width: `${displayProgress}%` }}
+      ></div>
+    </div>
+  );
+};
+
+// --- Modal Components ---
+
+/**
+ * Base Modal Wrapper
+ */
+const Modal = ({ children, onClose }) => (
+  <div 
+    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+    onClick={onClose}
+  >
+    <div
+      className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm"
+      onClick={e => e.stopPropagation()}
+    >
+      {children}
+    </div>
+  </div>
+);
+
+/**
+ * Modal to force set user name
+ */
+const SetNameModal = ({ onSubmit, isLoading }) => {
+  const [name, setName] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name.trim()) {
+      onSubmit(name.trim());
+    }
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <h2 className="text-xl font-bold text-teal-800 text-center">Selamat Datang ke SaveQuest!</h2>
+          <p className="text-center text-gray-600">Apa nama panggilan anda? (Ini akan dipaparkan kepada ahli skuad anda)</p>
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nama Paparan</label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading || !name.trim()}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+          >
+            {isLoading ? <LoadingSpinner /> : 'Simpan dan Mula'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Modal for Logging a Saving
+ */
+const LogSavingModal = ({ onSubmit, goals, isLoading, onClose }) => {
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
+  const [goalId, setGoalId] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const numAmount = parseFloat(amount);
+    if (numAmount > 0) {
+      onSubmit(numAmount, description, goalId);
+    }
+  };
+  
+  return (
+    <Modal onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-teal-800">Rekod Simpanan</h2>
+          <button type="button" onClick={onClose}><CloseIcon className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
+        </div>
+        
+        <div>
+          <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Jumlah (RM)</label>
+          <input
+            type="number"
+            id="amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            required
+            step="0.01"
+            min="0.01"
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Keterangan (cth: "Tak beli kopi")</label>
+          <input
+            type="text"
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
+        </div>
+        
+        {goals.length > 0 && (
+          <div>
+            <label htmlFor="goal" className="block text-sm font-medium text-gray-700">Paut ke Misi (Pilihan)</label>
+            <select
+              id="goal"
+              value={goalId}
+              onChange={(e) => setGoalId(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            >
+              <option value="">Tiada misi khusus</option>
+              {goals.map(goal => (
+                <option key={goal.id} value={goal.id}>{goal.title}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        
+        <button
+          type="submit"
+          disabled={isLoading || !amount}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+        >
+          {isLoading ? <LoadingSpinner /> : 'Tambah Simpanan'}
+        </button>
+      </form>
+    </Modal>
+  );
+};
+
+/**
+ * Modal for Adding a new Goal ("Quest")
+ */
+const AddGoalModal = ({ onSubmit, isLoading, onClose }) => {
+  const [title, setTitle] = useState('');
+  const [targetAmount, setTargetAmount] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const numAmount = parseFloat(targetAmount);
+    if (title.trim() && numAmount > 0) {
+      onSubmit(title.trim(), numAmount);
+    }
+  };
+  
+  return (
+    <Modal onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-teal-800">Mula Misi Baru</h2>
+          <button type="button" onClick={onClose}><CloseIcon className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
+        </div>
+        
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700">Tajuk Misi (cth: "Laptop Baru")</label>
+          <input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="targetAmount" className="block text-sm font-medium text-gray-700">Jumlah Sasaran (RM)</label>
+          <input
+            type="number"
+            id="targetAmount"
+            value={targetAmount}
+            onChange={(e) => setTargetAmount(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            required
+            step="0.01"
+            min="0.01"
+          />
+        </div>
+        
+        <button
+          type="submit"
+          disabled={isLoading || !title || !targetAmount}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+        >
+          {isLoading ? <LoadingSpinner /> : 'Cipta Misi'}
+        </button>
+      </form>
+    </Modal>
+  );
+};
+
+/**
+ * Modal for Creating a Squad
+ */
+const CreateSquadModal = ({ onSubmit, isLoading, onClose }) => {
+  const [squadName, setSquadName] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (squadName.trim()) {
+      onSubmit(squadName.trim());
+    }
+  };
+  
+  return (
+    <Modal onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-teal-800">Cipta Skuad</h2>
+          <button type="button" onClick={onClose}><CloseIcon className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
+        </div>
+        
+        <div>
+          <label htmlFor="squadName" className="block text-sm font-medium text-gray-700">Nama Skuad</label>
+          <input
+            type="text"
+            id="squadName"
+            value={squadName}
+            onChange={(e) => setSquadName(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            required
+          />
+        </div>
+        <p className="text-xs text-gray-500">ID Pengguna anda akan menjadi ID Skuad. Kongsi dengan kawan-kawan supaya mereka boleh sertai.</p>
+        
+        <button
+          type="submit"
+          disabled={isLoading || !squadName.trim()}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+        >
+          {isLoading ? <LoadingSpinner /> : 'Cipta Skuad'}
+        </button>
+      </form>
+    </Modal>
+  );
+};
+
+/**
+ * Modal for Joining a Squad
+ */
+const JoinSquadModal = ({ onSubmit, isLoading, onClose }) => {
+  const [squadId, setSquadId] = useState('');
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (squadId.trim()) {
+      onSubmit(squadId.trim());
+    }
+  };
+  
+  return (
+    <Modal onClose={onClose}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold text-teal-800">Sertai Skuad</h2>
+          <button type="button" onClick={onClose}><CloseIcon className="w-6 h-6 text-gray-400 hover:text-gray-600" /></button>
+        </div>
+        
+        <div>
+          <label htmlFor="squadId" className="block text-sm font-medium text-gray-700">ID Skuad</label>
+          <input
+            type="text"
+            id="squadId"
+            value={squadId}
+            onChange={(e) => setSquadId(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+            placeholder="Masukkan ID Pengguna kawan anda"
+            required
+          />
+        </div>
+        <p className="text-xs text-gray-500">Minta ID Pengguna kawan anda untuk sertai skuad mereka.</p>
+        
+        <button
+          type="submit"
+          disabled={isLoading || !squadId.trim()}
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+        >
+          {isLoading ? <LoadingSpinner /> : 'Sertai Skuad'}
+        </button>
+      </form>
+    </Modal>
+  );
+};
