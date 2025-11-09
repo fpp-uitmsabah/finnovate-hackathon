@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Confidence Builder | Fear of Loss Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .scenario-btn {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .scenario-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .scenario-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .scenario-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .scenario-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .option {
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .option.savings {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #fbbf24;
+        }
+
+        .option.investment {
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+            border-color: #3b82f6;
+        }
+
+        .option-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .value-display {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #1f2937;
+        }
+
+        .detail {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .inflation-warning {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #991b1b;
+        }
+
+        .growth-highlight {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #065f46;
+        }
+
+        .slider-container {
+            margin: 30px 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .education-section {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .education-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0c4a6e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fact-list {
+            list-style: none;
+        }
+
+        .fact-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #bae6fd;
+            color: #075985;
+            line-height: 1.6;
+        }
+
+        .fact-list li:last-child {
+            border-bottom: none;
+        }
+
+        .fact-list li::before {
+            content: "✓";
+            color: #0ea5e9;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .chart-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 15px;
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            max-width: 150px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .bar.savings-bar {
+            background: linear-gradient(to top, #fbbf24, #f59e0b);
+        }
+
+        .bar-label {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            color: #1f2937;
+            white-space: nowrap;
+        }
+
+        .bar-title {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Risk Confidence Builder</h1>
+            <p>Understanding the Real Cost of Fear</p>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #1f2937;">Choose Your Scenario</h2>
+            <div class="scenario-selector">
+                <div class="scenario-btn active" onclick="selectScenario('graduate')">
+                    <div class="scenario-icon">🎓</div>
+                    <div class="scenario-title">Fresh Graduate</div>
+                </div>
+                <div class="scenario-btn" onclick="selectScenario('midcareer')">
+                    <div class="scenario-icon">💼</div>
+                    <div class="scenario-title">Mid-Career</div>
+                </div>
+                <div class="scenario-btn" onclick="selectScenario('windfall')">
+                    <div class="scenario-icon">💰</div>
+                    <div class="scenario-title">Bonus/Windfall</div>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Investment Duration</span>
+                    <span id="yearsDisplay">10 years</span>
+                </div>
+                <input type="range" min="1" max="30" value="10" class="slider" id="yearsSlider">
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Initial Amount</span>
+                    <span id="amountDisplay">RM 10,000</span>
+                </div>
+                <input type="range" min="1000" max="100000" value="10000" step="1000" class="slider" id="amountSlider">
+            </div>
+
+            <div class="comparison-grid">
+                <div class="option savings">
+                    <div class="option-title">
+                        🏦 Savings Account
+                    </div>
+                    <div class="value-display" id="savingsValue">RM 11,046</div>
+                    <div class="detail">
+                        <strong>Interest Rate:</strong> 1.0% per year
+                    </div>
+                    <div class="detail">
+                        <strong>Risk Level:</strong> Very Low
+                    </div>
+                    <div class="detail">
+                        <strong>Inflation Impact:</strong> 3% per year
+                    </div>
+                    <div class="inflation-warning">
+                        ⚠️ Real purchasing power: <strong id="savingsRealValue">RM 8,220</strong>
+                        <br><small>You've lost <span id="savingsLoss">18%</span> in real terms!</small>
+                    </div>
+                </div>
+
+                <div class="option investment">
+                    <div class="option-title">
+                        📈 Diversified Investment
+                    </div>
+                    <div class="value-display" id="investmentValue">RM 25,937</div>
+                    <div class="detail">
+                        <strong>Average Return:</strong> 10% per year
+                    </div>
+                    <div class="detail">
+                        <strong>Risk Level:</strong> Moderate
+                    </div>
+                    <div class="detail">
+                        <strong>Strategy:</strong> Index Funds/ETFs
+                    </div>
+                    <div class="growth-highlight">
+                        ✨ Real purchasing power: <strong id="investmentRealValue">RM 19,289</strong>
+                        <br><small>You've gained <span id="investmentGain">93%</span> in real terms!</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="color: #1f2937; margin-bottom: 10px;">Growth Comparison</h3>
+                <div class="chart">
+                    <div style="flex: 1; max-width: 150px;">
+                        <div class="bar savings-bar" id="savingsBar" style="height: 60px;">
+                            <div class="bar-label" id="savingsBarLabel">RM 11,046</div>
+                        </div>
+                        <div class="bar-title">Savings</div>
+                    </div>
+                    <div style="flex: 1; max-width: 150px;">
+                        <div class="bar" id="investmentBar" style="height: 140px;">
+                            <div class="bar-label" id="investmentBarLabel">RM 25,937</div>
+                        </div>
+                        <div class="bar-title">Investment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="education-section">
+                <div class="education-title">
+                    🎯 Key Insights: Breaking the Fear Barrier
+                </div>
+                <ul class="fact-list">
+                    <li><strong>Time is Your Ally:</strong> The longer you invest, the more you benefit from compound growth, often reducing overall risk.</li>
+                    <li><strong>Inflation is the Silent Killer:</strong> Money in savings accounts often loses purchasing power over time due to inflation.</li>
+                    <li><strong>Diversification Reduces Risk:</strong> Spreading investments across different assets (stocks, bonds, REITs) significantly lowers risk.</li>
+                    <li><strong>Start Small, Learn Big:</strong> You don't need a fortune to start. Many platforms allow investments starting from RM 100.</li>
+                    <li><strong>Historical Evidence:</strong> Over 20+ years, diversified portfolios have consistently outperformed savings accounts.</li>
+                    <li><strong>Emergency Fund First:</strong> Keep 3-6 months of expenses in savings before investing for long-term goals.</li>
+                </ul>
+            </div>
+
+            <button class="btn-primary" onclick="showNextSteps()">Ready to Start Investing? 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = {
+            graduate: { amount: 10000, years: 10 },
+            midcareer: { amount: 50000, years: 20 },
+            windfall: { amount: 30000, years: 15 }
+        };
+
+        let currentScenario = 'graduate';
+
+        function selectScenario(scenario) {
+            currentScenario = scenario;
+            document.querySelectorAll('.scenario-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.scenario-btn').classList.add('active');
+            
+            const config = scenarios[scenario];
+            document.getElementById('amountSlider').value = config.amount;
+            document.getElementById('yearsSlider').value = config.years;
+            
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            const amount = parseFloat(document.getElementById('amountSlider').value);
+            const years = parseFloat(document.getElementById('yearsSlider').value);
+            
+            // Update displays
+            document.getElementById('amountDisplay').textContent = `RM ${amount.toLocaleString()}`;
+            document.getElementById('yearsDisplay').textContent = `${years} years`;
+            
+            // Calculate savings account (1% interest)
+            const savingsRate = 0.01;
+            const savingsValue = amount * Math.pow(1 + savingsRate, years);
+            
+            // Calculate investment (10% average return)
+            const investmentRate = 0.10;
+            const investmentValue = amount * Math.pow(1 + investmentRate, years);
+            
+            // Calculate real values (accounting for 3% inflation)
+            const inflationRate = 0.03;
+            const inflationFactor = Math.pow(1 + inflationRate, years);
+            const savingsRealValue = savingsValue / inflationFactor;
+            const investmentRealValue = investmentValue / inflationFactor;
+            
+            // Update UI
+            document.getElementById('savingsValue').textContent = `RM ${Math.round(savingsValue).toLocaleString()}`;
+            document.getElementById('investmentValue').textContent = `RM ${Math.round(investmentValue).toLocaleString()}`;
+            
+            document.getElementById('savingsRealValue').textContent = `RM ${Math.round(savingsRealValue).toLocaleString()}`;
+            document.getElementById('investmentRealValue').textContent = `RM ${Math.round(investmentRealValue).toLocaleString()}`;
+            
+            const savingsLoss = ((amount - savingsRealValue) / amount * 100);
+            const investmentGain = ((investmentRealValue - amount) / amount * 100);
+            
+            document.getElementById('savingsLoss').textContent = `${Math.round(savingsLoss)}%`;
+            document.getElementById('investmentGain').textContent = `${Math.round(investmentGain)}%`;
+            
+            // Update chart
+            const maxValue = Math.max(savingsValue, investmentValue);
+            const savingsHeight = (savingsValue / maxValue) * 200;
+            const investmentHeight = (investmentValue / maxValue) * 200;
+            
+            document.getElementById('savingsBar').style.height = `${savingsHeight}px`;
+            document.getElementById('investmentBar').style.height = `${investmentHeight}px`;
+            
+            document.getElementById('savingsBarLabel').textContent = `RM ${Math.round(savingsValue).toLocaleString()}`;
+            document.getElementById('investmentBarLabel').textContent = `RM ${Math.round(investmentValue).toLocaleString()}`;
+        }
+
+        function showNextSteps() {
+            alert('Great decision! 🎉\n\nNext Steps:\n\n1. Build an emergency fund (3-6 months expenses)\n2. Learn about index funds and ETFs\n3. Open an investment account with a trusted platform\n4. Start with a small amount you\'re comfortable with\n5. Set up automatic monthly contributions\n6. Stay consistent and patient!\n\nRemember: The best time to start was yesterday. The second best time is today!');
+        }
+
+        // Event listeners
+        document.getElementById('amountSlider').addEventListener('input', updateCalculations);
+        document.getElementById('yearsSlider').addEventListener('input', updateCalculations);
+
+        // Initial calculation
+        updateCalculations();
+    </script>
+</body>
+</html>
