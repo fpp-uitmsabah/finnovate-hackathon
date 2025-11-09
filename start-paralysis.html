@@ -1,1354 +1,1002 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Invest-Buddy Prototype</title>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Invest-Buddy</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8f5e9 100%);
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .screen {
+      display: none;
+      min-height: 100%;
+      padding: 20px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Welcome Screen */
+    .welcome-container {
+      text-align: center;
+      padding: 60px 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .app-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 10px;
+    }
+
+    .tagline {
+      font-size: 16px;
+      color: #6b7280;
+      margin-bottom: 50px;
+    }
+
+    .floating-coins {
+      position: absolute;
+      top: 20%;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      font-size: 30px;
+      opacity: 0.3;
+    }
+
+    .coin {
+      position: absolute;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .coin:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .coin:nth-child(2) { left: 30%; animation-delay: 0.5s; }
+    .coin:nth-child(3) { left: 50%; animation-delay: 1s; }
+    .coin:nth-child(4) { left: 70%; animation-delay: 1.5s; }
+    .coin:nth-child(5) { left: 90%; animation-delay: 2s; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      padding: 16px 40px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #10b981;
+      border: 2px solid #10b981;
+      padding: 14px 40px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .btn-secondary:hover {
+      background: #f0fdf4;
+    }
+
+    /* Name Input */
+    .name-input-container {
+      margin-bottom: 30px;
+    }
+
+    .name-input {
+      width: 100%;
+      max-width: 300px;
+      padding: 16px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 25px;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      transition: border-color 0.3s ease;
+      text-align: center;
+    }
+
+    .name-input:focus {
+      border-color: #10b981;
+    }
+
+    /* Onboarding Quiz */
+    .quiz-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #d1d5db;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: #10b981;
+      width: 30px;
+      border-radius: 6px;
+    }
+
+    .quiz-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+    }
+
+    .quiz-question {
+      font-size: 20px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 25px;
+    }
+
+    .quiz-option {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 15px;
+      padding: 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .quiz-option:hover {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .quiz-option.selected {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+
+    /* Persona Result */
+    .persona-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      max-width: 400px;
+      margin: 40px auto;
+    }
+
+    .persona-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+    }
+
+    .persona-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+
+    .persona-description {
+      font-size: 16px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    /* Dashboard */
+    .dashboard-header {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .greeting {
+      font-size: 24px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+
+    .xp-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .xp-bar {
+      flex: 1;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .xp-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .tiles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 80px;
+    }
+
+    .tile {
+      background: white;
+      border-radius: 20px;
+      padding: 25px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .tile-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .tile-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    /* Learning Modules */
+    .module-header {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .module-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 10px;
+    }
+
+    .modules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 80px;
+    }
+
+    .module-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .module-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .module-card.unlocked {
+      border-color: #10b981;
+    }
+
+    .module-card.completed {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    }
+
+    .module-icon {
+      font-size: 48px;
+      width: 60px;
+      text-align: center;
+    }
+
+    .module-info {
+      flex: 1;
+    }
+
+    .module-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 5px;
+    }
+
+    .module-description {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .module-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .module-status {
+      font-size: 24px;
+    }
+
+    /* Individual Lesson */
+    .lesson-header {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .lesson-info {
+      flex: 1;
+    }
+
+    .lesson-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 5px;
+    }
+
+    .lesson-subtitle {
+      font-size: 14px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    .lesson-progress-bar {
+      height: 4px;
+      background: #e5e7eb;
+      margin-bottom: 20px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .lesson-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .lesson-content-container {
+      margin-bottom: 20px;
+    }
+
+    .video-frame {
+      background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      border-radius: 15px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-frame:hover {
+      transform: scale(1.02);
+    }
+
+    .play-button {
+      font-size: 60px;
+      color: white;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .video-title {
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .lesson-content {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .lesson-text {
+      font-size: 16px;
+      color: #4b5563;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .lesson-text:last-child {
+      margin-bottom: 0;
+    }
+
+    .lesson-quiz {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .quiz-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+
+    .quiz-question {
+      font-size: 16px;
+      color: #4b5563;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .quiz-option {
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 15px;
+    }
+
+    .quiz-option:hover {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    .quiz-option.selected {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+
+    .quiz-option.correct {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+
+    .quiz-option.incorrect {
+      border-color: #ef4444;
+      background: #fee2e2;
+    }
+
+    .quiz-feedback {
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+    }
+
+    .quiz-feedback.correct {
+      background: #d1fae5;
+      color: #065f46;
+      display: block;
+    }
+
+    .quiz-feedback.incorrect {
+      background: #fee2e2;
+      color: #dc2626;
+      display: block;
+    }
+
+    .lesson-navigation {
+      display: flex;
+      gap: 15px;
+      justify-content: space-between;
+      margin-bottom: 80px;
+    }
+
+    .lesson-navigation .btn-secondary,
+    .lesson-navigation .btn-primary {
+      flex: 1;
+      max-width: none;
+    }
+
+    /* Sandbox Portfolio */
+    .portfolio-balance {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 20px;
+      padding: 30px;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .balance-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+
+    .balance-amount {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .balance-change {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .asset-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .asset-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .asset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .asset-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    .asset-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .asset-ticker {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .asset-chart {
+      height: 40px;
+      background: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 100%);
+      border-radius: 8px;
+    }
+
+    .ai-hint {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #92400e;
+    }
+
+    /* Chatbot Overlay */
+    .chat-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .chat-overlay.active {
+      display: flex;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .chat-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .message.user {
+      flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .message.user .message-avatar {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    }
+
+    .message-bubble {
+      background: #f3f4f6;
+      border-radius: 18px;
+      padding: 12px 18px;
+      max-width: 70%;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .message.user .message-bubble {
+      background: #dbeafe;
+    }
+
+    .chat-input-container {
+      padding: 15px;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 12px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 25px;
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .chat-input:focus {
+      border-color: #10b981;
+    }
+
+    /* Leaderboard */
+    .leaderboard-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6b7280;
+      transition: all 0.3s ease;
+    }
+
+    .tab.active {
+      background: #10b981;
+      color: white;
+      border-color: #10b981;
+    }
+
+    .challenge-banner {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .challenge-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .challenge-reward {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .rank-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .rank-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: #10b981;
+      width: 40px;
+      text-align: center;
+    }
+
+    .rank-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .rank-info {
+      flex: 1;
+    }
+
+    .rank-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 3px;
+    }
+
+    .rank-xp {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    /* Graduation */
+    .graduation-container {
+      text-align: center;
+      max-width: 400px;
+      margin: 40px auto;
+    }
+
+    .graduation-icon {
+      font-size: 100px;
+      margin-bottom: 20px;
+    }
+
+    .graduation-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #065f46;
+      margin-bottom: 15px;
+    }
+
+    .graduation-text {
+      font-size: 16px;
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .guide-list {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      text-align: left;
+    }
+
+    .guide-item {
+      padding: 15px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 15px;
+      color: #4b5563;
+    }
+
+    .guide-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      padding: 12px 20px;
+      display: none;
+      justify-content: space-around;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .bottom-nav.active {
+      display: flex;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      color: #9ca3af;
+      transition: color 0.3s ease;
+    }
+
+    .nav-item.active {
+      color: #10b981;
+    }
     
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts (Poppins) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons (as inline SVGs later) -->
-    
-    <!-- Tailwind Configuration -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': {
-                            DEFAULT: '#059669', // Emerald 600
-                            'dark': '#047857'   // Emerald 700
-                        },
-                        'secondary': '#FEF3C7', // Amber 100 (Warm Beige)
-                        'accent': '#F59E0B',     // Amber 500 (Gold)
-                        'bg-light': '#F9FAFB',   // Gray 50 (Soft White/Beige)
-                        'text-dark': '#1F2937',  // Gray 800
-                        'text-light': '#6B7280', // Gray 500
-                    },
-                    fontFamily: {
-                        sans: ['Poppins', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        '2xl': '1.25rem', // ~20px
-                    },
-                    boxShadow: {
-                        'card': '0 10px 20px -5px rgba(0, 0, 0, 0.05)',
-                        'nav': '0 -4px 12px 0px rgba(0, 0, 0, 0.04)',
-                    }
-                }
-            }
-        }
-    </script>
-
-    <!-- Custom Styles -->
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* --- Main App Container --- */
-        #app-container {
-            max-width: 420px; /* iPhone 12 Pro Max width */
-            height: 800px; /* Typical phone height */
-            margin: 2rem auto;
-            border: 1px solid #e5e7eb;
-            border-radius: 1.5rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            overflow: hidden;
-            position: relative;
-            background: #ffffff;
-        }
-
-        /* --- Screen Transition Base --- */
-        .app-screen {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
-            background-color: #F9FAFB; /* bg-light */
-        }
-        
-        .app-screen.active {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-
-        /* --- Splash Screen Animation --- */
-        .coin-animation {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            z-index: 0;
-        }
-        .coin {
-            position: absolute;
-            bottom: -50px;
-            font-size: 1.5rem;
-            color: #F59E0B; /* accent */
-            opacity: 0;
-            animation: float-up 10s infinite linear;
-        }
-        .coin:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .coin:nth-child(2) { left: 30%; animation-delay: 2s; font-size: 1rem; }
-        .coin:nth-child(3) { left: 50%; animation-delay: 4s; }
-        .coin:nth-child(4) { left: 70%; animation-delay: 6s; font-size: 1.25rem; }
-        .coin:nth-child(5) { left: 90%; animation-delay: 8s; }
-        
-        @keyframes float-up {
-            0% {
-                transform: translateY(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.7;
-            }
-            90% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-850px);
-                opacity: 0;
-            }
-        }
-        
-        /* --- Tooltip --- */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 140px;
-            background-color: #1F2937;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -70px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* --- Quiz Progress Bar --- */
-        .progress-bar-inner {
-            transition: width 0.5s ease-out;
-        }
-        
-        /* --- Chatbot Overlay --- */
-        #chatbot-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        #chatbot-window {
-            transition: transform 0.3s ease-in-out;
-            transform: translateY(100%);
-        }
-        #chatbot-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        #chatbot-overlay.active #chatbot-window {
-            transform: translateY(0);
-        }
-        
-        /* --- Modal (Quiz/Badge) --- */
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .modal-content {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            transform: scale(0.9);
-            opacity: 0;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        
-        /* --- Preview Mode Button --- */
-        #preview-mode-btn {
-            position: fixed;
-            bottom: 2.5rem;
-            right: 2.5rem;
-            z-index: 1000;
-            background-color: #db2777; /* Fuchsia 600 */
-            color: white;
-            padding: 0.75rem;
-            border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        #preview-mode-btn:hover {
-            background-color: #be185d;
-            transform: scale(1.05);
-        }
-        
-        /* --- Helper for scrollable content --- */
-        .scrollable-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-bottom: 6rem; /* Space for bottom nav */
-        }
-
-    </style>
-</head>
-<body class="bg-gray-200">
-
-    <!-- The App Container -->
-    <div id="app-container">
-        <div id="app-content" class="relative w-full h-full">
-
-            <!-- 
-            ====================================================================
-            SCREEN 1: Splash / Welcome
-            ====================================================================
-            -->
-            <div id="splash-screen" class="app-screen active bg-primary text-white p-8">
-                <div class="coin-animation">
-                    <div class="coin">RM</div>
-                    <div class="coin">💰</div>
-                    <div class="coin">RM</div>
-                    <div class="coin">📈</div>
-                    <div class="coin">RM</div>
-                </div>
-                
-                <div class="flex flex-col justify-between h-full text-center z-10">
-                    <!-- Spacer -->
-                    <div class="flex-grow"></div>
-                    
-                    <!-- Logo & Tagline -->
-                    <div class="flex-grow flex flex-col items-center justify-center">
-                        <div class="bg-white/20 p-6 rounded-full shadow-lg mb-6">
-                            <svg class="w-16 h-16 text-accent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v2h-2v-2zm0 4h2v6h-2v-6z"></path></svg>
-                        </div>
-                        <h1 class="text-4xl font-bold text-white mb-2">Smart Invest-Buddy</h1>
-                        <p class="text-lg text-white/90">Learn, Play & Grow Your Wealth Wisely</p>
-                    </div>
-                    
-                    <!-- Buttons -->
-                    <div class="flex-grow">
-                        <button id="splash-start-btn" class="w-full bg-white text-primary font-bold py-4 px-6 rounded-full shadow-lg text-lg transition-transform hover:scale-105">
-                            Get Started
-                        </button>
-                        <button class="w-full bg-transparent text-white font-medium py-3 px-6 rounded-full mt-4">
-                            Log In
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 2: Onboarding Quiz
-            ====================================================================
-            -->
-            <div id="onboarding-screen" class="app-screen p-6">
-                <!-- Progress Bar -->
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-                    <div id="onboarding-progress" class="bg-primary h-2.5 rounded-full progress-bar-inner" style="width: 25%"></div>
-                </div>
-                
-                <!-- Onboarding Card -->
-                <div id="onboarding-card" class="w-full flex-grow flex flex-col justify-center items-center">
-                    <!-- Question will be injected by JS -->
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 3: Persona Reveal
-            ====================================================================
-            -->
-            <div id="persona-screen" class="app-screen p-8 justify-center items-center text-center">
-                <div class="bg-secondary p-8 rounded-full mb-8 shadow-card">
-                    <span class="text-7xl">🧐</span>
-                </div>
-                <h2 class="text-3xl font-bold text-text-dark mb-2">You are a Cautious Learner!</h2>
-                <p class="text-lg text-text-light mb-12">You value security and want to understand the risks before diving in. We'll start with the basics!</p>
-                
-                <button id="persona-continue-btn" class="w-full bg-primary text-white font-bold py-4 px-6 rounded-full shadow-lg text-lg">
-                    Continue to Dashboard
-                </button>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 4: Dashboard (Main Hub)
-            ====================================================================
-            -->
-            <div id="dashboard-screen" class="app-screen">
-                <div class="scrollable-content p-6">
-                    <!-- Header -->
-                    <div class="mb-6">
-                        <h1 class="text-3xl font-bold text-text-dark">Hi, Aina 👋</h1>
-                        <p class="text-text-light">Welcome back, let's get investing!</p>
-                    </div>
-                    
-                    <!-- XP Progress Bar -->
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-sm font-semibold text-primary">Your XP</span>
-                            <div class="tooltip">
-                                <span class="text-sm font-bold text-text-dark">750 / 1000 XP</span>
-                                <span class="tooltip-text">Gain XP by completing lessons and challenges!</span>
-                            </div>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-4 relative">
-                            <div class="bg-gradient-to-r from-accent to-primary h-4 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Core Section Tiles -->
-                    <div class="grid grid-cols-2 gap-5">
-                        <!-- Learning Modules -->
-                        <div id="dash-learn-btn" class="bg-white p-5 rounded-2xl shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-                            <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-text-dark">Learning Modules</h3>
-                            <p class="text-sm text-text-light">Start with the basics.</p>
-                        </div>
-                        
-                        <!-- Sandbox Portfolio -->
-                        <div id="dash-sandbox-btn" class="bg-white p-5 rounded-2xl shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-                            <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-text-dark">Sandbox Portfolio</h3>
-                            <p class="text-sm text-text-light">Play with virtual RM.</p>
-                        </div>
-                        
-                        <!-- Ask Buddy (AI Chat) -->
-                        <div id="dash-chat-btn" class="bg-white p-5 rounded-2xl shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-                            <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-text-dark">Ask Buddy</h3>
-                            <p class="text-sm text-text-light">Your AI mentor.</p>
-                        </div>
-                        
-                        <!-- Challenges & Leaderboard -->
-                        <div id="dash-leaderboard-btn" class="bg-white p-5 rounded-2xl shadow-card hover:shadow-lg transition-shadow cursor-pointer">
-                            <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-6.75c-.621 0-1.125.503-1.125 1.125v3.375m9 0h-9"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-text-dark">Challenges</h3>
-                            <p class="text-sm text-text-light">Compete and win.</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Graduation Pathway Card -->
-                    <div id="dash-graduation-btn" class="mt-6 bg-gradient-to-r from-primary to-emerald-700 text-white p-6 rounded-2xl shadow-lg flex items-center justify-between cursor-pointer">
-                        <div>
-                            <h4 class="text-xl font-bold">Investment-Ready?</h4>
-                            <p class="text-white/90">See your next steps.</p>
-                        </div>
-                        <svg class="w-8 h-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 5: Learning Module
-            ====================================================================
-            -->
-            <div id="learning-screen" class="app-screen">
-                <!-- Header -->
-                <div class="flex items-center justify-between p-4 bg-white shadow-sm">
-                    <button class="nav-back-btn p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6 text-text-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path></svg>
-                    </button>
-                    <h2 class="text-lg font-semibold text-text-dark">Why Invest?</h2>
-                    <span class="text-sm font-medium text-text-light">1 / 5</span>
-                </div>
-                
-                <div class="scrollable-content p-6">
-                    <!-- Micro-video Frame -->
-                    <div class="aspect-video bg-gray-900 rounded-2xl mb-6 flex items-center justify-center text-white relative shadow-lg">
-                        <p class="text-lg">Micro-Video Placeholder</p>
-                        <div class="absolute w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <svg class="w-8 h-8 text-white ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                        </div>
-                    </div>
-                    
-                    <!-- Lesson Content -->
-                    <h3 class="text-2xl font-bold text-text-dark mb-3">Understanding Inflation</h3>
-                    <p class="text-text-light mb-4">
-                        Inflation is the "invisible thief" that makes your money worth less over time. If a Nasi Lemak costs RM2 today, it might cost RM2.50 in a few years.
-                    </p>
-                    <p class="text-text-light mb-6">
-                        Investing is about making your money grow *faster* than inflation, so you can afford that Nasi Lemak and more in the future!
-                    </p>
-                    
-                    <!-- Next Lesson Button -->
-                    <button id="learning-quiz-btn" class="w-full bg-primary text-white font-bold py-4 px-6 rounded-full shadow-lg text-lg">
-                        Take Module Quiz
-                    </button>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 6: Sandbox Portfolio
-            ====================================================================
-            -->
-            <div id="sandbox-screen" class="app-screen">
-                <div class="scrollable-content p-6">
-                    <!-- Header -->
-                    <div class="text-center mb-6">
-                        <p class="text-sm text-text-light">Portfolio Value</p>
-                        <h2 class="text-4xl font-bold text-text-dark">RM 10,245.50</h2>
-                        <span class="text-lg font-semibold text-green-600">+ RM 245.50 (2.45%)</span>
-                    </div>
-                    
-                    <!-- Chart View -->
-                    <div class="h-48 bg-white rounded-2xl shadow-card p-4 flex items-end justify-between mb-6">
-                        <!-- Fake bar chart -->
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 40%"></div>
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 50%"></div>
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 45%"></div>
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 60%"></div>
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 65%"></div>
-                        <div class="w-4 bg-primary/20 rounded-t-md" style="height: 75%"></div>
-                        <div class="w-4 bg-primary rounded-t-md" style="height: 80%"></div>
-                        <div class="w-4 bg-primary rounded-t-md" style="height: 85%"></div>
-                    </div>
-
-                    <!-- Virtual Cash -->
-                    <div class="bg-secondary p-4 rounded-2xl text-center mb-6">
-                        <p class="text-sm font-medium text-amber-800">Virtual Cash Available</p>
-                        <p class="text-2xl font-bold text-amber-900">RM 4,754.50</p>
-                    </div>
-
-                    <!-- ✨ GEMINI FEATURE: Analyze Portfolio Button -->
-                    <button id="sandbox-analyze-btn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-full shadow-lg text-lg mb-6 flex items-center justify-center transition-transform hover:scale-105">
-                        <span class="mr-2">✨</span>
-                        Analyze My Portfolio
-                    </button>
-
-                    <!-- Asset Cards -->
-                    <h3 class="text-xl font-semibold text-text-dark mb-3">Your Assets</h3>
-                    <div class="space-y-3">
-                        <!-- Stock -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="bg-blue-100 p-3 rounded-full mr-3">
-                                    <svg class="w-6 h-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-text-dark">TENAGA (Stock)</p>
-                                    <p class="text-sm text-text-light">150 Units</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-text-dark">RM 2,010.00</p>
-                                <p class="text-sm text-green-600">+3.2%</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Fund -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="bg-purple-100 p-3 rounded-full mr-3">
-                                    <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6A1.125 1.125 0 012.25 10.875v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25A1.125 1.125 0 0114.25 16.875v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25A1.125 1.125 0 013.75 18.375v-2.25z"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-text-dark">Public Mutual (Fund)</p>
-                                    <p class="text-sm text-text-light">5000 Units</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-text-dark">RM 2,500.00</p>
-                                <p class="text-sm text-red-600">-0.5%</p>
-                            </div>
-                        </div>
-
-                        <!-- REIT -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="bg-green-100 p-3 rounded-full mr-3">
-                                    <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-text-dark">PAVREIT (REIT)</p>
-                                    <p class="text-sm text-text-light">1000 Units</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-semibold text-text-dark">RM 1,000.00</p>
-                                <p class="text-sm text-green-600">+1.0%</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- AI Hint Bar -->
-                <div class="absolute bottom-16 left-0 right-0 p-3 bg-secondary m-4 rounded-xl shadow-md">
-                    <p class="text-sm text-amber-800 font-medium">
-                        <span class="font-bold">💡 Buddy's Tip:</span> You're holding 3 types of assets. Great diversification!
-                    </p>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 7: Community / Leaderboard
-            ====================================================================
-            -->
-            <div id="leaderboard-screen" class="app-screen">
-                <!-- Header -->
-                <div class="p-6 bg-white shadow-sm">
-                    <h2 class="text-3xl font-bold text-text-dark text-center">Leaderboard</h2>
-                </div>
-                
-                <!-- Tabs -->
-                <div class="flex p-1 bg-gray-200 m-6 rounded-full">
-                    <button class="flex-1 py-2 px-4 rounded-full bg-white shadow font-semibold text-primary">Campus</button>
-                    <button class="flex-1 py-2 px-4 rounded-full font-medium text-text-light">Friends</button>
-                    <button class="flex-1 py-2 px-4 rounded-full font-medium text-text-light">Global</button>
-                </div>
-
-                <div class="scrollable-content px-6">
-                    <!-- Weekly Challenge Banner -->
-                    <div class="bg-gradient-to-r from-accent to-amber-600 text-white p-5 rounded-2xl shadow-lg mb-6 flex items-center">
-                        <svg class="w-10 h-10 text-white mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-6.75c-.621 0-1.125.503-1.125 1.125v3.375m9 0h-9"></path></svg>
-                        <div>
-                            <h4 class="text-lg font-bold">Weekly Challenge</h4>
-                            <p class="text-sm text-white/90">Diversify into a REIT to earn +50 XP!</p>
-                        </div>
-                    </div>
-
-                    <!-- Rank Cards -->
-                    <div class="space-y-3">
-                        <!-- Rank 1 (Gold) -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center space-x-4 border-2 border-accent">
-                            <span class="text-2xl font-bold text-accent">1</span>
-                            <img src="https://placehold.co/48x48/FEF3C7/F59E0B?text=FA" alt="avatar" class="w-12 h-12 rounded-full">
-                            <div class="flex-grow">
-                                <p class="font-semibold text-text-dark">Fatimah A.</p>
-                                <p class="text-sm text-text-light">Universiti Malaya</p>
-                            </div>
-                            <span class="font-bold text-lg text-accent">1250 XP</span>
-                        </div>
-
-                        <!-- Rank 2 (Silver) -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center space-x-4 border-2 border-gray-300">
-                            <span class="text-2xl font-bold text-gray-500">2</span>
-                            <img src="https://placehold.co/48x48/E5E7EB/4B5563?text=R" alt="avatar" class="w-12 h-12 rounded-full">
-                            <div class="flex-grow">
-                                <p class="font-semibold text-text-dark">Ravi S.</p>
-                                <p class="text-sm text-text-light">Universiti Sains Malaysia</p>
-                            </div>
-                            <span class="font-bold text-lg text-gray-600">1100 XP</span>
-                        </div>
-                        
-                        <!-- Rank 3 (Bronze) -->
-                        <div class="bg-white p-4 rounded-2xl shadow-card flex items-center space-x-4 border-2 border-amber-700">
-                            <span class="text-2xl font-bold text-amber-700">3</span>
-                            <img src="https://placehold.co/48x48/FED7AA/9A3412?text=C" alt="avatar" class="w-12 h-12 rounded-full">
-                            <div class="flex-grow">
-                                <p class="font-semibold text-text-dark">Chen L.</p>
-                                <p class="text-sm text-text-light">Universiti Kebangsaan Malaysia</p>
-                            </div>
-                            <span class="font-bold text-lg text-amber-800">980 XP</span>
-                        </div>
-                        
-                        <!-- Current User -->
-                        <div class="bg-blue-50 p-4 rounded-2xl shadow-card flex items-center space-x-4 border-2 border-primary">
-                            <span class="text-2xl font-bold text-primary">4</span>
-                            <img src="https://placehold.co/48x48/DBEAFE/1D4ED8?text=A" alt="avatar" class="w-12 h-12 rounded-full">
-                            <div class="flex-grow">
-                                <p class="font-semibold text-text-dark">Aina (You)</p>
-                                <p class="text-sm text-text-light">Universiti Teknologi MARA</p>
-                            </div>
-                            <span class="font-bold text-lg text-primary">750 XP</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            SCREEN 8: Graduation / Real-World
-            ====================================================================
-            -->
-            <div id="graduation-screen" class="app-screen p-8 justify-center items-center text-center bg-gradient-to-b from-primary to-emerald-800 text-white">
-                <div class="bg-white/20 p-8 rounded-full mb-8 shadow-lg">
-                    <svg class="w-20 h-20 text-accent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 9l4 1.5V17a1 1 0 001 1h12a1 1 0 001-1v-6.5L23 9l-11-7zm9 8.5l-2 1v6h-3v-5a1 1 0 00-1-1h-4a1 1 0 00-1 1v5H6v-6l-2-1L12 4l9 6.5z"></path></svg>
-                </div>
-                <h2 class="text-3xl font-bold mb-2">Congrats, Aina!</h2>
-                <h3 class="text-4xl font-bold text-accent mb-4">You're Investment-Ready!</h3>
-                <p class="text-lg text-white/90 mb-12">You've completed all modules and learned the basics of smart investing. You're ready for the next step!</p>
-                
-                <button id="grad-guide-btn" class="w-full bg-white text-primary font-bold py-4 px-6 rounded-full shadow-lg text-lg mb-4">
-                    View Real-World Guide
-                </button>
-                <button class="w-full bg-transparent border-2 border-white text-white font-medium py-3.5 px-6 rounded-full">
-                    Download Certificate
-                </button>
-                <button class="nav-back-btn text-white/80 mt-8">Back to Dashboard</button>
-            </div>
-            
-            <!-- 
-            ====================================================================
-            SCREEN 9: Real-World Guide (Sub-screen)
-            ====================================================================
-            -->
-            <div id="real-world-guide-screen" class="app-screen">
-                <!-- Header -->
-                <div class="flex items-center p-4 bg-white shadow-sm">
-                    <button id="guide-back-btn" class="p-2 rounded-full hover:bg-gray-100">
-                        <svg class="w-6 h-6 text-text-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"></path></svg>
-                    </button>
-                    <h2 class="text-lg font-semibold text-text-dark ml-4">Real-World Guide</h2>
-                </div>
-                
-                <div class="scrollable-content p-6">
-                    <div class="space-y-4">
-                        <div class="bg-white p-5 rounded-2xl shadow-card">
-                            <h3 class="text-lg font-semibold text-text-dark mb-1">1. How to Open a Brokerage Account</h3>
-                            <p class="text-text-light text-sm">Learn about CDS accounts, and compare local brokers like Rakuten Trade, M+ Online, and Maybank Trade.</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-card">
-                            <h3 class="text-lg font-semibold text-text-dark mb-1">2. Understanding Fees</h3>
-                            <p class="text-text-light text-sm">Brokerage fees, stamp duty, and clearing fees. Know what you're paying for!</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-card">
-                            <h3 class="text-lg font-semibold text-text-dark mb-1">3. Common Scams to Avoid</h3>
-                            <p class="text-text-light text-sm">If it sounds too good to be true, it probably is. Watch out for "get rich quick" schemes.</p>
-                        </div>
-                         <div class="bg-white p-5 rounded-2xl shadow-card">
-                            <h3 class="text-lg font-semibold text-text-dark mb-1">4. Tax Responsibilities</h3>
-                            <p class="text-text-light text-sm">Learn about capital gains tax (or lack thereof for shares in Malaysia) and tax on dividends.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            FLOATING: Bottom Navigation Bar
-            ====================================================================
-            -->
-            <nav id="bottom-nav" class="absolute bottom-0 left-0 right-0 h-20 bg-white shadow-nav rounded-t-2xl flex justify-around items-center z-30 transition-transform duration-300 translate-y-full">
-                <button id="nav-home" class="p-3 flex flex-col items-center text-primary">
-                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-                    <span class="text-xs font-semibold">Home</span>
-                </button>
-                <button id="nav-learn" class="p-3 flex flex-col items-center text-text-light hover:text-primary">
-                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25"></path></svg>
-                    <span class="text-xs font-medium">Learn</span>
-                </button>
-                <button id="nav-sandbox" class="p-3 flex flex-col items-center text-text-light hover:text-primary">
-                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"></path></svg>
-                    <span class="text-xs font-medium">Sandbox</span>
-                </button>
-                <button id="nav-leaderboard" class="p-3 flex flex-col items-center text-text-light hover:text-primary">
-                    <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-6.75c-.621 0-1.125.503-1.125 1.125v3.375m9 0h-9"></path></svg>
-                    <span class="text-xs font-medium">Community</span>
-                </button>
-            </nav>
-            
-            <!-- 
-            ====================================================================
-            FLOATING: AI Mentor Chatbot
-            ====================================================================
-            -->
-            <div id="chatbot-overlay" class="absolute inset-0 bg-black/40 z-40 p-0 opacity-0 pointer-events-none">
-                <div id="chatbot-window" class="absolute inset-0 mt-20 bg-bg-light rounded-t-2xl flex flex-col">
-                    <!-- Chat Header -->
-                    <div class="flex items-center justify-between p-4 bg-white shadow-sm rounded-t-2xl">
-                        <div class="flex items-center">
-                            <div class="bg-primary/10 p-2 rounded-full mr-3">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <h3 class="text-lg font-semibold text-text-dark">Ask Buddy</h3>
-                        </div>
-                        <button id="chatbot-close-btn" class="p-2 rounded-full hover:bg-gray-100">
-                            <svg class="w-6 h-6 text-text-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-                    
-                    <!-- Chat Thread -->
-                    <div id="chat-thread" class="flex-grow p-4 space-y-4 overflow-y-auto">
-                        <!-- Buddy Message -->
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-white p-3 rounded-full shadow-sm">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-card max-w-xs">
-                                <p class="text-text-dark">Hi Aina! I'm Buddy, your AI mentor. Ask me anything about investing, like "What is a REIT?" or "How do I diversify?".</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Sample User/Buddy Exchange -->
-                        <div class="flex justify-end">
-                            <div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-card max-w-xs">
-                                <p>What is a REIT?</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="bg-white p-3 rounded-full shadow-sm">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-card max-w-xs">
-                                <p class="text-text-dark">A REIT is a Real Estate Investment Trust. It's a company that owns and operates income-generating properties. By buying its stock, you can earn from properties (like malls or offices) without buying the whole building!</p>
-                            </div>
-                        </div>
-
-                        <!-- ✨ GEMINI FEATURE: Buddy Typing Indicator -->
-                        <div id="buddy-typing" class="flex items-start space-x-3 hidden">
-                            <div class="bg-white p-3 rounded-full shadow-sm">
-                                <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-card max-w-xs">
-                                <div class="flex space-x-1 justify-center items-center">
-                                    <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                    <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                    <div class="h-2 w-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Input Bar -->
-                    <div class="p-4 bg-white border-t border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <input id="chat-input" type="text" placeholder="Type your question..." class="flex-grow bg-gray-100 border-transparent rounded-full py-3 px-5 focus:outline-none focus:ring-2 focus:ring-primary">
-                            <button id="chatbot-send-btn" class="bg-primary p-3 rounded-full text-white shadow-md">
-                                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.875L6 12z"></path></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 
-            ====================================================================
-            MODAL: Module Quiz
-            ====================================================================
-            -->
-            <div id="quiz-modal" class="modal-overlay absolute inset-0 bg-black/50 z-40 p-6 flex items-center justify-center opacity-0 pointer-events-none">
-                <div class="modal-content bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm text-center">
-                    <h3 class="text-xl font-bold text-text-dark mb-4">Module 1 Quiz</h3>
-                    <p class="text-text-light mb-6">What is the "invisible thief" that makes money worth less over time?</p>
-                    <div class="space-y-3">
-                        <button class="w-full text-left p-4 bg-gray-100 rounded-xl hover:bg-gray-200 font-medium">A. Taxes</button>
-                        <button id="quiz-correct-btn" class="w-full text-left p-4 bg-gray-100 rounded-xl hover:bg-gray-200 font-medium">B. Inflation</button>
-                        <button class="w-full text-left p-4 bg-gray-100 rounded-xl hover:bg-gray-200 font-medium">C. Brokerage Fees</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 
-            ====================================================================
-            MODAL: Badge Earned
-            ====================================================================
-            -->
-            <div id="badge-modal" class="modal-overlay absolute inset-0 bg-black/50 z-50 p-6 flex items-center justify-center opacity-0 pointer-events-none">
-                <div class="modal-content bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm text-center">
-                    <div class="text-7xl mb-4">🎖️</div>
-                    <h3 class="text-2xl font-bold text-text-dark mb-2">Badge Unlocked!</h3>
-                    <p class="text-lg text-primary font-semibold mb-4">"Inflation Buster"</p>
-                    <p class="text-text-light mb-6">+50 XP has been added to your profile!</p>
-                    <button id="badge-close-btn" class="w-full bg-primary text-white font-bold py-3 px-6 rounded-full shadow-lg">
-                        Awesome!
-                    </button>
-                </div>
-            </div>
-
-            <!-- 
-            ====================================================================
-            ✨ GEMINI FEATURE: Sandbox Analysis Modal
-            ====================================================================
-            -->
-            <div id="sandbox-analysis-modal" class="modal-overlay absolute inset-0 bg-black/50 z-50 p-6 flex items-center justify-center opacity-0 pointer-events-none">
-                <div class="modal-content bg-white p-6 rounded-2xl shadow-lg w-full max-w-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold text-text-dark">✨ Portfolio Analysis</h3>
-                        <button id="analysis-close-btn" class="p-1 rounded-full hover:bg-gray-100">
-                             <svg class="w-6 h-6 text-text-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
-
-                    <!-- Loading State -->
-                    <div id="analysis-loading" class="text-center py-8">
-                        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                        <p class="text-text-light font-medium">Buddy is analyzing your portfolio...</p>
-                    </div>
-
-                    <!-- Results State -->
-                    <div id="analysis-results" class="hidden space-y-4">
-                        <div>
-                            <h4 class="text-sm font-semibold text-green-600">STRENGTH</h4>
-                            <p id="analysis-result-strength" class="text-text-dark">...</p>
-                        </div>
-                         <div>
-                            <h4 class="text-sm font-semibold text-amber-600">WEAKNESS</h4>
-                            <p id="analysis-result-weakness" class="text-text-dark">...</p>
-                        </div>
-                         <div>
-                            <h4 class="text-sm font-semibold text-blue-600">BUDDY'S TIP</h4>
-                            <p id="analysis-result-tip" class="text-text-dark">...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    
-    <!-- Preview Mode Button -->
-    <button id="preview-mode-btn">
-        <svg class="w-5 h-5 mr-2 inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-        Run Preview
-    </button>
-
-
-    <!-- JavaScript Logic -->
-    <script>
-        /**
-         * --------------------------------------------------------------------
-         * ✨ GEMINI API FUNCTIONS
-         * --------------------------------------------------------------------
-         */
-
-        /**
-         * Performs a fetch request with exponential backoff.
-         */
-        async function fetchWithBackoff(url, options, retries = 5, delay = 1000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(url, options);
-                    if (response.ok) {
-                        return response.json();
-                    }
-                } catch (error) {
-                    // Log network errors, but don't retry on them, as they are likely persistent
-                    console.error("Network error:", error);
-                    break; 
-                }
-                
-                // If not OK, wait and retry
-                await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
-            }
-            throw new Error("Failed to fetch from API after multiple retries.");
-        }
-
-        /**
-         * Calls the Gemini API `generateContent` endpoint.
-         * @param {string} prompt - The user's prompt.
-         * @param {string | null} systemPrompt - The system instruction for the model.
-         * @param {object | null} jsonSchema - A JSON schema for structured output.
-         * @returns {Promise<string | null>} The model's response text or JSON string.
-         */
-        async function callGeminiApi(prompt, systemPrompt = null, jsonSchema = null) {
-            const apiKey = ""; // API key will be provided by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-            };
-
-            if (systemPrompt) {
-                payload.systemInstruction = {
-                    parts: [{ text: systemPrompt }]
-                };
-            }
-
-            if (jsonSchema) {
-                payload.generationConfig = {
-                    responseMimeType: "application/json",
-                    responseSchema: jsonSchema
-                };
-            }
-
-            try {
-                const result = await fetchWithBackoff(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const candidate = result.candidates?.[0];
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    return candidate.content.parts[0].text;
-                }
-                console.error("Invalid API response structure:", result);
-                return null;
-
-            } catch (error) {
-                console.error("Error calling Gemini API:", error);
-                return null;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-
-            // --- STATE ---
-            let currentScreen = 'splash-screen';
-            let currentOnboardingStep = 0;
-            const onboardingQuestions = [
-                {
-                    question: "When you think about investing, you feel...",
-                    options: ["Excited! A chance to grow my money.", "Curious, but a little nervous.", "Very cautious. It seems risky."],
-                    progress: "25%"
-                },
-                {
-                    question: "Your main goal for investing is...",
-                    options: ["Short-term gains (1-2 years).", "Mid-term goals, like a new laptop (3-5 years).", "Long-term wealth, like retirement (>10 years)."],
-                    progress: "50%"
-                },
-                {
-                    question: "If your investment dropped 10% in a week, you would...",
-                    options: ["Buy more! It's on sale.", "Hold and wait, it will probably recover.", "Sell immediately to cut my losses."],
-                    progress: "75%"
-                },
-                {
-                    question: "How familiar are you with investment terms (e.g., Stocks, Bonds)?",
-                    options: ["Very familiar. I know the lingo.", "Somewhat familiar. I know the basics.", "Not at all. It's all new to me."],
-                    progress: "100%"
-                }
-            ];
-
-            // --- SELECTORS ---
-            const screens = document.querySelectorAll('.app-screen');
-            const bottomNav = document.getElementById('bottom-nav');
-            const chatbotOverlay = document.getElementById('chatbot-overlay');
-            const quizModal = document.getElementById('quiz-modal');
-            const badgeModal = document.getElementById('badge-modal');
-
-            // ✨ GEMINI FEATURE: New Selectors
-            const sandboxAnalyzeBtn = document.getElementById('sandbox-analyze-btn');
-            const sandboxAnalysisModal = document.getElementById('sandbox-analysis-modal');
-            const analysisLoading = document.getElementById('analysis-loading');
-            const analysisResults = document.getElementById('analysis-results');
-            const analysisResultStrength = document.getElementById('analysis-result-strength');
-            const analysisResultWeakness = document.getElementById('analysis-result-weakness');
-            const analysisResultTip = document.getElementById('analysis-result-tip');
-            const analysisCloseBtn = document.getElementById('analysis-close-btn');
-            const buddyTyping = document.getElementById('buddy-typing');
-            const chatbotSendBtn = document.getElementById('chatbot-send-btn');
-            const chatInput = document.getElementById('chat-input');
-            const chatThread = document.getElementById('chat-thread');
-
-            // --- CORE FUNCTIONS ---
-            
-            /**
-             * Main navigation function. Hides all screens and shows the target one.
-             * @param {string} screenId The ID of the screen to show.
-             */
-            function showScreen(screenId) {
-                screens.forEach(screen => {
-                    screen.classList.remove('active');
-                });
-                
-                const activeScreen = document.getElementById(screenId);
-                if (activeScreen) {
-                    activeScreen.classList.add('active');
-                    currentScreen = screenId;
-                }
-                
-                // Show/Hide Bottom Nav
-                const navScreens = ['dashboard-screen', 'learning-screen', 'sandbox-screen', 'leaderboard-screen'];
-                if (navScreens.includes(screenId)) {
-                    bottomNav.classList.remove('translate-y-full');
-                } else {
-                    bottomNav.classList.add('translate-y-full');
-                }
-                
-                // Update Nav Active State
-                updateNavActiveState(screenId);
-            }
-
-            /**
-             * Updates the active state of the bottom navigation icons
-             * @param {string} screenId The ID of the currently active screen
-             */
-            function updateNavActiveState(screenId) {
-                const navButtons = {
-                    'nav-home': 'dashboard-screen',
-                    'nav-learn': 'learning-screen',
-                    'nav-sandbox': 'sandbox-screen',
-                    'nav-leaderboard': 'leaderboard-screen'
-                };
-                
-                Object.keys(navButtons).forEach(buttonId => {
-                    const button = document.getElementById(buttonId);
-                    if (navButtons[buttonId] === screenId) {
-                        button.classList.add('text-primary');
-                        button.classList.remove('text-text-light');
-                    } else {
-                        button.classList.remove('text-primary');
-                        button.classList.add('text-text-light');
-                    }
-                });
-            }
-
-            /**
-             * Renders the current onboarding question
-             * @param {number} stepIndex The index of the question to show
-             */
-            function showOnboardingQuestion(stepIndex) {
-                if (stepIndex >= onboardingQuestions.length) {
-                    showScreen('persona-screen');
-                    return;
-                }
-                
-                const questionData = onboardingQuestions[stepIndex];
-                const card = document.getElementById('onboarding-card');
-                const progressBar = document.getElementById('onboarding-progress');
-                
-                progressBar.style.width = questionData.progress;
-                
-                let optionsHTML = questionData.options.map(option => 
-                    `<button class="onboarding-option w-full text-left p-5 bg-white rounded-2xl shadow-card hover:shadow-lg border-2 border-transparent hover:border-primary transition-all">
-                        ${option}
-                    </button>`
-                ).join('');
-
-                card.innerHTML = `
-                    <h2 class="text-2xl font-semibold text-text-dark text-center mb-8">${questionData.question}</h2>
-                    <div class="w-full space-y-4">
-                        ${optionsHTML}
-                    </div>
-                `;
-                
-                // Add event listeners to new option buttons
-                document.querySelectorAll('.onboarding-option').forEach(button => {
-                    button.addEventListener('click', () => {
-                        currentOnboardingStep++;
-                        showOnboardingQuestion(currentOnboardingStep);
-                    });
-                });
-            }
-            
-            /**
-             * Toggles the AI chatbot overlay
-             * @param {boolean} [forceShow] - Force the overlay to show or hide
-             */
-            function toggleChatbot(forceShow) {
-                if (forceShow === true) {
-                    chatbotOverlay.classList.add('active');
-                } else if (forceShow === false) {
-                    chatbotOverlay.classList.remove('active');
-                } else {
-                    chatbotOverlay.classList.toggle('active');
-                }
-            }
-
-            /**
-             * ✨ GEMINI FEATURE: Upgraded `sendChatMessage` function
-             * Sends a message to the Gemini API and displays the response.
-             */
-            async function sendChatMessage() {
-                const message = chatInput.value.trim();
-                if (message === "") return;
-
-                // 1. Add User Message
-                const userMessageHTML = `
-                    <div class="flex justify-end">
-                        <div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-card max-w-xs">
-                            <p>${message}</p>
-                        </div>
-                    </div>
-                `;
-                chatThread.innerHTML += userMessageHTML;
-                chatInput.value = "";
-                chatThread.scrollTop = chatThread.scrollHeight;
-
-                // 2. Show typing indicator and disable input
-                buddyTyping.classList.remove('hidden');
-                chatbotSendBtn.disabled = true;
-                chatInput.disabled = true;
-
-                // 3. Define System Prompt for Buddy
-                const buddySystemPrompt = `
-                    You are 'Buddy', a friendly, encouraging, and knowledgeable financial mentor for 
-                    Malaysian university students. Your goal is to make investing feel simple and accessible.
-                    - Keep answers concise (2-3 sentences if possible).
-                    - Use simple language. Avoid complex jargon.
-                    - When relevant, use Malaysian context (e.g., Ringgit (RM), Bursa Malaysia, ASNB, REITs like PAVREIT).
-                    - You are an educator. DO NOT give direct financial advice (e.g., "You should buy X"). 
-                    - Focus on explaining *concepts* (e.g., "Diversification is like...").
-                `;
-
-                // 4. Call Gemini API
-                try {
-                    const responseText = await callGeminiApi(message, buddySystemPrompt);
-                    
-                    if (responseText) {
-                        addBuddyMessageToThread(responseText);
-                    } else {
-                        addBuddyMessageToThread("Oops! I'm having a little trouble thinking right now. Please try again in a moment.");
-                    }
-                } catch (error) {
-                    console.error("Failed to send message:", error);
-                    addBuddyMessageToThread("Sorry, I couldn't connect. Please check your connection and try again.");
-                } finally {
-                    // 5. Hide typing indicator and re-enable input
-                    buddyTyping.classList.add('hidden');
-                    chatbotSendBtn.disabled = false;
-                    chatInput.disabled = false;
-                    chatInput.focus();
-                }
-            }
-            
-            /**
-             * ✨ GEMINI FEATURE: Helper to add Buddy's message to the chat
-             * @param {string} text - The message text from Buddy.
-             */
-            function addBuddyMessageToThread(text) {
-                const buddyMessageHTML = `
-                    <div class="flex items-start space-x-3">
-                        <div class="bg-white p-3 rounded-full shadow-sm">
-                            <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-card max-w-xs">
-                            <p class="text-text-dark">${text}</p>
-                        </div>
-                    </div>
-                `;
-                chatThread.innerHTML += buddyMessageHTML;
-                chatThread.scrollTop = chatThread.scrollHeight; // Scroll to bottom
-            }
-
-            /**
-             * Toggles a modal popup
-             * @param {string} modalId - ID of the modal to toggle
-             * @param {boolean} show - Force show/hide
-             */
-            function toggleModal(modalId, show) {
-                const modal = document.getElementById(modalId);
-                if (show) {
-                    modal.classList.add('active');
-                } else {
-                    modal.classList.remove('active');
-                }
-            }
-
-            /**
-             * ✨ GEMINI FEATURE: Handles the sandbox portfolio analysis
-             */
-            async function handleSandboxAnalysis() {
-                // 1. Show modal and loading state
-                toggleModal('sandbox-analysis-modal', true);
-                analysisLoading.classList.remove('hidden');
-                analysisLoading.innerHTML = `
-                    <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p class="text-text-light font-medium">Buddy is analyzing your portfolio...</p>`;
-                analysisResults.classList.add('hidden');
-
-                // 2. Define the JSON schema for the response
-                const schema = {
-                    type: "OBJECT",
-                    properties: {
-                        strength: { 
-                            type: "STRING",
-                            description: "A brief, positive observation about the portfolio (e.g., 'Good diversification')." 
-                        },
-                        weakness: { 
-                            type: "STRING",
-                            description: "A brief, constructive criticism (e.g., 'High cash amount not earning returns')."
-                        },
-                        tip: { 
-                            type: "STRING",
-                            description: "A simple, actionable educational tip related to the weakness (e.g., 'Consider learning about Unit Trusts to use your cash.')."
-                        }
-                    },
-                    required: ["strength", "weakness", "tip"]
-                };
-
-                // 3. Define System & User Prompts (using hardcoded portfolio for this demo)
-                const systemPrompt = "You are a helpful financial analyst robot. Analyze the user's portfolio and provide one strength, one weakness, and one educational tip in simple terms for a beginner.";
-                
-                // In a real app, this data would be dynamic.
-                const userPrompt = `
-                    Analyze this demo portfolio for a Malaysian student:
-                    - Total Value: RM 10,245.50
-                    - Virtual Cash: RM 4,754.50
-                    - Assets:
-                        - TENAGA (Stock): RM 2,010.00
-                        - Public Mutual (Fund): RM 2,500.00
-                        - PAVREIT (REIT): RM 1,000.00
-                    
-                    Based on this, what is one strength, one weakness, and a simple educational tip?
-                `;
-
-                // 4. Call Gemini API
-                try {
-                    const responseJson = await callGeminiApi(userPrompt, systemPrompt, schema);
-
-                    if (responseJson) {
-                        const data = JSON.parse(responseJson);
-                        // 5. Populate UI
-                        analysisResultStrength.textContent = data.strength;
-                        analysisResultWeakness.textContent = data.weakness;
-                        analysisResultTip.textContent = data.tip;
-
-                        // 6. Show results
-                        analysisLoading.classList.add('hidden');
-                        analysisResults.classList.remove('hidden');
-                    } else {
-                        throw new Error("No response from API");
-                    }
-                } catch (error) {
-                    console.error("Analysis failed:", error);
-                    analysisLoading.innerHTML = `<p class="text-red-600 font-medium">Oops! Analysis failed. Please try again.</p>`;
-                }
-            }
-
-            /**
-             * Runs the "Preview Mode" autoplay flow
-             */
-            function startPreviewMode() {
-                const previewBtn = document.getElementById('preview-mode-btn');
-                previewBtn.disabled = true;
-                previewBtn.innerHTML = 'Preview Running...';
-                previewBtn.classList.add('bg-gray-500');
-
-                const steps = [
-                    // Flow 1: Welcome -> Onboarding -> Persona
-                    { action: () => showScreen('splash-screen'), delay: 1000 },
-                    { action: () => showScreen('onboarding-screen'), delay: 2000 },
-                    { action: () => showOnboardingQuestion(0), delay: 500 },
-                    { action: () => showOnboardingQuestion(1), delay: 2000 },
-                    { action: () => showOnboardingQuestion(2), delay: 2000 },
-                    { action: () => showOnboardingQuestion(3), delay: 2000 },
-                    { action: () => showScreen('persona-screen'), delay: 2000 },
-                    { action: () => showScreen('dashboard-screen'), delay: 3000 },
-
-                    // Flow 2: Dashboard -> Learning -> Sandbox -> Chatbot
-                    { action: () => showScreen('learning-screen'), delay: 2000 },
-                    { action: () => toggleModal('quiz-modal', true), delay: 3000 },
-                    { action: () => {
-                        toggleModal('quiz-modal', false);
-                        toggleModal('badge-modal', true);
-                    }, delay: 2000 },
-                    { action: () => toggleModal('badge-modal', false), delay: 2500 },
-                    { action: () => showScreen('sandbox-screen'), delay: 1000 },
-                    { action: () => toggleChatbot(true), delay: 3000 },
-                    { action: () => {
-                        document.getElementById('chat-input').value = "What is a stock?";
-                        sendChatMessage();
-                    }, delay: 1000 },
-                    { action: () => toggleChatbot(false), delay: 4000 },
-                    { action: () => showScreen('dashboard-screen'), delay: 1000 },
-
-                    // Flow 3: Dashboard -> Leaderboard -> Graduation
-                    { action: () => showScreen('leaderboard-screen'), delay: 2000 },
-                    { action: () => showScreen('dashboard-screen'), delay: 3000 },
-                    { action: () => showScreen('graduation-screen'), delay: 2000 },
-                    { action: () => showScreen('real-world-guide-screen'), delay: 3000 },
-                    { action: () => showScreen('graduation-screen'), delay: 3000 },
-                    { action: () => showScreen('dashboard-screen'), delay: 2000 },
-
-                    // End
-                    { action: () => {
-                        previewBtn.disabled = false;
-                        previewBtn.innerHTML = '<svg class="w-5 h-5 mr-2 inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg> Run Preview';
-                        previewBtn.classList.remove('bg-gray-500');
-                        showScreen('splash-screen');
-                    }, delay: 1000 }
-                ];
-                
-                let cumulativeDelay = 0;
-                steps.forEach(step => {
-                    cumulativeDelay += step.delay;
-                    setTimeout(step.action, cumulativeDelay);
-                });
-            }
-
-            // --- EVENT BINDINGS ---
-            
-            // Flow 1
-            document.getElementById('splash-start-btn').onclick = () => showScreen('onboarding-screen');
-            document.getElementById('persona-continue-btn').onclick = () => showScreen('dashboard-screen');
-            
-            // Dashboard Tiles
-            document.getElementById('dash-learn-btn').onclick = () => showScreen('learning-screen');
-            document.getElementById('dash-sandbox-btn').onclick = () => showScreen('sandbox-screen');
-            document.getElementById('dash-chat-btn').onclick = () => toggleChatbot(true);
-            document.getElementById('dash-leaderboard-btn').onclick = () => showScreen('leaderboard-screen');
-            document.getElementById('dash-graduation-btn').onclick = () => showScreen('graduation-screen');
-
-            // Bottom Nav
-            document.getElementById('nav-home').onclick = () => showScreen('dashboard-screen');
-            document.getElementById('nav-learn').onclick = () => showScreen('learning-screen');
-            document.getElementById('nav-sandbox').onclick = () => showScreen('sandbox-screen');
-            document.getElementById('nav-leaderboard').onclick = () => showScreen('leaderboard-screen');
-            
-            // Back Buttons
-            document.querySelectorAll('.nav-back-btn').forEach(btn => {
-                btn.onclick = () => showScreen('dashboard-screen');
-            });
-            document.getElementById('guide-back-btn').onclick = () => showScreen('graduation-screen');
-
-            // Chatbot
-            document.getElementById('chatbot-close-btn').onclick = () => toggleChatbot(false);
-            document.getElementById('chatbot-send-btn').onclick = sendChatMessage; // Updated to new async function
-            document.getElementById('chat-input').onkeydown = (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Prevent form submission
-                    sendChatMessage(); // Updated to new async function
-                }
-            };
-            
-            // Learning Modals
-            document.getElementById('learning-quiz-btn').onclick = () => toggleModal('quiz-modal', true);
-            document.getElementById('quiz-correct-btn').onclick = () => {
-                toggleModal('quiz-modal', false);
-                setTimeout(() => toggleModal('badge-modal', true), 400);
-            };
-            document.getElementById('badge-close-btn').onclick = () => {
-                toggleModal('badge-modal', false);
-            };
-            
-            // Graduation
-            document.getElementById('grad-guide-btn').onclick = () => showScreen('real-world-guide-screen');
-            
-            // Preview Mode
-            document.getElementById('preview-mode-btn').onclick = startPreviewMode;
-
-            // ✨ GEMINI FEATURE: Event Listeners
-            sandboxAnalyzeBtn.onclick = handleSandboxAnalysis;
-            analysisCloseBtn.onclick = () => toggleModal('sandbox-analysis-modal', false);
-
-            // --- INITIALIZATION ---
-            showOnboardingQuestion(currentOnboardingStep); // Prepare onboarding screen
-            showScreen('splash-screen'); // Show splash first
-
-        });
-    </script>
-</body>
-</html>
