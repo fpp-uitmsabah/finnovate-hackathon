@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaveQuest</title>
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- 3. Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom class for active nav items */
+        .nav-active {
+            color: #0d9488; /* teal-600 */
+        }
+        /* Hide scrollbars for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="bg-teal-50">
+
+    <!-- 
+      Global Fullscreen Loader
+      This is shown on initial auth and during major operations.
+    -->
+    <div id="global-loader" class="fixed inset-0 bg-teal-50/90 z-50 flex items-center justify-center">
+        <div class="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <!-- 
+      Main App Content
+      Pages will be shown/hidden inside this container.
+    -->
+    <div id="app-container" class="pb-24 max-w-lg mx-auto">
+        
+        <!-- === Page: Dashboard === -->
+        <div id="page-dash" class="p-4 space-y-6">
+            <h1 class="text-3xl font-bold text-teal-900 pt-4">Taman Zen Anda</h1>
+            
+            <!-- Pet Container -->
+            <div id="pet-container" class="bg-gradient-to-br from-white to-teal-100 p-8 rounded-3xl shadow-lg flex flex-col items-center">
+                <span id="pet-emoji" class="text-8xl mb-4">🌱</span>
+                <span id="pet-name" class="text-xl font-semibold text-teal-800">Tunas</span>
+                <span class="text-sm text-teal-600">Haiwan simpanan anda membesar bersama anda!</span>
+            </div>
+            
+            <!-- Total Savings Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-md">
+                <h2 class="text-sm font-semibold text-gray-500 uppercase mb-2">Jumlah Disimpan</h2>
+                <p id="dash-total-savings" class="text-4xl font-bold text-teal-700">MYR 0</p>
+            </div>
+            
+            <!-- Goals Summary Card -->
+            <div id="dash-goals-summary" class="bg-white p-6 rounded-2xl shadow-md hidden">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Kemajuan Matlamat Keseluruhan</h2>
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="dash-progress-bar" class="bg-teal-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mt-2">
+                    <span id="dash-progress-current">MYR 0</span>
+                    <span id="dash-progress-target">MYR 0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- === Page: Goals === -->
+        <div id="page-goals" class="p-4 space-y-6 hidden">
+            <div class="flex justify-between items-center pt-4">
+                <h1 class="text-3xl font-bold text-teal-900">Misi Anda</h1>
+                <button id="add-goal-btn" class="bg-teal-500 text-white p-2 rounded-full shadow-lg hover:bg-teal-600 transition-colors">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="goals-empty-state" class="text-center text-gray-500 py-16">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4ZM12 6C10.9 6 10 6.9 10 8C10 9.1 10.9 10 12 10C13.1 10 14 9.1 14 8C14 6.9 13.1 6 12 6ZM12 10C9.79 10 8 11.79 8 14C8 16.21 9.79 18 12 18C14.21 18 16 16.21 16 14C16 11.79 14.21 10 12 10ZM12 12C13.1 12 14 12.9 14 14C14 15.1 13.1 16 12 16C10.9 16 10 15.1 10 14C10 12.9 10.9 12 12 12Z"></path></svg>
+                <p>Tiada misi lagi!</p>
+                <p>Tekan '+' untuk mulakan misi simpanan baru.</p>
+            </div>
+            
+            <!-- Goals List -->
+            <div id="goals-list" class="space-y-4">
+                <!-- Goal items will be injected here by JS -->
+            </div>
+        </div>
+
+        <!-- === Page: Squads === -->
+        <div id="page-squads" class="p-4 space-y-6 hidden">
+            <h1 class="text-3xl font-bold text-teal-900 pt-4">Skuad Simpanan</h1>
+            
+            <!-- View: Not in a squad -->
+            <div id="squad-view-none">
+                <div class="text-center text-gray-500 py-16">
+                    <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 13C17.6569 13 19 11.6569 19 10C19 8.34315 17.6569 7 16 7C14.3431 7 13 8.34315 13 10C13 11.6569 14.3431 13 16 13ZM16 15C13.2386 15 11 17.2386 11 20H21C21 17.2386 18.7614 15 16 15ZM8 13C9.65685 13 11 11.6569 11 10C11 8.34315 9.65685 7 8 7C6.34315 7 5 8.34315 5 10C5 11.6569 6.34315 13 8 13ZM8 15C5.23858 15 3 17.2386 3 20H13C13 17.2386 10.7614 15 8 15Z"></path></svg>
+                    <p>Anda belum menyertai mana-mana skuad.</p>
+                    <p>Sertai skuad untuk menyimpan bersama rakan!</p>
+                </div>
+                <div class="space-y-4">
+                    <button id="join-squad-btn" class="w-full bg-teal-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-teal-600 transition-colors">
+                        Sertai Skuad
+                    </button>
+                    <button id="create-squad-btn" class="w-full bg-white text-teal-600 font-semibold py-3 px-4 rounded-xl shadow-md border border-gray-200 hover:bg-gray-50 transition-colors">
+                        Cipta Skuad Baru
+                    </button>
+                </div>
+            </div>
+            
+            <!-- View: In a squad -->
+            <div id="squad-view-joined" class="hidden">
+                <div class="bg-white p-6 rounded-2xl shadow-md">
+                    <h2 id="squad-name" class="text-2xl font-bold text-teal-700 text-center mb-1">Nama Skuad</h2>
+                    <p id="squad-leader" class="text-center text-sm text-gray-500 mb-6">Diketuai oleh ...</p>
+                    
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Papan Markah</h3>
+                    <ul id="squad-members-list" class="space-y-3">
+                        <!-- Member items will be injected here by JS -->
+                    </ul>
+                </div>
+                
+                <button id="leave-squad-btn" class="w-full bg-red-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:bg-red-600 transition-colors mt-6">
+                    Tinggalkan Skuad
+                </button>
+            </div>
+        </div>
+
+    </div> <!-- End #app-container -->
+
+    <!-- 
+      Modals
+      Contained within a backdrop, shown/hidden with JS.
+    -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/50 z-30 flex items-center justify-center p-4 hidden">
+
+        <!-- Modal: Set Name -->
+        <div id="modal-setName" class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-xl hidden">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Selamat Datang!</h2>
+            <p class="text-gray-600 mb-6">Sila masukkan nama anda untuk bermula.</p>
+            <form id="form-setName">
+                <label for="setName-name" class="block text-sm font-medium text-gray-700">Nama Panggilan</label>
+                <input type="text" id="setName-name" name="name" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-colors mt-6">
+                    Simpan
+                </button>
+            </form>
+        </div>
+        
+        <!-- Modal: Log Saving -->
+        <div id="modal-log" class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-xl hidden">
+            <!-- Close Button -->
+            <button data-action="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Log Simpanan Baru</h2>
+            <form id="form-logSaving">
+                <div class="mb-4">
+                    <label for="log-amount" class="block text-sm font-medium text-gray-700">Jumlah (RM)</label>
+                    <input type="number" id="log-amount" name="amount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="log-description" class="block text-sm font-medium text-gray-700">Deskripsi (Pilihan)</label>
+                    <input type="text" id="log-description" name="description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <div class="mb-6">
+                    <label for="log-goal" class="block text-sm font-medium text-gray-700">Pautkan ke Misi</label>
+                    <select id="log-goal" name="goalId" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                        <option value="">Simpanan Am</option>
+                        <!-- Goal options will be injected here by JS -->
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-colors">
+                    Simpan
+                </button>
+            </form>
+        </div>
+        
+        <!-- Modal: Add Goal -->
+        <div id="modal-goal" class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-xl hidden">
+            <!-- Close Button -->
+            <button data-action="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Misi Simpanan Baru</h2>
+            <form id="form-addGoal">
+                <div class="mb-4">
+                    <label for="goal-title" class="block text-sm font-medium text-gray-700">Nama Misi</label>
+                    <input type="text" id="goal-title" name="title" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                </div>
+                <div class="mb-6">
+                    <label for="goal-target" class="block text-sm font-medium text-gray-700">Sasaran (RM)</label>
+                    <input type="number" id="goal-target" name="targetAmount" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                </div>
+                <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-colors">
+                    Mula Misi
+                </button>
+            </form>
+        </div>
+        
+        <!-- Modal: Create Squad -->
+        <div id="modal-createSquad" class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-xl hidden">
+            <!-- Close Button -->
+            <button data-action="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Cipta Skuad Baru</h2>
+            <form id="form-createSquad">
+                <div class="mb-6">
+                    <label for="createSquad-name" class="block text-sm font-medium text-gray-700">Nama Skuad</label>
+                    <input type="text" id="createSquad-name" name="squadName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                </div>
+                <p class="text-sm text-gray-500 mb-6">Nota: ID anda akan digunakan sebagai ID jemputan untuk skuad ini.</p>
+                <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-colors">
+                    Cipta
+                </button>
+            </form>
+        </div>
+
+        <!-- Modal: Join Squad -->
+        <div id="modal-joinSquad" class="bg-white w-full max-w-sm p-6 rounded-2xl shadow-xl hidden">
+            <!-- Close Button -->
+            <button data-action="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11.9997 10.5865L16.9495 5.63672L18.3637 7.05093L13.4139 12.0007L18.3637 16.9504L16.9495 18.3646L11.9997 13.4148L7.04996 18.3646L5.63574 16.9504L10.5855 12.0007L5.63574 7.05093L7.04996 5.63672L11.9997 10.5865Z"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Sertai Skuad</h2>
+            <form id="form-joinSquad">
+                <div class="mb-6">
+                    <label for="joinSquad-id" class="block text-sm font-medium text-gray-700">ID Skuad (ID Ketua)</label>
+                    <input type="text" id="joinSquad-id" name="squadId" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" required>
+                </div>
+                <p id="join-squad-error" class="text-sm text-red-500 mb-4 hidden"></p>
+                <button type="submit" class="w-full bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-colors">
+                    Sertai
+                </button>
+            </form>
+        </div>
+
+    </div> <!-- End #modal-backdrop -->
+
+    <!-- 
+      Bottom Navigation Bar
+    -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto h-20 bg-white border-t border-gray-200 shadow-[0_-4px_10px_-1px_rgba(0,0,0,0.05)] grid grid-cols-5 items-center px-4 rounded-t-2xl">
+        <!-- Nav: Dash -->
+        <button data-page="dash" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-teal-600 nav-active">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12.0006 1.62109L22.607 9.87321V22.3732H1.39429V9.87321L12.0006 1.62109ZM12.0006 4.31481L3.39429 10.9995V20.3732H9.0006V14.3732H15.0006V20.3732H20.607V10.9995L12.0006 4.31481Z"></path></svg>
+            <span class="text-xs font-medium mt-1">Zen</span>
+        </button>
+        
+        <!-- Nav: Goals -->
+        <button data-page="goals" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-teal-600">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C16.42 20 20 16.42 20 12C20 7.58 16.42 4 12 4ZM12 6C10.9 6 10 6.9 10 8C10 9.1 10.9 10 12 10C13.1 10 14 9.1 14 8C14 6.9 13.1 6 12 6ZM12 10C9.79 10 8 11.79 8 14C8 16.21 9.79 18 12 18C14.21 18 16 16.21 16 14C16 11.79 14.21 10 12 10ZM12 12C13.1 12 14 12.9 14 14C14 15.1 13.1 16 12 16C10.9 16 10 15.1 10 14C10 12.9 10.9 12 12 12Z"></path></svg>
+            <span class="text-xs font-medium mt-1">Misi</span>
+        </button>
+        
+        <!-- Action: Log Saving -->
+        <button id="log-saving-btn" class="flex items-center justify-center -translate-y-6">
+            <div class="bg-teal-500 text-white rounded-full p-4 shadow-lg shadow-teal-500/50 hover:bg-teal-600 transition-all">
+                <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path></svg>
+            </div>
+        </button>
+        
+        <!-- Nav: Squads -->
+        <button data-page="squads" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-teal-600">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 13C17.6569 13 19 11.6569 19 10C19 8.34315 17.6569 7 16 7C14.3431 7 13 8.34315 13 10C13 11.6569 14.3431 13 16 13ZM16 15C13.2386 15 11 17.2386 11 20H21C21 17.2386 18.7614 15 16 15ZM8 13C9.65685 13 11 11.6569 11 10C11 8.34315 9.65685 7 8 7C6.34315 7 5 8.34315 5 10C5 11.6569 6.34315 13 8 13ZM8 15C5.23858 15 3 17.2386 3 20H13C13 17.2386 10.7614 15 8 15Z"></path></svg>
+            <span class="text-xs font-medium mt-1">Skuad</span>
+        </button>
+
+        <!-- User ID Display -->
+        <div class="flex flex-col items-center justify-center text-gray-500">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C15.3137 2 18 4.68629 18 8C18 11.3137 15.3137 14 12 14C8.68629 14 6 11.3137 6 8C6 4.68629 8.68629 2 12 2ZM12 16C17.5228 16 22 18.2386 22 21V22H2V21C2 18.2386 6.47715 16 12 16Z"></path></svg>
+            <span class="text-xs font-medium mt-1 truncate w-full px-1 text-center" id="user-id-display">...</span>
+        </div>
+    </nav>
+
+
+    <!-- 
+      JavaScript Logic
+    -->
+    <script type="module">
+        // --- Firebase Imports ---
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, doc, getDoc, setDoc, addDoc, deleteDoc, 
+            onSnapshot, collection, query, serverTimestamp, writeBatch 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+          ? JSON.parse(__firebase_config) 
+          : { apiKey: "DEFAULT_API_KEY", authDomain: "DEFAULT_AUTH_DOMAIN", projectId: "DEFAULT_PROJECT_ID" };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-savequest-app';
+
+        // --- Firebase Initialization ---
+        setLogLevel('Debug');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- Global State ---
+        let isAuthReady = false;
+        let userId = null;
+        let profile = null;
+        let goals = [];
+        let savings = [];
+        let squad = null;
+        let squadMembers = [];
+        
+        let totalSavings = 0;
+        let savingsByGoal = new Map();
+        
+        let currentPage = 'dash';
+        let currentModal = null;
+        let isLoading = false;
+        
+        let paths = null;
+        
+        // --- Unsubscribe Functions for Listeners ---
+        let unsubProfile = () => {};
+        let unsubGoals = () => {};
+        let unsubSavings = () => {};
+        let unsubSquad = () => {};
+        let unsubMembers = () => {};
+
+        // --- DOM Element Refs ---
+        const dom = {
+            loader: document.getElementById('global-loader'),
+            userIdDisplay: document.getElementById('user-id-display'),
+            pages: {
+                dash: document.getElementById('page-dash'),
+                goals: document.getElementById('page-goals'),
+                squads: document.getElementById('page-squads'),
+            },
+            dash: {
+                petEmoji: document.getElementById('pet-emoji'),
+                petName: document.getElementById('pet-name'),
+                totalSavings: document.getElementById('dash-total-savings'),
+                goalsSummary: document.getElementById('dash-goals-summary'),
+                progressBar: document.getElementById('dash-progress-bar'),
+                progressCurrent: document.getElementById('dash-progress-current'),
+                progressTarget: document.getElementById('dash-progress-target'),
+            },
+            goals: {
+                addBtn: document.getElementById('add-goal-btn'),
+                emptyState: document.getElementById('goals-empty-state'),
+                list: document.getElementById('goals-list'),
+            },
+            squads: {
+                viewNone: document.getElementById('squad-view-none'),
+                viewJoined: document.getElementById('squad-view-joined'),
+                joinBtn: document.getElementById('join-squad-btn'),
+                createBtn: document.getElementById('create-squad-btn'),
+                squadName: document.getElementById('squad-name'),
+                squadLeader: document.getElementById('squad-leader'),
+                membersList: document.getElementById('squad-members-list'),
+                leaveBtn: document.getElementById('leave-squad-btn'),
+            },
+            nav: {
+                buttons: document.querySelectorAll('.nav-btn'),
+                logBtn: document.getElementById('log-saving-btn'),
+            },
+            modal: {
+                backdrop: document.getElementById('modal-backdrop'),
+                closeBtns: document.querySelectorAll('[data-action="close-modal"]'),
+                setName: document.getElementById('modal-setName'),
+                log: document.getElementById('modal-log'),
+                goal: document.getElementById('modal-goal'),
+                createSquad: document.getElementById('modal-createSquad'),
+                joinSquad: document.getElementById('modal-joinSquad'),
+            },
+            forms: {
+                setName: document.getElementById('form-setName'),
+                logSaving: document.getElementById('form-logSaving'),
+                addGoal: document.getElementById('form-addGoal'),
+                createSquad: document.getElementById('form-createSquad'),
+                joinSquad: document.getElementById('form-joinSquad'),
+            },
+            inputs: {
+                logGoalSelect: document.getElementById('log-goal'),
+                joinSquadError: document.getElementById('join-squad-error'),
+            }
+        };
+
+        // --- Helper Functions ---
+        
+        /**
+         * Formats a number as Malaysian Ringgit (MYR).
+         */
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('ms-MY', {
+                style: 'currency',
+                currency: 'MYR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(amount || 0);
+        };
+        
+        /**
+         * Gets pet details based on total savings.
+         */
+        const getPet = (total) => {
+            if (total < 50) return { emoji: '🌱', name: 'Tunas' };
+            if (total < 200) return { emoji: '🪴', name: 'Anak Pokok' };
+            if (total < 500) return { emoji: '🌳', name: 'Pokok Muda' };
+            if (total < 1000) return { emoji: '🌸', name: 'Pokok Bunga Raya' };
+            if (total < 2500) return { emoji: '🌴', name: 'Pokok Kelapa' };
+            if (total < 5000) return { emoji: '🌲', name: 'Pokok Meranti' };
+            return { emoji: '💰', name: 'Pokok Duit' };
+        };
+
+        // --- State Update & Render Functions ---
+
+        /**
+         * Toggles the global loading spinner.
+         */
+        const updateLoading = (state) => {
+            isLoading = state;
+            dom.loader.classList.toggle('hidden', !isLoading);
+        };
+
+        /**
+         * Switches the visible page.
+         */
+        const updatePage = (pageName) => {
+            if (!pageName || !dom.pages[pageName]) return;
+            currentPage = pageName;
+            
+            // Hide all pages
+            Object.values(dom.pages).forEach(page => page.classList.add('hidden'));
+            
+            // Show the active page
+            dom.pages[currentPage].classList.remove('hidden');
+            
+            // Update nav button active state
+            dom.nav.buttons.forEach(btn => {
+                btn.classList.toggle('nav-active', btn.dataset.page === currentPage);
+            });
+        };
+
+        /**
+         * Shows or hides a modal.
+         */
+        const updateModal = (modalName) => {
+            currentModal = modalName;
+            
+            // Hide all modals first
+            Object.values(dom.modal).forEach(modalEl => {
+                if (modalEl.id && modalEl.id.startsWith('modal-')) {
+                    modalEl.classList.add('hidden');
+                }
+            });
+
+            if (modalName) {
+                // Show the specific modal and the backdrop
+                dom.modal[modalName].classList.remove('hidden');
+                dom.modal.backdrop.classList.remove('hidden');
+                
+                // Special logic for log modal
+                if(modalName === 'log') {
+                    renderLogModalOptions();
+                }
+            } else {
+                // Hide the backdrop
+                dom.modal.backdrop.classList.add('hidden');
+            }
+        };
+        
+        /**
+         * Recalculates memoized values from state.
+         */
+        const recalculateSavings = () => {
+            totalSavings = savings.reduce((acc, log) => acc + (log.amount || 0), 0);
+            
+            savingsByGoal.clear();
+            savings.forEach(log => {
+                if (log.goalId) {
+                    savingsByGoal.set(log.goalId, (savingsByGoal.get(log.goalId) || 0) + log.amount);
+                }
+            });
+        };
+
+        /**
+         * Renders the Dashboard page with current state.
+         */
+        const renderDashboard = () => {
+            const { emoji, name } = getPet(totalSavings);
+            dom.dash.petEmoji.textContent = emoji;
+            dom.dash.petName.textContent = name;
+            dom.dash.totalSavings.textContent = formatCurrency(totalSavings);
+            
+            if (goals.length > 0) {
+                const totalTarget = goals.reduce((acc, g) => acc + g.targetAmount, 0);
+                const totalProgress = totalTarget > 0 ? (totalSavings / totalTarget) * 100 : 0;
+                
+                dom.dash.goalsSummary.classList.remove('hidden');
+                dom.dash.progressBar.style.width = `${Math.min(totalProgress, 100)}%`;
+                dom.dash.progressCurrent.textContent = formatCurrency(totalSavings);
+                dom.dash.progressTarget.textContent = formatCurrency(totalTarget);
+            } else {
+                dom.dash.goalsSummary.classList.add('hidden');
+            }
+        };
+
+        /**
+         * Renders the Goals page with current state.
+         */
+        const renderGoals = () => {
+            // Clear current list
+            dom.goals.list.innerHTML = '';
+            
+            if (goals.length === 0) {
+                dom.goals.emptyState.classList.remove('hidden');
+                dom.goals.list.classList.add('hidden');
+            } else {
+                dom.goals.emptyState.classList.add('hidden');
+                dom.goals.list.classList.remove('hidden');
+                
+                goals.forEach(goal => {
+                    const current = savingsByGoal.get(goal.id) || 0;
+                    const target = goal.targetAmount;
+                    const progress = target > 0 ? (current / target) * 100 : 0;
+                    const isComplete = progress >= 100;
+                    
+                    const goalEl = document.createElement('div');
+                    goalEl.className = "bg-white p-5 rounded-2xl shadow-md";
+                    goalEl.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-lg font-semibold text-gray-800">${goal.title}</span>
+                            ${isComplete ? '<svg class="w-6 h-6 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9.9997 15.1709L19.1921 5.97852L20.6063 7.39273L9.9997 17.9993L3.63574 11.6354L5.04996 10.2212L9.9997 15.1709Z"></path></svg>' : ''}
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-teal-500 h-3 rounded-full transition-all duration-500" style="width: ${Math.min(progress, 100)}%"></div>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600 mt-2">
+                            <span>${formatCurrency(current)}</span>
+                            <span class="font-medium">${formatCurrency(target)}</span>
+                        </div>
+                    `;
+                    dom.goals.list.appendChild(goalEl);
+                });
+            }
+        };
+
+        /**
+         * Renders the Squads page with current state.
+         */
+        const renderSquads = () => {
+            if (squad && profile && profile.currentSquadId) {
+                dom.squads.viewNone.classList.add('hidden');
+                dom.squads.viewJoined.classList.remove('hidden');
+                
+                dom.squads.squadName.textContent = squad.squadName;
+                dom.squads.squadLeader.textContent = `Diketuai oleh ${squad.leaderName}`;
+                
+                // Render leaderboard
+                dom.squads.membersList.innerHTML = '';
+                squadMembers.forEach((member, index) => {
+                    const isUser = member.id === userId;
+                    const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                    
+                    const memberEl = document.createElement('li');
+                    memberEl.className = `flex items-center justify-between p-3 rounded-lg ${isUser ? 'bg-teal-100 border border-teal-300' : 'bg-gray-50'}`;
+                    memberEl.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="font-semibold text-gray-700 w-6">${rankEmoji || index + 1}</span>
+                            <span class="font-medium text-gray-900">${member.name} ${isUser ? '(Anda)' : ''}</span>
+                        </div>
+                        <span class="font-bold text-teal-600">${formatCurrency(member.totalSavings)}</span>
+                    `;
+                    dom.squads.membersList.appendChild(memberEl);
+                });
+                
+            } else {
+                dom.squads.viewNone.classList.remove('hidden');
+                dom.squads.viewJoined.classList.add('hidden');
+            }
+        };
+        
+        /**
+         * Populates the goal dropdown in the 'Log Saving' modal.
+         */
+        const renderLogModalOptions = () => {
+            dom.inputs.logGoalSelect.innerHTML = '<option value="">Simpanan Am</option>';
+            goals.forEach(goal => {
+                const option = document.createElement('option');
+                option.value = goal.id;
+                option.textContent = goal.title;
+                dom.inputs.logGoalSelect.appendChild(option);
+            });
+        };
+        
+        /**
+         * Main render function to update all UI parts.
+         */
+        const renderAll = () => {
+            recalculateSavings();
+            renderDashboard();
+            renderGoals();
+            renderSquads();
+            renderLogModalOptions(); // In case modal is open
+        };
+        
+
+        // --- Firebase Actions ---
+
+        const handleSetName = async (e) => {
+            e.preventDefault();
+            if (!paths) return;
+            updateLoading(true);
+            const name = new FormData(e.target).get('name');
+            
+            try {
+                await setDoc(paths.profile, { 
+                    displayName: name, 
+                    currentSquadId: null 
+                }, { merge: true });
+                updateModal(null);
+            } catch (error) {
+                console.error("Error setting name:", error);
+            }
+            updateLoading(false);
+        };
+
+        const handleLogSaving = async (e) => {
+            e.preventDefault();
+            if (!paths || !profile) return;
+            updateLoading(true);
+            
+            const formData = new FormData(e.target);
+            const amount = parseFloat(formData.get('amount'));
+            const description = formData.get('description');
+            const goalId = formData.get('goalId');
+            
+            if (isNaN(amount) || amount <= 0) {
+                console.error("Invalid amount");
+                updateLoading(false);
+                return;
+            }
+            
+            const newTotalSavings = totalSavings + amount;
+            
+            try {
+                const batch = writeBatch(db);
+
+                // 1. Add to private savings log
+                batch.set(doc(collection(paths.savings)), {
+                    amount,
+                    description,
+                    goalId: goalId || null,
+                    createdAt: serverTimestamp()
+                });
+                
+                // 2. Update public squad member doc (if in a squad)
+                if (profile.currentSquadId) {
+                    const memberDocRef = doc(paths.publicSquads, profile.currentSquadId, 'members', userId);
+                    batch.set(memberDocRef, {
+                        name: profile.displayName,
+                        totalSavings: newTotalSavings
+                    }, { merge: true });
+                }
+                
+                await batch.commit();
+                updateModal(null);
+                e.target.reset();
+            } catch (error) {
+                console.error("Error logging saving:", error);
+            }
+            updateLoading(false);
+        };
+
+        const handleAddGoal = async (e) => {
+            e.preventDefault();
+            if (!paths) return;
+            updateLoading(true);
+            
+            const formData = new FormData(e.target);
+            const title = formData.get('title');
+            const targetAmount = parseFloat(formData.get('targetAmount'));
+
+            try {
+                await addDoc(paths.goals, {
+                    title,
+                    targetAmount,
+                    createdAt: serverTimestamp()
+                });
+                updateModal(null);
+                e.target.reset();
+            } catch (error) {
+                console.error("Error adding goal:", error);
+            }
+            updateLoading(false);
+        };
+
+        const handleCreateSquad = async (e) => {
+            e.preventDefault();
+            if (!paths || !profile) return;
+            updateLoading(true);
+            
+            const squadName = new FormData(e.target).get('squadName');
+            const squadId = userId; // The creator's ID is the squad ID
+            
+            try {
+                const batch = writeBatch(db);
+
+                // 1. Create the public squad doc
+                const squadDocRef = doc(paths.publicSquads, squadId);
+                batch.set(squadDocRef, {
+                    squadName,
+                    leaderName: profile.displayName,
+                    leaderId: userId
+                });
+                
+                // 2. Add leader as first member
+                const memberDocRef = doc(squadDocRef, 'members', userId);
+                batch.set(memberDocRef, {
+                    name: profile.displayName,
+                    totalSavings: totalSavings
+                });
+                
+                // 3. Update user's private profile
+                batch.set(paths.profile, {
+                    currentSquadId: squadId
+                }, { merge: true });
+                
+                await batch.commit();
+                updateModal(null);
+                e.target.reset();
+            } catch (error)
+            {
+                console.error("Error creating squad:", error);
+            }
+            updateLoading(false);
+        };
+
+        const handleJoinSquad = async (e) => {
+            e.preventDefault();
+            if (!paths || !profile) return;
+            updateLoading(true);
+            
+            const squadId = new FormData(e.target).get('squadId');
+            if (!squadId) {
+                updateLoading(false);
+                return;
+            }
+            
+            dom.inputs.joinSquadError.classList.add('hidden');
+            
+            try {
+                // 1. Check if squad exists
+                const squadDocRef = doc(paths.publicSquads, squadId);
+                const squadDoc = await getDoc(squadDocRef);
+                
+                if (!squadDoc.exists()) {
+                    dom.inputs.joinSquadError.textContent = "Skuad tidak dijumpai!";
+                    dom.inputs.joinSquadError.classList.remove('hidden');
+                    throw new Error("Skuad tidak dijumpai!");
+                }
+
+                // 2. Leave current squad if in one (internal call, don't reset loading)
+                if (profile.currentSquadId) {
+                    await internalLeaveSquad();
+                }
+                
+                const batch = writeBatch(db);
+                
+                // 3. Add user to new squad's member list
+                const memberDocRef = doc(squadDocRef, 'members', userId);
+                batch.set(memberDocRef, {
+                    name: profile.displayName,
+                    totalSavings: totalSavings
+                });
+                
+                // 4. Update user's private profile
+                batch.set(paths.profile, {
+                    currentSquadId: squadId
+                }, { merge: true });
+                
+                await batch.commit();
+                updateModal(null);
+                e.target.reset();
+            } catch (error) {
+                console.error("Error joining squad:", error);
+            }
+            updateLoading(false);
+        };
+        
+        /** Internal function for leaving squad without loading state */
+        const internalLeaveSquad = async () => {
+            if (!paths || !profile || !profile.currentSquadId) return;
+            try {
+                const batch = writeBatch(db);
+                
+                // 1. Remove member doc from public squad
+                const memberDocRef = doc(paths.publicSquads, profile.currentSquadId, 'members', userId);
+                batch.delete(memberDocRef);
+                
+                // 2. Update private profile
+                batch.set(paths.profile, {
+                    currentSquadId: null
+                }, { merge: true });
+                
+                await batch.commit();
+            } catch (error) {
+                console.error("Error leaving squad (internal):", error);
+            }
+        };
+        
+        /** Public-facing function for leaving squad */
+        const handleLeaveSquad = async () => {
+            updateLoading(true);
+            await internalLeaveSquad();
+            updateLoading(false);
+        };
+        
+        // --- Firebase Listeners Setup ---
+        
+        /**
+         * Sets up listeners for squad and members.
+         * Cleans up old listeners before creating new ones.
+         */
+        const listenToSquad = (squadId) => {
+            // Clean up previous listeners
+            unsubSquad();
+            unsubMembers();
+            
+            if (!squadId) {
+                squad = null;
+                squadMembers = [];
+                renderSquads();
+                return;
+            }
+
+            const squadDocRef = doc(paths.publicSquads, squadId);
+            const membersColRef = collection(squadDocRef, 'members');
+
+            unsubSquad = onSnapshot(squadDocRef, (doc) => {
+                if(doc.exists()) {
+                    squad = { id: doc.id, ...doc.data() };
+                } else {
+                    squad = null;
+                }
+                renderSquads();
+            });
+
+            unsubMembers = onSnapshot(query(membersColRef), (snapshot) => {
+                const membersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Sort for leaderboard
+                membersData.sort((a, b) => (b.totalSavings || 0) - (a.totalSavings || 0));
+                squadMembers = membersData;
+                renderSquads();
+            });
+        };
+
+        /**
+         * Sets up main data listeners after auth is ready.
+         */
+        const setupDataListeners = () => {
+            if (!isAuthReady || !userId || !paths) return;
+
+            // 1. Profile Listener
+            unsubProfile = onSnapshot(paths.profile, (doc) => {
+                const oldSquadId = profile ? profile.currentSquadId : null;
+                
+                if (doc.exists()) {
+                    profile = doc.data();
+                } else {
+                    profile = null;
+                    // Force user to set a name for the social features
+                    updateModal('setName');
+                }
+                
+                // Update squad listener if squad ID changed
+                const newSquadId = profile ? profile.currentSquadId : null;
+                if (oldSquadId !== newSquadId) {
+                    listenToSquad(newSquadId);
+                }
+                
+                renderAll();
+            });
+
+            // 2. Goals Listener
+            unsubGoals = onSnapshot(query(paths.goals), (snapshot) => {
+                goals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAll();
+            });
+
+            // 3. Savings Listener
+            unsubSavings = onSnapshot(query(paths.savings), (snapshot) => {
+                savings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAll();
+            });
+        };
+
+        /**
+         * Sets up the auth state listener.
+         */
+        const setupAuthListener = () => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    isAuthReady = true;
+                    dom.userIdDisplay.textContent = userId;
+                    
+                    // Define paths now that we have userId
+                    paths = {
+                        profile: doc(db, 'artifacts', appId, 'users', userId, 'profile', 'main'),
+                        goals: collection(db, 'artifacts', appId, 'users', userId, 'goals'),
+                        savings: collection(db, 'artifacts', appId, 'users', userId, 'savings'),
+                        publicSquads: collection(db, 'artifacts', appId, 'public', 'data', 'squads'),
+                    };
+                    
+                    setupDataListeners();
+                    updateLoading(false); // Auth is ready, hide loader
+                    
+                } else {
+                    // No user, try to sign in
+                    updateLoading(true);
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Error during sign-in:", error);
+                        // Handle sign-in error (e.g., show an error message)
+                    }
+                }
+            });
+        };
+
+        // --- App Initialization ---
+
+        /**
+         * Main app entry point.
+         */
+        const initApp = () => {
+            updateLoading(true);
+
+            // 1. Nav Listeners
+            dom.nav.buttons.forEach(btn => {
+                btn.addEventListener('click', () => updatePage(btn.dataset.page));
+            });
+            dom.nav.logBtn.addEventListener('click', () => updateModal('log'));
+
+            // 2. Modal Open Listeners
+            dom.goals.addBtn.addEventListener('click', () => updateModal('goal'));
+            dom.squads.joinBtn.addEventListener('click', () => updateModal('joinSquad'));
+            dom.squads.createBtn.addEventListener('click', () => updateModal('createSquad'));
+            
+            // 3. Modal Close Listeners
+            dom.modal.closeBtns.forEach(btn => {
+                btn.addEventListener('click', () => updateModal(null));
+            });
+            dom.modal.backdrop.addEventListener('click', (e) => {
+                if (e.target === dom.modal.backdrop) {
+                    updateModal(null);
+                }
+            });
+            
+            // 4. Form Submit Listeners
+            dom.forms.setName.addEventListener('submit', handleSetName);
+            dom.forms.logSaving.addEventListener('submit', handleLogSaving);
+            dom.forms.addGoal.addEventListener('submit', handleAddGoal);
+            dom.forms.createSquad.addEventListener('submit', handleCreateSquad);
+            dom.forms.joinSquad.addEventListener('submit', handleJoinSquad);
+            
+            // 5. Other Action Listeners
+            dom.squads.leaveBtn.addEventListener('click', handleLeaveSquad);
+            
+            // 6. Start Auth
+            setupAuthListener();
+        };
+
+        // Run the app once the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
