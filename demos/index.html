@@ -1,24 +1,198 @@
-<section class="demo-cards">
-    <div class="grid lg:grid-cols-2 gap-4">
-        <div class="demo-card">
-            <span class="badge">Interactive App</span>
-            <h2 class="title">💰 MyRuncit - Pelaburan Mikro</h2>
-            <p class="challenges">Challenge #7: "First Step" Paralysis + Challenge #10: Low Savings Rate</p>
-            <p class="description">Aplikasi pelaburan mikro dalam Bahasa Malaysia yang memudahkan pelaburan melalui "Simpan Baki" (round-up savings) dan "Beli Sikit-Sikit" (DCA). Termasuk simulasi pertumbuhan portfolio dan mod "Jangka Panjang" untuk melindungi daripada keputusan terburu-buru.</p>
-            <p class="tags">Tags: Round-up Savings, DCA, Portfolio Lock, Bahasa Malaysia</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIN-novate Hackathon 2025 - Demo Applications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .demo-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .challenges {
+            font-size: 13px;
+            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .tags {
+            font-size: 13px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .demo-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .demo-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .back-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .demo-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-button">← Back to Home</a>
+        
+        <div class="header">
+            <h1>🚀 Demo Applications</h1>
+            <p>Explore innovative solutions to FIN-novate Hackathon challenges</p>
         </div>
-        <div class="demo-card">
-            <span class="badge">Gamification</span>
-            <h2 class="title">🌱 SaveQuest - Taman Zen</h2>
-            <p class="challenges">Challenge #10: Low Savings Rate + Challenge #9: Peer Influence</p>
-            <p class="description">Platform simpanan bergamifikasi dalam Bahasa Malaysia dengan haiwan kesayangan yang membesar mengikut jumlah simpanan. Pengguna boleh menetapkan matlamat, menyertai "Skuad Simpanan" dengan rakan, dan bersaing dalam papan markah untuk galakkan tabiat simpanan yang sihat.</p>
-            <p class="tags">Tags: Pet Growth, Savings Goals, Social Squads, Leaderboard</p>
-        </div>
-        <div class="demo-card">
-            <h2 class="title">📉 Fear of Loss - Risk Confidence Builder</h2>
-        </div>
-        <div class="demo-card">
-            <h2 class="title">🚀 Get Rich Quick - Smart Growth Simulator</h2>
-        </div>
+
+        <section class="demo-cards">
+            <div class="demo-card">
+                <span class="badge">Interactive App</span>
+                <h2 class="title">💰 MyRuncit - Pelaburan Mikro</h2>
+                <p class="challenges">Challenge #7: "First Step" Paralysis + Challenge #10: Low Savings Rate</p>
+                <p class="description">Aplikasi pelaburan mikro dalam Bahasa Malaysia yang memudahkan pelaburan melalui "Simpan Baki" (round-up savings) dan "Beli Sikit-Sikit" (DCA). Termasuk simulasi pertumbuhan portfolio dan mod "Jangka Panjang" untuk melindungi daripada keputusan terburu-buru.</p>
+                <p class="tags">Tags: Round-up Savings, DCA, Portfolio Lock, Bahasa Malaysia</p>
+                <a href="myruncitvestment.html" class="demo-link">Launch Demo →</a>
+            </div>
+            
+            <div class="demo-card">
+                <span class="badge">Gamification</span>
+                <h2 class="title">🌱 SaveQuest - Taman Zen</h2>
+                <p class="challenges">Challenge #10: Low Savings Rate + Challenge #9: Peer Influence</p>
+                <p class="description">Platform simpanan bergamifikasi dalam Bahasa Malaysia dengan haiwan kesayangan yang membesar mengikut jumlah simpanan. Pengguna boleh menetapkan matlamat, menyertai "Skuad Simpanan" dengan rakan, dan bersaing dalam papan markah untuk galakkan tabiat simpanan yang sihat.</p>
+                <p class="tags">Tags: Pet Growth, Savings Goals, Social Squads, Leaderboard</p>
+                <a href="savequest.html" class="demo-link">Launch Demo →</a>
+            </div>
+            
+            <div class="demo-card">
+                <span class="badge">Interactive Calculator</span>
+                <h2 class="title">📉 Fear of Loss - Risk Confidence Builder</h2>
+                <p class="challenges">Challenge #1: The "Fear of Loss" Barrier</p>
+                <p class="description">An interactive calculator that helps students overcome fear of investing by showing real-time comparison of savings accounts vs. diversified investments. Includes compound growth calculations, inflation impact on purchasing power, and multiple scenario profiles (Fresh Graduate, Mid-Career, Windfall).</p>
+                <p class="tags">Tags: Investment Calculator, Compound Growth, Inflation Impact, Scenario Analysis</p>
+                <a href="fear-of-loss.html" class="demo-link">Launch Demo →</a>
+            </div>
+            
+            <div class="demo-card">
+                <span class="badge">Simulation Tool</span>
+                <h2 class="title">🚀 Get Rich Quick - Smart Growth Simulator</h2>
+                <p class="challenges">Challenge #2: "Get Rich Quick" Mindset</p>
+                <p class="description">A simulation tool comparing risky "get rich quick" schemes with steady wealth building over a 10-year timeline. Features side-by-side comparison of two strategies, red flags to identify scams and schemes, and principles of sustainable wealth building with animated timeline visualization.</p>
+                <p class="tags">Tags: Investment Simulation, Risk Education, Scam Detection, Long-term Strategy</p>
+                <a href="get-rich-quick.html" class="demo-link">Launch Demo →</a>
+            </div>
+        </section>
     </div>
-</section>
+</body>
+</html>
