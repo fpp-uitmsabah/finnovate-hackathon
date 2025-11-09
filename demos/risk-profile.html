@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Profile Analyzer | Know Your Investment Persona</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-container {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .question-section {
+            display: none;
+        }
+
+        .question-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #f093fb;
+            background: #fef3f8;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #f093fb;
+            background: linear-gradient(135deg, #fef3f8 0%, #fce4ec 100%);
+        }
+
+        .option-text {
+            font-size: 16px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+        }
+
+        .result-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .persona-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+
+        .persona-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .persona-subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .persona-description {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .persona-description h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .persona-description p {
+            color: #4b5563;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .characteristics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .characteristic-card {
+            background: linear-gradient(135deg, #fef3f8 0%, #fce4ec 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+        }
+
+        .characteristic-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f5576c;
+            margin-bottom: 8px;
+        }
+
+        .characteristic-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .recommendations {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .recommendations h3 {
+            color: #065f46;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+        }
+
+        .recommendations li {
+            padding: 8px 0;
+            color: #047857;
+            line-height: 1.6;
+        }
+
+        .recommendations li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .characteristics {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Risk Profile Analyzer</h1>
+            <p>Discover Your Investment Personality</p>
+        </div>
+
+        <div class="card">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="progress-text" id="progressText">Question 1 of 6</div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <div id="quizContainer">
+                <!-- Question 1 -->
+                <div class="question-section active" data-question="1">
+                    <div class="question-title">
+                        What is your primary investment goal?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 1)">
+                            <div class="option-text">Preserve my capital and earn steady, safe returns</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 1)">
+                            <div class="option-text">Balance growth with safety - willing to accept some risk</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 1)">
+                            <div class="option-text">Maximize growth potential - comfortable with volatility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="question-section" data-question="2">
+                    <div class="question-title">
+                        If your investment dropped 20% in value, what would you do?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 2)">
+                            <div class="option-text">Sell immediately to prevent further losses</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 2)">
+                            <div class="option-text">Wait and see, might sell if it drops more</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 2)">
+                            <div class="option-text">Buy more - it's a discount opportunity!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="question-section" data-question="3">
+                    <div class="question-title">
+                        How long do you plan to invest before needing the money?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 3)">
+                            <div class="option-text">Less than 3 years - I need access soon</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 3)">
+                            <div class="option-text">3-10 years - medium-term goals</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 3)">
+                            <div class="option-text">10+ years - long-term wealth building</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="question-section" data-question="4">
+                    <div class="question-title">
+                        How would you describe your investment knowledge?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 4)">
+                            <div class="option-text">Beginner - still learning the basics</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 4)">
+                            <div class="option-text">Intermediate - understand core concepts</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 4)">
+                            <div class="option-text">Advanced - comfortable analyzing investments</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="question-section" data-question="5">
+                    <div class="question-title">
+                        What percentage of your savings can you invest?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 5)">
+                            <div class="option-text">Less than 25% - most should stay safe</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 5)">
+                            <div class="option-text">25-50% - balanced approach</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 5)">
+                            <div class="option-text">50%+ - confident in my investment strategy</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="question-section" data-question="6">
+                    <div class="question-title">
+                        How do you feel about market volatility?
+                    </div>
+                    <div class="options">
+                        <div class="option" data-value="conservative" onclick="selectOption(this, 6)">
+                            <div class="option-text">It makes me anxious - I prefer stability</div>
+                        </div>
+                        <div class="option" data-value="moderate" onclick="selectOption(this, 6)">
+                            <div class="option-text">Manageable if not too extreme</div>
+                        </div>
+                        <div class="option" data-value="aggressive" onclick="selectOption(this, 6)">
+                            <div class="option-text">Exciting - volatility creates opportunities</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection">
+                <div class="persona-icon" id="personaIcon">🎯</div>
+                <div class="persona-title" id="personaTitle">Your Risk Profile</div>
+                <div class="persona-subtitle" id="personaSubtitle">Investment Personality</div>
+
+                <div class="persona-description" id="personaDescription">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <div class="characteristics">
+                    <div class="characteristic-card">
+                        <div class="characteristic-title">Risk Tolerance</div>
+                        <div class="characteristic-value" id="riskTolerance">-</div>
+                    </div>
+                    <div class="characteristic-card">
+                        <div class="characteristic-title">Time Horizon</div>
+                        <div class="characteristic-value" id="timeHorizon">-</div>
+                    </div>
+                    <div class="characteristic-card">
+                        <div class="characteristic-title">Volatility Comfort</div>
+                        <div class="characteristic-value" id="volatilityComfort">-</div>
+                    </div>
+                    <div class="characteristic-card">
+                        <div class="characteristic-title">Return Expectation</div>
+                        <div class="characteristic-value" id="returnExpectation">-</div>
+                    </div>
+                </div>
+
+                <div class="recommendations" id="recommendations">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <button class="btn-primary" style="width: 100%;" onclick="restartQuiz()">Take Quiz Again 🔄</button>
+            </div>
+
+            <div class="btn-container" id="navigationButtons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 6;
+        const answers = {};
+
+        const personas = {
+            conservative: {
+                icon: "🛡️",
+                title: "The Guardian",
+                subtitle: "Conservative Investor",
+                description: "You prioritize capital preservation and prefer stable, predictable returns. You're comfortable with lower potential returns in exchange for minimizing risk and protecting your principal investment.",
+                riskTolerance: "Low",
+                timeHorizon: "Short-term",
+                volatilityComfort: "Minimal",
+                returnExpectation: "3-5% annually",
+                recommendations: [
+                    "Focus on Fixed Deposits and Money Market Funds",
+                    "Consider government bonds (Malaysian Government Securities)",
+                    "Allocate 70-80% to low-risk assets, 20-30% to moderate risk",
+                    "Build a robust emergency fund (6-12 months expenses)",
+                    "Start with REITs for stable dividend income",
+                    "Gradually learn about diversified index funds"
+                ]
+            },
+            moderate: {
+                icon: "⚖️",
+                title: "The Balanced Planner",
+                subtitle: "Moderate Investor",
+                description: "You seek a balanced approach between growth and security. You understand that some risk is necessary for better returns and are willing to weather moderate market fluctuations for long-term gains.",
+                riskTolerance: "Medium",
+                timeHorizon: "Medium-term",
+                volatilityComfort: "Moderate",
+                returnExpectation: "6-8% annually",
+                recommendations: [
+                    "Build a diversified portfolio: 50% stocks, 40% bonds, 10% cash",
+                    "Consider low-cost index funds or ETFs",
+                    "Explore balanced mutual funds or unit trusts",
+                    "Invest in blue-chip Malaysian stocks (FBM KLCI constituents)",
+                    "Consider dollar-cost averaging to smooth volatility",
+                    "Review and rebalance portfolio quarterly"
+                ]
+            },
+            aggressive: {
+                icon: "🚀",
+                title: "The Growth Seeker",
+                subtitle: "Aggressive Investor",
+                description: "You're focused on maximizing long-term growth and are comfortable with significant short-term volatility. You view market dips as buying opportunities and have the patience and knowledge to ride out market cycles.",
+                riskTolerance: "High",
+                timeHorizon: "Long-term",
+                volatilityComfort: "High",
+                returnExpectation: "10%+ annually",
+                recommendations: [
+                    "Build a stock-heavy portfolio: 80-90% equities, 10-20% bonds",
+                    "Diversify across sectors and regions (don't forget international markets)",
+                    "Consider growth stocks and emerging market ETFs",
+                    "Explore thematic investing (technology, healthcare, green energy)",
+                    "Stay informed and keep learning about market trends",
+                    "Maintain 6-month emergency fund as safety net",
+                    "Consider systematic investment plans for consistency"
+                ]
+            }
+        };
+
+        function selectOption(element, questionNum) {
+            // Remove selected class from all options in current question
+            const currentOptions = element.parentElement.querySelectorAll('.option');
+            currentOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selected class to clicked option
+            element.classList.add('selected');
+            
+            // Store answer
+            answers[questionNum] = element.dataset.value;
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (!answers[currentQuestion]) return;
+            
+            if (currentQuestion < totalQuestions) {
+                // Hide current question
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                
+                // Show next question
+                currentQuestion++;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Update buttons
+                document.getElementById('prevBtn').style.display = 'block';
+                document.getElementById('nextBtn').disabled = !answers[currentQuestion];
+                
+                if (currentQuestion === totalQuestions) {
+                    document.getElementById('nextBtn').textContent = 'See My Results';
+                    document.getElementById('nextBtn').onclick = showResults;
+                }
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                // Hide current question
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.remove('active');
+                
+                // Show previous question
+                currentQuestion--;
+                document.querySelector(`[data-question="${currentQuestion}"]`).classList.add('active');
+                
+                // Update progress
+                updateProgress();
+                
+                // Update buttons
+                if (currentQuestion === 1) {
+                    document.getElementById('prevBtn').style.display = 'none';
+                }
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').textContent = 'Next';
+                document.getElementById('nextBtn').onclick = nextQuestion;
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = `Question ${currentQuestion} of ${totalQuestions}`;
+        }
+
+        function showResults() {
+            if (!answers[currentQuestion]) return;
+            
+            // Calculate persona based on answers
+            const scores = { conservative: 0, moderate: 0, aggressive: 0 };
+            Object.values(answers).forEach(answer => {
+                scores[answer]++;
+            });
+            
+            // Determine dominant persona
+            let persona = 'moderate';
+            let maxScore = 0;
+            Object.entries(scores).forEach(([key, score]) => {
+                if (score > maxScore) {
+                    maxScore = score;
+                    persona = key;
+                }
+            });
+            
+            // Get persona data
+            const personaData = personas[persona];
+            
+            // Hide quiz, show results
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('navigationButtons').style.display = 'none';
+            document.getElementById('progressContainer')?.remove();
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            // Populate results
+            document.getElementById('personaIcon').textContent = personaData.icon;
+            document.getElementById('personaTitle').textContent = personaData.title;
+            document.getElementById('personaSubtitle').textContent = personaData.subtitle;
+            
+            document.getElementById('personaDescription').innerHTML = `
+                <h3>Your Investment Personality</h3>
+                <p>${personaData.description}</p>
+            `;
+            
+            document.getElementById('riskTolerance').textContent = personaData.riskTolerance;
+            document.getElementById('timeHorizon').textContent = personaData.timeHorizon;
+            document.getElementById('volatilityComfort').textContent = personaData.volatilityComfort;
+            document.getElementById('returnExpectation').textContent = personaData.returnExpectation;
+            
+            document.getElementById('recommendations').innerHTML = `
+                <h3>Recommended Investment Strategy</h3>
+                <ul>
+                    ${personaData.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+            `;
+            
+            document.getElementById('resultSection').classList.add('active');
+        }
+
+        function restartQuiz() {
+            // Reset everything
+            currentQuestion = 1;
+            Object.keys(answers).forEach(key => delete answers[key]);
+            
+            // Hide results, show quiz
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('navigationButtons').style.display = 'flex';
+            document.querySelector('.progress-container').style.display = 'block';
+            
+            // Reset all questions
+            document.querySelectorAll('.question-section').forEach((section, index) => {
+                section.classList.remove('active');
+                section.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                if (index === 0) section.classList.add('active');
+            });
+            
+            // Reset buttons
+            document.getElementById('prevBtn').style.display = 'none';
+            document.getElementById('nextBtn').textContent = 'Next';
+            document.getElementById('nextBtn').onclick = nextQuestion;
+            document.getElementById('nextBtn').disabled = true;
+            
+            // Reset progress
+            updateProgress();
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

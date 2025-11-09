@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock vs Unit Trust Explorer | Investment Vehicle Comparison</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .vehicle-card {
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vehicle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .vehicle-card.stock {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+        }
+
+        .vehicle-card.stock::before {
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .vehicle-card.unit-trust {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+
+        .vehicle-card.unit-trust::before {
+            background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .vehicle-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .vehicle-icon {
+            font-size: 48px;
+        }
+
+        .vehicle-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            color: #4b5563;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-label {
+            font-weight: 600;
+            color: #1f2937;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #6b7280;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .tab:hover {
+            border-color: #4facfe;
+            background: #f0f9ff;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border-color: #4facfe;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scenario-card {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .scenario-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .scenario-description {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .scenario-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .scenario-option {
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid transparent;
+        }
+
+        .scenario-option.better {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-color: #10b981;
+        }
+
+        .scenario-option.worse {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-color: #ef4444;
+        }
+
+        .scenario-option h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .scenario-option p {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pros, .cons {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .pros {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+
+        .cons {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        }
+
+        .pros h4, .cons h4 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #1f2937;
+        }
+
+        .pros ul, .cons ul {
+            list-style: none;
+        }
+
+        .pros li, .cons li {
+            padding: 6px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .pros li {
+            color: #065f46;
+        }
+
+        .cons li {
+            color: #991b1b;
+        }
+
+        .pros li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .cons li::before {
+            content: "×";
+            color: #ef4444;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .quiz-section {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .quiz-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #78350f;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quiz-question {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .quiz-question h4 {
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .quiz-option:hover {
+            border-color: #4facfe;
+            background: #f0f9ff;
+        }
+
+        .quiz-option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .quiz-option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .quiz-feedback {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .quiz-feedback.incorrect {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid,
+            .scenario-comparison,
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Investment Vehicle Explorer</h1>
+            <p>Stock vs Unit Trust: Which is Right for You?</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('overview')">Overview</div>
+                <div class="tab" onclick="switchTab('scenarios')">Real Scenarios</div>
+                <div class="tab" onclick="switchTab('quiz')">Test Yourself</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="overview">
+                <div class="comparison-grid">
+                    <div class="vehicle-card stock">
+                        <div class="vehicle-header">
+                            <div class="vehicle-icon">📈</div>
+                            <div class="vehicle-title">Individual Stocks</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li>
+                                <span class="feature-label">What is it?</span>
+                                Buying shares of individual companies (e.g., Maybank, Petronas)
+                            </li>
+                            <li>
+                                <span class="feature-label">Control</span>
+                                You choose exactly which companies to invest in
+                            </li>
+                            <li>
+                                <span class="feature-label">Diversification</span>
+                                You must build diversity yourself (harder)
+                            </li>
+                            <li>
+                                <span class="feature-label">Research Required</span>
+                                High - need to analyze each company
+                            </li>
+                            <li>
+                                <span class="feature-label">Minimum Investment</span>
+                                One lot = 100 shares (varies by price)
+                            </li>
+                            <li>
+                                <span class="feature-label">Fees</span>
+                                Brokerage fees (0.1-0.4% per trade)
+                            </li>
+                            <li>
+                                <span class="feature-label">Risk Level</span>
+                                High - concentrated in few companies
+                            </li>
+                            <li>
+                                <span class="feature-label">Best For</span>
+                                Active investors who enjoy research
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="vehicle-card unit-trust">
+                        <div class="vehicle-header">
+                            <div class="vehicle-icon">🎯</div>
+                            <div class="vehicle-title">Unit Trust / Mutual Funds</div>
+                        </div>
+                        <ul class="feature-list">
+                            <li>
+                                <span class="feature-label">What is it?</span>
+                                Pool of money from many investors, managed professionally
+                            </li>
+                            <li>
+                                <span class="feature-label">Control</span>
+                                Professional managers make investment decisions
+                            </li>
+                            <li>
+                                <span class="feature-label">Diversification</span>
+                                Built-in - spreads across many companies/assets
+                            </li>
+                            <li>
+                                <span class="feature-label">Research Required</span>
+                                Low - managers handle the research
+                            </li>
+                            <li>
+                                <span class="feature-label">Minimum Investment</span>
+                                As low as RM 100 (very accessible)
+                            </li>
+                            <li>
+                                <span class="feature-label">Fees</span>
+                                Management fees (0.5-2% annually) + sales charge
+                            </li>
+                            <li>
+                                <span class="feature-label">Risk Level</span>
+                                Lower - diversified across many holdings
+                            </li>
+                            <li>
+                                <span class="feature-label">Best For</span>
+                                Beginners and hands-off investors
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>When to Choose Stocks</h4>
+                        <ul>
+                            <li>You enjoy researching companies</li>
+                            <li>You have time to monitor investments</li>
+                            <li>You want direct control over holdings</li>
+                            <li>You're comfortable with higher risk</li>
+                            <li>You have capital for diversification (RM 10k+)</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>When to Choose Unit Trusts</h4>
+                        <ul>
+                            <li>You're new to investing</li>
+                            <li>You have limited time for research</li>
+                            <li>You want professional management</li>
+                            <li>You're starting with small amounts</li>
+                            <li>You prefer built-in diversification</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scenarios Tab -->
+            <div class="tab-content" id="scenarios">
+                <div class="scenario-card">
+                    <div class="scenario-title">Scenario 1: Fresh Graduate - RM 5,000 to Invest</div>
+                    <div class="scenario-description">
+                        Sarah just graduated and has RM 5,000 in savings. She wants to start investing but has limited knowledge and doesn't have much time to research due to her new job.
+                    </div>
+                    <div class="scenario-comparison">
+                        <div class="scenario-option worse">
+                            <h4>📈 Individual Stocks - Not Ideal</h4>
+                            <p>With RM 5,000, Sarah can only buy 1-2 stocks (limited diversification). She lacks time to research and monitor companies. High risk of loss if one company performs poorly.</p>
+                        </div>
+                        <div class="scenario-option better">
+                            <h4>🎯 Unit Trust - Better Choice</h4>
+                            <p>Sarah can start with RM 1,000 in a balanced fund, keeping emergency money. Professional managers handle research and diversification. She can set up automatic monthly investments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-title">Scenario 2: Mid-Career Professional - RM 50,000 to Invest</div>
+                    <div class="scenario-description">
+                        Ahmad has RM 50,000 and enjoys analyzing businesses. He reads financial news regularly and wants more control over his investments. He has 10+ years until retirement.
+                    </div>
+                    <div class="scenario-comparison">
+                        <div class="scenario-option better">
+                            <h4>📈 Individual Stocks - Good Fit</h4>
+                            <p>Ahmad can build a diversified portfolio of 8-10 stocks across sectors. His knowledge and interest make stock picking suitable. He has enough capital to spread risk effectively.</p>
+                        </div>
+                        <div class="scenario-option better">
+                            <h4>🎯 Unit Trust - Also Good</h4>
+                            <p>Or combine both! Use 60% for unit trusts (core holdings) and 40% for individual stocks (satellite holdings). This balances professional management with personal control.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-title">Scenario 3: Parent Saving for Child's Education - 10 Years Timeline</div>
+                    <div class="scenario-description">
+                        Fatimah wants to save RM 30,000 over 10 years for her child's university education. She needs steady growth with controlled risk and can't afford major losses.
+                    </div>
+                    <div class="scenario-comparison">
+                        <div class="scenario-option worse">
+                            <h4>📈 Individual Stocks - Risky</h4>
+                            <p>Too risky for a fixed-timeline goal. If the market crashes near year 10, she might lose a significant portion. Stock picking requires expertise she may not have.</p>
+                        </div>
+                        <div class="scenario-option better">
+                            <h4>🎯 Unit Trust - Ideal Choice</h4>
+                            <p>Education-focused unit trust or balanced fund provides professional management, diversification, and risk management. Can set up monthly contributions (RM 250/month) with auto-debit.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Tab -->
+            <div class="tab-content" id="quiz">
+                <div class="quiz-section">
+                    <div class="quiz-title">🧠 Test Your Knowledge</div>
+
+                    <div class="quiz-question">
+                        <h4>1. What is the main advantage of unit trusts over individual stocks for beginners?</h4>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 0)">Higher guaranteed returns</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, true, 0)">Built-in diversification and professional management</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 0)">No fees or charges</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 0)">Can only lose money in stocks, not in unit trusts</div>
+                        </div>
+                        <div class="quiz-feedback" id="feedback0">
+                            <strong>Correct!</strong> Unit trusts provide instant diversification and professional management, making them ideal for beginners who lack time or expertise for individual stock research.
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <h4>2. If you have RM 2,000 and want to invest in 5 different sectors, which is more practical?</h4>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Individual stocks - RM 400 per stock</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, true, 1)">Unit trust - already diversified across sectors</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 1)">Buy one stock from each sector</div>
+                        </div>
+                        <div class="quiz-feedback" id="feedback1">
+                            <strong>Correct!</strong> RM 2,000 is too small to effectively diversify across stocks (minimum 1 lot = 100 shares). A unit trust instantly provides diversification across multiple sectors and companies.
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <h4>3. Which statement about fees is TRUE?</h4>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Stocks have no fees at all</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Unit trusts are always more expensive than stocks</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, true, 2)">Both have fees; stocks charge per trade, unit trusts charge annually</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 2)">Unit trusts never have any fees</div>
+                        </div>
+                        <div class="quiz-feedback" id="feedback2">
+                            <strong>Correct!</strong> Stocks have brokerage fees per trade (0.1-0.4%), while unit trusts have annual management fees (0.5-2%). Which is "cheaper" depends on your trading frequency and amount invested.
+                        </div>
+                    </div>
+
+                    <div class="quiz-question">
+                        <h4>4. You want to invest but don't have time to research companies. What should you do?</h4>
+                        <div class="quiz-options">
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Don't invest at all</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Pick random stocks and hope for the best</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, true, 3)">Invest in unit trusts where professionals do the research</div>
+                            <div class="quiz-option" onclick="checkAnswer(this, false, 3)">Only buy one stock you've heard of</div>
+                        </div>
+                        <div class="quiz-feedback" id="feedback3">
+                            <strong>Correct!</strong> Unit trusts are perfect for people without time or expertise. Professional fund managers handle all research, selection, and monitoring for you.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        const quizAnswered = [false, false, false, false];
+
+        function checkAnswer(element, isCorrect, questionIndex) {
+            if (quizAnswered[questionIndex]) return;
+            
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById(`feedback${questionIndex}`);
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+                opt.style.opacity = '0.6';
+            });
+            
+            // Mark the selected answer
+            if (isCorrect) {
+                element.classList.add('correct');
+                feedback.classList.add('correct');
+            } else {
+                element.classList.add('incorrect');
+                feedback.classList.add('incorrect');
+                feedback.innerHTML = '<strong>Not quite!</strong> ' + (questionIndex === 0 
+                    ? 'Unit trusts provide instant diversification and professional management, making them ideal for beginners.'
+                    : questionIndex === 1 
+                    ? 'RM 2,000 is too small to effectively diversify across stocks. A unit trust provides instant diversification.'
+                    : questionIndex === 2
+                    ? 'Both have fees. Stocks charge brokerage per trade, unit trusts charge management fees annually.'
+                    : 'Unit trusts are perfect for people without time or expertise. Professionals do the research for you.');
+                
+                // Highlight the correct answer
+                options.forEach(opt => {
+                    if (opt.textContent.includes('Built-in diversification') && questionIndex === 0) opt.classList.add('correct');
+                    if (opt.textContent.includes('already diversified') && questionIndex === 1) opt.classList.add('correct');
+                    if (opt.textContent.includes('Both have fees') && questionIndex === 2) opt.classList.add('correct');
+                    if (opt.textContent.includes('professionals do the research') && questionIndex === 3) opt.classList.add('correct');
+                });
+            }
+            
+            feedback.classList.add('show');
+            quizAnswered[questionIndex] = true;
+        }
+    </script>
+</body>
+</html>

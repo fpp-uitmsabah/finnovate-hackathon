@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Demo Showcase | FIN-novate Hackathon 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'electric-blue': '#0EA5E9',
+                        'cyber-cyan': '#06B6D4',
+                        'amber-gold': '#F59E0B',
+                        'dark-bg': '#0F172A',
+                        'dark-card': '#1E293B',
+                        'dark-border': '#334155'
+                    },
+                    fontFamily: {
+                        'display': ['Space Grotesk', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #F59E0B 0%, #06B6D4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.3);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .demo-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .badge-interactive {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .badge-educational {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+
+        .badge-tool {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-100 font-body">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full glass-strong z-50 border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="font-display font-bold text-2xl text-gradient">FIN-novate Demos</div>
+                <div class="flex items-center gap-6">
+                    <a href="../index.html" class="text-gray-300 hover:text-white transition-colors">← Back to Main</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center pt-20">
+        <div class="hero-content max-w-7xl mx-auto px-6 py-20">
+            <div class="text-center mb-16 fade-in">
+                <div class="inline-block glass px-4 py-2 rounded-full mb-6">
+                    <span class="text-electric-blue font-semibold">🚀 Example Applications</span>
+                </div>
+                <h1 class="font-display text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                    Demo <span class="text-gradient">Showcase</span>
+                </h1>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                    Explore interactive examples of applications that can be built to solve the FIN-novate Hackathon challenges
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demos Section -->
+    <section class="py-20 bg-dark-card/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    Available <span class="text-gradient">Demos</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Each demo addresses a specific challenge from the hackathon
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Demo 1: Fear of Loss -->
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <span class="demo-badge badge-interactive">Interactive Calculator</span>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">
+                        💪 Risk Confidence Builder
+                    </h3>
+                    <p class="text-gray-400 mb-4 leading-relaxed">
+                        <strong class="text-amber-gold">Challenge #1: The "Fear of Loss" Barrier</strong>
+                    </p>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        An interactive tool that helps students overcome fear of investing by visualizing the real cost of keeping money in low-yield savings accounts vs. diversified investments. Features compound growth calculations, inflation impact analysis, and personalized scenarios.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Compound Interest</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Inflation Impact</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Scenarios</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Visual Charts</span>
+                    </div>
+                    <a href="fear-of-loss.html" target="_blank" class="inline-block glass-strong px-6 py-3 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all">
+                        Launch Demo →
+                    </a>
+                </div>
+
+                <!-- Demo 2: Risk Profile -->
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <span class="demo-badge badge-educational">Interactive Assessment</span>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">
+                        🎯 Risk Profile Analyzer
+                    </h3>
+                    <p class="text-gray-400 mb-4 leading-relaxed">
+                        <strong class="text-amber-gold">Challenge #3: Misunderstanding Risk Appetite</strong>
+                    </p>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        A comprehensive quiz-based application that helps students accurately assess their risk tolerance and discover their investment persona. Provides personalized recommendations based on risk profile, time horizon, and financial goals.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">6-Question Quiz</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">3 Personas</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Custom Recommendations</span>
+                    </div>
+                    <a href="risk-profile.html" target="_blank" class="inline-block glass-strong px-6 py-3 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all">
+                        Launch Demo →
+                    </a>
+                </div>
+
+                <!-- Demo 3: Stock vs Unit Trust -->
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <span class="demo-badge badge-tool">Comparison Tool</span>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">
+                        📊 Investment Vehicle Explorer
+                    </h3>
+                    <p class="text-gray-400 mb-4 leading-relaxed">
+                        <strong class="text-amber-gold">Challenge #8: Stock vs. Unit Trust Confusion</strong>
+                    </p>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        An educational platform that clarifies the differences between individual stocks and unit trusts through interactive comparisons, real-world scenarios, and knowledge quizzes. Helps students make informed decisions about which investment vehicle suits their needs.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Side-by-Side Compare</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">3 Scenarios</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Knowledge Quiz</span>
+                    </div>
+                    <a href="stock-vs-unittrust.html" target="_blank" class="inline-block glass-strong px-6 py-3 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all">
+                        Launch Demo →
+                    </a>
+                </div>
+
+                <!-- Demo 4: First Step Paralysis -->
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <span class="demo-badge badge-interactive">Mobile App Demo</span>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">
+                        🚀 Smart Invest-Buddy
+                    </h3>
+                    <p class="text-gray-400 mb-4 leading-relaxed">
+                        <strong class="text-amber-gold">Challenge #7: "First Step" Paralysis</strong>
+                    </p>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        A gamified mobile app prototype that simplifies the investment journey through guided onboarding, learning modules, sandbox portfolio simulation, AI chatbot support, and social features. Makes taking the first step in investing approachable and fun.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Gamification</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Learning Modules</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">Sandbox Trading</span>
+                        <span class="glass px-3 py-1 rounded-full text-xs text-electric-blue">AI Chatbot</span>
+                    </div>
+                    <a href="first-step-paralysis.html" target="_blank" class="inline-block glass-strong px-6 py-3 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all">
+                        Launch Demo →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="py-20 bg-dark-bg">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-4xl lg:text-5xl font-bold text-white mb-6">
+                    How to Use <span class="text-gradient">These Demos</span>
+                </h2>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <div class="w-16 h-16 bg-gradient-to-br from-electric-blue to-cyber-cyan rounded-full flex items-center justify-center mb-6 text-3xl">
+                        🎓
+                    </div>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Learn & Explore</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Interact with each demo to understand how different solutions can address investment literacy challenges. Take notes on features and user experiences you find effective.
+                    </p>
+                </div>
+
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-gold to-orange-500 rounded-full flex items-center justify-center mb-6 text-3xl">
+                        💡
+                    </div>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Get Inspired</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Use these demos as inspiration for your own solutions. Consider how you can improve upon these ideas or combine different approaches for your chosen challenge.
+                    </p>
+                </div>
+
+                <div class="glass-strong rounded-2xl p-8 card-hover fade-in">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-6 text-3xl">
+                        🚀
+                    </div>
+                    <h3 class="font-display text-2xl font-bold text-white mb-4">Build Better</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        These are starting points, not finished products. Think about how you can create something even more innovative, user-friendly, or impactful for your hackathon submission.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-dark-card/50">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="glass-strong rounded-2xl p-12 fade-in">
+                <h2 class="font-display text-3xl lg:text-4xl font-bold text-white mb-6">
+                    Ready to Build Your Solution?
+                </h2>
+                <p class="text-xl text-gray-400 mb-8 leading-relaxed">
+                    Head back to the main page to review all challenges and register your team for FIN-novate 2025
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="../index.html#challenges" class="glass-strong px-8 py-4 rounded-lg font-semibold text-white hover:bg-electric-blue/20 transition-all inline-block">
+                        View All Challenges
+                    </a>
+                    <a href="../index.html#register" class="glass-strong px-8 py-4 rounded-lg font-semibold text-white hover:bg-amber-gold/20 transition-all inline-block">
+                        Register Your Team
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark-bg border-t border-dark-border py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <div class="font-display text-3xl font-bold mb-4">
+                    <span class="text-gradient">FIN-novate 2025</span>
+                </div>
+                <p class="text-gray-400 mb-6">Demo Showcase - Example Applications</p>
+                <div class="text-sm text-gray-500">
+                    © 2025 UiTM Sabah • FIN333 Investment Analysis Course
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Fade in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
