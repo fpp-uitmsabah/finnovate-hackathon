@@ -250,11 +250,23 @@
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Firebase Configuration ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-          ? JSON.parse(__firebase_config) 
-          : { apiKey: "DEFAULT_API_KEY", authDomain: "DEFAULT_AUTH_DOMAIN", projectId: "DEFAULT_PROJECT_ID" };
+        // IMPORTANT: Anonymous authentication must be enabled in Firebase Console
+        // Navigate to: Authentication > Sign-in method > Anonymous > Enable
+        // 
+        // Firestore structure used by this app:
+        // artifacts/{appId}/users/{userId}/profile/main - User's portfolio data
+        // artifacts/{appId}/users/{userId}/settings/main - User's settings (roundups, DCA, locks)
+        const firebaseConfig = {
+          apiKey: "AIzaSyBw3CzBbdO49NpxkOqAmVI596nuB9wmt8w",
+          authDomain: "academiq-9c9zg.firebaseapp.com",
+          projectId: "academiq-9c9zg",
+          storageBucket: "academiq-9c9zg.firebasestorage.app",
+          messagingSenderId: "779034912138",
+          appId: "1:779034912138:web:548d8841fbecc792261473",
+          measurementId: "G-B2LMN7ZLG7"
+        };
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-myruncit-app';
+        const appId = 'myruncit-investment-app';
 
         // Initialize Firebase
         setLogLevel('Debug');
@@ -834,7 +846,32 @@
                         }
                     } catch (error) {
                         console.error("Error during sign-in:", error);
-                        dom.loadingContainer.innerHTML = `<p class="text-red-500 p-4">Error connecting to server. Please refresh.</p>`;
+                        state.isLoading = false;
+                        
+                        // Show detailed error message for debugging
+                        let errorMessage = 'Error connecting to server.';
+                        let errorDetails = '';
+                        
+                        if (error.code === 'auth/operation-not-allowed') {
+                            errorDetails = 'Anonymous authentication is not enabled. Please enable it in Firebase Console: Authentication > Sign-in method > Anonymous.';
+                        } else if (error.code === 'auth/invalid-api-key') {
+                            errorDetails = 'Invalid Firebase API key. Please check the configuration.';
+                        } else if (error.message) {
+                            errorDetails = `Error: ${error.message}`;
+                        }
+                        
+                        dom.loadingContainer.innerHTML = `
+                            <div class="p-4 max-w-md mx-auto text-center space-y-4">
+                                <svg class="w-16 h-16 text-red-500 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"></path>
+                                </svg>
+                                <h2 class="text-xl font-bold text-gray-800">${errorMessage}</h2>
+                                <p class="text-sm text-gray-600">${errorDetails}</p>
+                                <button onclick="location.reload()" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-colors">
+                                    Retry
+                                </button>
+                            </div>
+                        `;
                     }
                 }
             });
